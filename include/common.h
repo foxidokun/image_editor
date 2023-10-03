@@ -10,7 +10,8 @@
 
 const double infinity = std::numeric_limits<double>::infinity();
 
-extern sf::Font global_font;
+extern const sf::Font global_font;
+extern const sf::Texture close_window_button;
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Random functions

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vector.h"
+#include <iostream>
 
 #define POINT_DIM 2
 
@@ -79,4 +80,9 @@ inline Point& Point::operator+=(const Vector& vec) {
 inline Point& Point::operator-=(const Vector& vec) {
     *this = *this - vec;
     return *this;
+}
+
+inline std::ostream& operator<<(std::ostream& stream, const Point& point) {
+    stream << "Point{x: " << point.x << "; y: " << point.y << "}";
+    return stream; 
 }

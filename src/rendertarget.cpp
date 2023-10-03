@@ -40,3 +40,15 @@ void RenderTarget::drawText(const Point& point, const char* text, uint size) {
 
     _data.draw(textobj);
 }
+
+void RenderTarget::drawTexture(const Point& point, const Vector& size, const Texture& texture) {
+    sf::Sprite sprite(texture);
+    sprite.setPosition(point.x, point.y);
+
+    double x_scale = size.x / texture.getSize().x;
+    double y_scale = size.y / texture.getSize().y;
+
+    sprite.setScale(x_scale, y_scale);
+
+    _data.draw(sprite);
+}

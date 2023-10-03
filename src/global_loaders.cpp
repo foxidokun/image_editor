@@ -3,8 +3,10 @@
 #include <iostream>
 
 static sf::Font load_font();
+static sf::Texture load_texture(const char* path);
 
-sf::Font global_font = load_font();
+const sf::Font global_font = load_font();
+const sf::Texture close_window_button = load_texture(CLOSE_WINDOW_BUTTON_TEXTURE_PATH);
 
 sf::Font load_font() {
     sf::Font font;
@@ -12,4 +14,12 @@ sf::Font load_font() {
     assert(res);
 
     return font;
+}
+
+static sf::Texture load_texture(const char* path) {
+    sf::Texture texture;
+    bool res = texture.loadFromFile(path);
+    assert(res);
+
+    return texture;
 }

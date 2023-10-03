@@ -46,6 +46,12 @@ public:
     virtual EVENT_RES on_mouse_move      (const mouse_event_t& key)    { return EVENT_RES::CONT; };
     virtual EVENT_RES on_timer           ()                            { return EVENT_RES::CONT; };
 
+    virtual void render(RenderTarget& target, const Point& start_pos) const override {
+        for (const auto& child: _childs) {
+            child->render(target, start_pos + _pos);
+        }
+    }
+
     void register_object(Widget *child) {
         _childs.push_back(child);
     }

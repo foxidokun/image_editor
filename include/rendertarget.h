@@ -4,6 +4,8 @@
 #include "vector.h"
 #include "point.h"
 
+typedef sf::Texture Texture;
+
 struct Color {
     uint r;
     uint g;
@@ -27,4 +29,6 @@ public:
     void drawLine(const Point& point, const Vector& size, const Color& fillcolor = {0,0,0,255});
 
     void drawText(const Point& point, const char* text, uint size);
+
+    void drawTexture(const Point& point, const Vector& size, const Texture& texture);
 };
