@@ -6,7 +6,7 @@
 #include <cassert>
 #include <iostream>
 
-#define DISABLE_DYNARRAY_FOR_SAFETY 0
+#define DISABLE_DYNARRAY_FOR_SAFETY 1
 
 
 #if DISABLE_DYNARRAY_FOR_SAFETY

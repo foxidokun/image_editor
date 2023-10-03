@@ -5,8 +5,11 @@
 
 namespace chrono = std::chrono;
 static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, WindowManager& wm);
+static void test_regions();
 
 int main() {
+    test_regions();
+
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), WINDOW_TITLE);
     auto frame_start_time = chrono::system_clock::now();
 
@@ -70,4 +73,24 @@ static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& wind
         default:
             return EVENT_RES::CONT;
     }
+}
+
+
+
+
+
+#include "regions.h"
+
+static void test_regions() {
+    Rectangle a{1.0, 1.0, 5.0, 5.0};
+    Rectangle b{2.0, 2.0, 4.0, 4.0};
+
+    Region r1;
+    Region r2;
+
+    r1.add_rectangle(a);
+    r2.add_rectangle(b);
+
+    Region r3 = r1 - r2;
+    std::cout << "Diff is \n" << r3; 
 }
