@@ -19,7 +19,10 @@ private:
 public:
     RenderTarget(const Vector& size) {
             _data.create(size.x, size.y);
+            clear(sf::Color(255,255,255,255));
         }
+
+    void clear(const sf::Color& color) { _data.clear(color); };
 
     void display(sf::RenderWindow& window);
 

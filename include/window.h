@@ -3,20 +3,20 @@
 #include "string.h"
 
 class Window: public Widget {
-public: // TODO: revert to private
+private:
     string _title;
 
     void initialise();
 
 public:
-    Window(const Point& pos, const Vector& size, const string& title):
-        Widget(pos, size),
+    Window(Widget *parent, const Point& pos, const Vector& size, const string& title):
+        Widget(parent, pos, size),
         _title(title) {
             initialise();
         }
 
-    Window(const Point& pos, const Vector& size, string&& title):
-        Widget(pos, size),
+    Window(Widget *parent, const Point& pos, const Vector& size, string&& title):
+        Widget(parent, pos, size),
         _title(title) {
             initialise();
         }

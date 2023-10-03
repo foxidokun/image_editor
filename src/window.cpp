@@ -11,8 +11,8 @@ struct WindowButtonArgs: public CallbackArgs {
 static void close_window_callback(CallbackArgs *_args) {
     WindowButtonArgs *args = static_cast<WindowButtonArgs *>(_args);
 
-    std::cout << "Window with title " << (args->window->_title) <<  "closed";
-    // TODO;
+    Widget *parent = args->window->parent();
+    parent->unregister_object(args->window);
 }
 
 void Window::render(RenderTarget& target, const Point& start_pos) const {
@@ -27,9 +27,8 @@ void Window::render(RenderTarget& target, const Point& start_pos) const {
 void Window::initialise() {
     CallbackArgs *args = new WindowButtonArgs(this);
     Point pos = {_size.x - BUTTON_SIZE - LINE_THICKNESS, LINE_THICKNESS};
-    std::cout << "button relative pos = " << pos << "\n";
     Vector size = {BUTTON_SIZE, BUTTON_SIZE};
-    TextureButton* button = new TextureButton(pos, size, close_window_callback, args, close_window_button);
+    TextureButton* button = new TextureButton(this, pos, size, close_window_callback, args, close_window_button);
 
     register_object(button);
 }
