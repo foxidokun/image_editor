@@ -15,5 +15,5 @@ public:
         Widget(pos, size),
         _title(title) {}
 
-    void render(RenderTarget& target) const final;
+    void render(RenderTarget& target, const Point& start_pos) const final;
 };

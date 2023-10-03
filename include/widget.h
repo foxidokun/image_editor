@@ -5,7 +5,7 @@
 #include "vector.h"
 
 class Renderable {
-    virtual void render(RenderTarget& target) const = 0;
+    virtual void render(RenderTarget& target, const Point& start_pos) const = 0;
 };
 
 typedef char keyboard_event_t;

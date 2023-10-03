@@ -1,6 +1,7 @@
 #pragma once
 
 #include <random>
+#include <SFML/Graphics.hpp>
 #include "config.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -8,6 +9,8 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 const double infinity = std::numeric_limits<double>::infinity();
+
+extern sf::Font global_font;
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Random functions
@@ -37,4 +40,8 @@ static inline double random_double(double min, double max) {
 
 static inline double degrees_to_radians(double degrees) {
     return degrees * std::numbers::pi / 180.0;
+}
+
+static inline double radians_to_degrees(double radians) {
+    return radians / std::numbers::pi * 180.0;
 }

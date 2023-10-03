@@ -45,6 +45,10 @@ static inline Point operator+(const Vector& vec, const Point& point) {
     return point + vec;
 }
 
+static inline Point operator+(const Point& lhs, const Point& rhs) {
+    return {lhs.x + rhs.x, lhs.y + rhs.y};
+}
+
 static inline Point operator-(const Point& point, const Vector& vec) {
     return {point.x - vec.x,
             point.y - vec.y

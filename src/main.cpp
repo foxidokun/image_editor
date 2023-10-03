@@ -13,9 +13,9 @@ int main() {
     RenderTarget target(Vector(WINDOW_WIDTH, WINDOW_HEIGHT));
 
     while (window.isOpen()) {
-        window.clear();
+        window.clear(sf::Color::White);
 
-        main_window.render(target);
+        main_window.render(target, {0, 0});
         target.display(window);
         window.display();
 
