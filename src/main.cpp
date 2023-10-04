@@ -77,13 +77,11 @@ static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& wind
 
 
 
-
-
 #include "regions.h"
 
 static void test_regions() {
     Rectangle a{1.0, 1.0, 5.0, 5.0};
-    Rectangle b{2.0, 2.0, 4.0, 4.0};
+    Rectangle b{0.0, 0.0, 4.0, 4.0};
 
     Region r1;
     Region r2;
