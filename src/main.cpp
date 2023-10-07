@@ -108,4 +108,25 @@ static void test_regions() {
 
     Region r4 = r1 * r2;
     std::cout << "Intersection is \n" << r4; 
+
+    Rectangle c1(0, 0, 3, 2);
+    Rectangle c2(3, 0, 5, 2);
+    Rectangle c3(0, 2, 2, 4);
+    Rectangle c4(2, 2, 3, 3);
+    Rectangle c5(3, 2, 4, 3);
+    Rectangle c6(2, 3, 4, 4);
+    Rectangle c7(4, 2, 5, 4);
+
+    Region opt;
+    opt.add_rectangle(c1);
+    opt.add_rectangle(c2);
+    opt.add_rectangle(c3);
+    opt.add_rectangle(c4);
+    opt.add_rectangle(c5);
+    opt.add_rectangle(c6);
+    opt.add_rectangle(c7);
+
+    opt.optimize();
+
+    std::cout << "Optimised is \n" << opt;
 }

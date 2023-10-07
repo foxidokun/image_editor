@@ -14,12 +14,15 @@ class Region {
 private:
     dynarray<Rectangle> rects;
 
+
 public:
     Region() = default;
 
     void add_rectangle(Rectangle rec) {
         rects.push_back(rec);
     }
+    
+    void optimize();
 
     Region& operator+=(const Region& other);
     Region& operator-=(const Region& other);

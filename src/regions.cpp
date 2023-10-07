@@ -1,23 +1,58 @@
 #include "regions.h"
 #include <format>
 
-static bool has_intersect(const Rectangle& one, const Rectangle& other) {
-    bool has_common_x = false;
-    has_common_x |= (other.low_x < one.low_x  && other.high_x > one.low_x);
-    has_common_x |= (other.low_x < one.high_x && other.high_x > one.high_x);
-    has_common_x |= (other.low_x >= one.low_x  && other.high_x <= one.high_x);
-    bool has_common_y = false;
-    has_common_y |= (other.low_y < one.low_y  && other.high_y > one.low_y);
-    has_common_y |= (other.low_y < one.high_y && other.high_y > one.high_y);
-    has_common_y |= (other.low_y >= one.low_y  && other.high_y <= one.high_y);
+static bool has_intersect(const Rectangle& one, const Rectangle& other);
 
-    return has_common_x && has_common_y;
-}
+enum class common_edge {
+    NO_COMMON,
+    LEFT,
+    RIGHT,
+    TOP,
+    BOTTOM
+};
+
+static common_edge has_common_edge(const Rectangle& one, const Rectangle& other);
 
 Region& Region::operator+=(const Region& other) {
     Region tmp = other - *this;
     rects.insert(rects.end(), tmp.rects.begin(), tmp.rects.end());
     return *this;
+}
+
+void Region::optimize() {
+    for (uint i = 0; i < rects.size();) {
+        bool increment_i = true;
+        for (uint j = 0; j < i; ++j) {
+            auto common = has_common_edge(rects[i], rects[j]);
+            if (common != common_edge::NO_COMMON) {
+                switch (common) {
+                    case (common_edge::BOTTOM):
+                        rects[i].low_y = rects[j].low_y;
+                        break;
+                    case (common_edge::TOP):
+                        rects[i].high_y = rects[j].high_y;
+                        break;
+                    case (common_edge::LEFT):
+                        rects[i].low_x = rects[j].low_x;
+                        break;
+                    case (common_edge::RIGHT):
+                        rects[i].high_x = rects[j].high_x;
+                        break;
+                }
+
+                rects.erase(rects.begin() + j);
+
+                i = 0;
+                j = 0;
+                increment_i = false;
+                break;
+            }
+        }
+
+        if (increment_i) {
+            ++i;
+        }
+    }
 }
 
 Region& Region::operator-=(const Region& other) {
@@ -83,11 +118,16 @@ Region& Region::operator-=(const Region& other) {
         }
     }
 
+    optimize();
+
     return *this;
 }
 
 Region& Region::operator*=(const Region& other) {
     *this -= (*this - other);
+
+    optimize();
+
     return *this;
 }
 
@@ -109,4 +149,49 @@ std::ostream& operator<<(std::ostream& stream, const Region& self) {
     stream << "}\n";
 
     return stream;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Static 
+// ---------------------------------------------------------------------------------------------------------------------
+
+static bool has_intersect(const Rectangle& one, const Rectangle& other) {
+    bool has_common_x = false;
+    has_common_x |= (other.low_x < one.low_x  && other.high_x > one.low_x);
+    has_common_x |= (other.low_x < one.high_x && other.high_x > one.high_x);
+    has_common_x |= (other.low_x >= one.low_x  && other.high_x <= one.high_x);
+    bool has_common_y = false;
+    has_common_y |= (other.low_y < one.low_y  && other.high_y > one.low_y);
+    has_common_y |= (other.low_y < one.high_y && other.high_y > one.high_y);
+    has_common_y |= (other.low_y >= one.low_y  && other.high_y <= one.high_y);
+
+    return has_common_x && has_common_y;
+}
+
+static common_edge has_common_edge(const Rectangle& one, const Rectangle& other) {
+    if (one.high_x == other.low_x) {
+        if (one.low_y == other.low_y && one.high_y == other.high_y) {
+            return common_edge::RIGHT;
+        }
+    }
+
+    if (one.low_x == other.high_x) {
+        if (one.low_y == other.low_y && one.high_y == other.high_y) {
+            return common_edge::LEFT;
+        }
+    }
+
+    if (one.high_y == other.low_y) {
+        if (one.low_x == other.low_x && one.high_x == other.high_x) {
+            return common_edge::TOP;
+        }
+    }
+
+    if (one.low_y == other.high_y) {
+        if (one.low_x == other.low_x && one.high_x == other.high_x) {
+            return common_edge::BOTTOM;
+        }
+    }
+
+    return common_edge::NO_COMMON;
 }
