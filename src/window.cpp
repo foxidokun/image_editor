@@ -15,18 +15,19 @@ static void close_window_callback(CallbackArgs *_args) {
     parent->unregister_object(args->window);
 }
 
-void Window::render(RenderTarget& target, const Point& start_pos) const {
-    target.drawRect(_pos + start_pos, _size);
+void Window::render(RenderTarget& target) const {
+    target.drawRect(_pos, _size);
 
-    target.drawLine(_pos + start_pos + Point(0, HEADER_HEIGHT), {_size.x, 0});
-    target.drawText(_pos + start_pos +  Point(LINE_THICKNESS, LINE_THICKNESS), _title.c_str(), TITLE_SIZE);
+    target.drawLine(_pos + Point(0, HEADER_HEIGHT), {_size.x, 0});
+    target.drawText(_pos +  Point(LINE_THICKNESS, LINE_THICKNESS), _title.c_str(), TITLE_SIZE);
 
-    Widget::render(target, start_pos);
+    Widget::render(target);
 }
 
 void Window::initialise() {
     CallbackArgs *args = new WindowButtonArgs(this);
     Point pos = {_size.x - BUTTON_SIZE - LINE_THICKNESS, LINE_THICKNESS};
+    pos += _pos;
     Vector size = {BUTTON_SIZE, BUTTON_SIZE};
     TextureButton* button = new TextureButton(this, pos, size, close_window_callback, args, close_window_button);
 

@@ -41,8 +41,6 @@ EVENT_RES Widget::on_mouse_press(const mouse_event_t& _key) {
     mouse_event_t key = _key;
 
     if (no_hit(_pos, _size, key)) { return EVENT_RES::CONT; }
-    key.x -= _pos.x;
-    key.y -= _pos.y;
 
     return default_event_handler<mouse_event_t>(_childs, &Widget::on_mouse_press, key);
 }
@@ -52,8 +50,6 @@ EVENT_RES Widget::on_mouse_release(const mouse_event_t& _key) {
     mouse_event_t key = _key;
     
     if (no_hit(_pos, _size, key)) { return EVENT_RES::CONT; }
-    key.x -= _pos.x;
-    key.y -= _pos.y;
 
     return default_event_handler<mouse_event_t>(_childs, &Widget::on_mouse_release, key);
 }
@@ -62,8 +58,6 @@ EVENT_RES Widget::on_mouse_move(const mouse_event_t& _key) {
     mouse_event_t key = _key;
     
     if (no_hit(_pos, _size, key)) { return EVENT_RES::CONT; }
-    key.x -= _pos.x;
-    key.y -= _pos.y;
 
     return default_event_handler<mouse_event_t>(_childs, &Widget::on_mouse_move, key);
 }

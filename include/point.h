@@ -29,6 +29,7 @@ public:
         {};
 
     Point& operator+=(const Vector& vec);
+    Point& operator+=(const Point& vec);
 
     Point& operator-=(const Vector& vec);
 };
@@ -73,6 +74,11 @@ static inline Vector operator-(const Point& end, const Point& start) {
 }
 
 inline Point& Point::operator+=(const Vector& vec) {
+    *this = *this + vec;
+    return *this;
+}
+
+inline Point& Point::operator+=(const Point& vec) {
     *this = *this + vec;
     return *this;
 }

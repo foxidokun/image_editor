@@ -23,7 +23,7 @@ int main() {
         window.clear(sf::Color::White);
         target.clear(sf::Color::White);
 
-        WM.render(target, {0, 0});
+        WM.render(target);
         target.display(window);
         window.display();
 

@@ -37,5 +37,5 @@ public:
         Button(parent, pos, size, callback, allocated_args),
         _texture(texture) {}
 
-    void render(RenderTarget& target, const Point& start_pos) const final;
+    void render(RenderTarget& target) const final;
 };

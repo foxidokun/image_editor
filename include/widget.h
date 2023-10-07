@@ -6,7 +6,7 @@
 #include <chrono>
 
 class Renderable {
-    virtual void render(RenderTarget& target, const Point& start_pos) const = 0;
+    virtual void render(RenderTarget& target) const = 0;
 };
 
 typedef char keyboard_event_t;
@@ -52,9 +52,9 @@ public:
     virtual EVENT_RES on_mouse_move      (const mouse_event_t& key);
     virtual EVENT_RES on_timer           (const time_point& time);
 
-    virtual void render(RenderTarget& target, const Point& start_pos) const override {
+    virtual void render(RenderTarget& target) const override {
         for (const auto& child: _childs) {
-            child->render(target, start_pos + _pos);
+            child->render(target);
         }
     }
 

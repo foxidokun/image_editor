@@ -21,5 +21,5 @@ public:
             initialise();
         }
 
-    void render(RenderTarget& target, const Point& start_pos) const final;
+    void render(RenderTarget& target) const final;
 };
