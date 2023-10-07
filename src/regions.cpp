@@ -5,13 +5,13 @@ static bool has_intersect(const Rectangle& one, const Rectangle& other) {
     bool has_common_x = false;
     has_common_x |= (other.low_x < one.low_x  && other.high_x > one.low_x);
     has_common_x |= (other.low_x < one.high_x && other.high_x > one.high_x);
-    has_common_x |= (other.low_x > one.low_x  && other.high_x < one.high_x);
+    has_common_x |= (other.low_x >= one.low_x  && other.high_x <= one.high_x);
     bool has_common_y = false;
     has_common_y |= (other.low_y < one.low_y  && other.high_y > one.low_y);
     has_common_y |= (other.low_y < one.high_y && other.high_y > one.high_y);
-    has_common_y |= (other.low_y > one.low_y  && other.high_y < one.high_y);
+    has_common_y |= (other.low_y >= one.low_y  && other.high_y <= one.high_y);
 
-    return has_common_x & has_common_y;
+    return has_common_x && has_common_y;
 }
 
 Region& Region::operator+=(const Region& other) {
@@ -21,7 +21,8 @@ Region& Region::operator+=(const Region& other) {
 }
 
 Region& Region::operator-=(const Region& other) {
-    for (uint i = 0; i < rects.size(); ++i) {
+    for (uint i = 0; i < rects.size();) {
+        bool increment_i = true;
         for (uint j = 0; j < other.rects.size(); ++j) {
             if (has_intersect(rects[i], other.rects[j])) {
                 const Rectangle& first_rect = rects[i];
@@ -72,13 +73,23 @@ Region& Region::operator-=(const Region& other) {
 
                 i = 0;
                 j = 0;
+                increment_i = false;
+                break;
             }
+        }
+
+        if (increment_i) {
+            ++i;
         }
     }
 
     return *this;
 }
 
+Region& Region::operator*=(const Region& other) {
+    *this -= (*this - other);
+    return *this;
+}
 
 std::ostream& operator<<(std::ostream& stream, const Region& self) {
     stream << "Region {\n";

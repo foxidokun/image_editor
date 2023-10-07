@@ -80,15 +80,32 @@ static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& wind
 #include "regions.h"
 
 static void test_regions() {
-    Rectangle a{1.0, 1.0, 5.0, 5.0};
-    Rectangle b{0.0, 0.0, 4.0, 4.0};
+    Rectangle a1{0, 0, 3, 3};
+    Rectangle a2{6, 0, 10, 4};
+    Rectangle a3{2, 4, 7, 8};
+    Rectangle a4{8, 7, 13, 10};
+
+    Rectangle b1{2, 2, 7, 5};
+    Rectangle b2{6, 5, 10, 8};
+    Rectangle b3{8, 1, 9, 2};
+    Rectangle b4{10, 8, 15,11};
 
     Region r1;
     Region r2;
 
-    r1.add_rectangle(a);
-    r2.add_rectangle(b);
+    r1.add_rectangle(a1);
+    r1.add_rectangle(a2);
+    r1.add_rectangle(a3);
+    r1.add_rectangle(a4);
+
+    r2.add_rectangle(b1);
+    r2.add_rectangle(b2);
+    r2.add_rectangle(b3);
+    r2.add_rectangle(b4);
 
     Region r3 = r1 - r2;
     std::cout << "Diff is \n" << r3; 
+
+    Region r4 = r1 * r2;
+    std::cout << "Intersection is \n" << r4; 
 }
