@@ -20,8 +20,8 @@ int main() {
     RenderTarget target(Vector(WINDOW_WIDTH, WINDOW_HEIGHT));
 
     while (window.isOpen()) {
-        window.clear(sf::Color::White);
-        target.clear(sf::Color::White);
+        window.clear(sf::Color::Cyan);
+        target.clear(sf::Color::Cyan);
 
         WM.render(target);
         target.display(window);
