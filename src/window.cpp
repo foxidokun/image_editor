@@ -35,3 +35,32 @@ void Window::initialise() {
 
     register_object(button);
 }
+
+EVENT_RES Window::on_mouse_press(const mouse_event_t& key) {
+    EVENT_RES res = Widget::on_mouse_press(key);
+    if (res == EVENT_RES::CONT) {
+        bool hit_y = key.y > _pos.y && key.y < _pos.y + HEADER_HEIGHT;
+        bool hit_x = key.x > _pos.x && key.x < _pos.x + _size.x;
+        if (hit_x && hit_y) {
+            is_moving = true;
+            std::cout << "moving\n";
+            return EVENT_RES::STOP;
+        }
+    }
+
+    return res;
+}
+
+EVENT_RES Window::on_mouse_release(const mouse_event_t& key) {
+    is_moving = false;
+    return Widget::on_mouse_release(key);
+}
+
+EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
+    if (is_moving) {
+        std::cout << "somehow is_moving is true\n";
+        _pos = {key.x, key.y};
+    }
+
+    return Widget::on_mouse_move(key);
+}

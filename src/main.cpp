@@ -14,11 +14,11 @@ int main() {
     auto frame_start_time = chrono::system_clock::now();
 
     WindowManager WM(WINDOW_WIDTH, WINDOW_HEIGHT);
-    auto main_window    = new Window(Point(200, 200), Vector(300, 300), string("Test"));
-    auto another_window = new Window(Point(600, 200), Vector(200, 200), string("Test 2"));
-    auto child_window   = new Window(Point(100, 100), Vector(100, 100), string("Child"));
-    main_window->register_object(child_window);
-    WM.register_object(main_window);
+    // auto main_window    = new Window(Point(200, 200), Vector(300, 300), string("Test"));
+    auto another_window = new Window(Point(600, 200), Vector(200, 200), string("aboba"));
+    // auto child_window   = new Window(Point(100, 100), Vector(100, 100), string("Child"));
+    // main_window->register_object(child_window);
+    // WM.register_object(main_window);
     WM.register_object(another_window);
 
     RenderTarget target(Vector(WINDOW_WIDTH, WINDOW_HEIGHT));
@@ -44,12 +44,21 @@ int main() {
 }
 
 static inline mouse_event_t get_mouse_event(const sf::RenderWindow& window, const sf::Event& event) {
-    sf::Vector2f point = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+    sf::Vector2f point;
+    if (event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseButtonReleased) {
+        point = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+    } else {
+        assert(event.type == sf::Event::MouseMoved);
+        point = window.mapPixelToCoords(sf::Vector2i(event.mouseMove.x, event.mouseMove.y));
+    }
+
     mouse_event_t mouse_event;
     mouse_event.x = point.x;
     mouse_event.y = point.y;
 
-    if (event.mouseButton.button == sf::Mouse::Button::Left) {
+    if (event.type == sf::Event::MouseMoved) {
+        mouse_event.button = mouse_event_t::button_type::UNKNOWN;
+    } else if (event.mouseButton.button == sf::Mouse::Button::Left) {
         mouse_event.button = mouse_event_t::button_type::LEFT;
     } else if (event.mouseButton.button == sf::Mouse::Button::Right) {
         mouse_event.button = mouse_event_t::button_type::RIGHT;
@@ -72,6 +81,10 @@ static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& wind
 
         case (sf::Event::MouseButtonReleased):
             wm.on_mouse_release(get_mouse_event(window, event));
+            return EVENT_RES::CONT;
+
+        case (sf::Event::MouseMoved):
+            wm.on_mouse_move(get_mouse_event(window, event));
             return EVENT_RES::CONT;
 
         default:

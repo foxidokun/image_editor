@@ -31,13 +31,21 @@ void RenderTarget::drawLine(const Region& reg, const Point& point, const Vector&
     rect.setRotation(radians_to_degrees(atan(size.y / size.x)));
 
     for (const auto &disp_rect: reg.rects()) {
-        Point  new_pos  = Point(std::max(point.x, disp_rect.low_x), std::max(point.y, disp_rect.low_y));
-        Vector new_size = Vector(std::min(size.x, disp_rect.high_x - new_pos.x),
-                                std::min(size.y, disp_rect.high_y - new_pos.y));
+        Point start_point = point;
+        Point end_point   = point + size;
+        start_point.x = std::max(start_point.x, disp_rect.low_x);
+        start_point.y = std::max(start_point.y, disp_rect.low_y);
+        end_point.x   = std::min(end_point.x,   disp_rect.high_x);
+        end_point.y   = std::min(end_point.y,   disp_rect.high_y);
+
+        Vector new_size = end_point - start_point;
+
+        if (new_size.x < 0 || new_size.y < 0) {
+            continue;
+        }
 
         rect.setSize(sf::Vector2f(new_size.length(), LINE_THICKNESS));
-        rect.setPosition(new_pos.x, new_pos.y);
-
+        rect.setPosition(start_point.x, start_point.y);
 
         _data.draw(rect);
     }
@@ -65,8 +73,12 @@ void RenderTarget::drawText(const Region& reg, const Point& point, const char* t
     for (const auto &disp_rect: reg.rects()) {
         float width  = disp_rect.high_x - disp_rect.low_x;
         float height = disp_rect.high_y - disp_rect.low_y;
-        ghost.setView(sf::View(sf::Rect((float)disp_rect.low_x, (float)disp_rect.high_y, width, height)));
-        _data.draw(sf::Sprite(ghost.getTexture()));
+
+        sf::Sprite part_sprite(ghost.getTexture(), sf::Rect<int>(disp_rect.low_x, disp_rect.low_y, width, height));
+        part_sprite.setColor(sf::Color::Red);
+        part_sprite.setPosition(disp_rect.low_x, disp_rect.low_y);
+
+        _data.draw(part_sprite);
     }
 }
 

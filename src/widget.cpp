@@ -10,11 +10,13 @@ Widget* update_coords(Widget *widget, void *args);
 template<typename T>
 using handler_func_t = EVENT_RES (Widget::*)(const T& event);
 
+const Vector SAFETY_AROUND = {20, 20};
+
 template<typename T>
 static EVENT_RES default_event_handler(const list<Widget *>& childs, handler_func_t<T> handler_func, const T& event) {
     for (auto& child: childs) {
         if constexpr (std::is_same_v<T, mouse_event_t>) {
-            if (no_hit(child->pos(), child->size(), event)) {
+            if (no_hit(child->pos() - SAFETY_AROUND, child->size() + 2*SAFETY_AROUND, event)) {
                 continue;
             }
         }
@@ -51,7 +53,7 @@ EVENT_RES Widget::on_mouse_press(const mouse_event_t& _key) {
 EVENT_RES Widget::on_mouse_release(const mouse_event_t& _key) {
     mouse_event_t key = _key;
     
-    if (no_hit(_pos, _size, key)) { return EVENT_RES::CONT; }
+    if (no_hit(_pos - SAFETY_AROUND, _size + 2*SAFETY_AROUND, key)) { return EVENT_RES::CONT; }
 
     return default_event_handler<mouse_event_t>(_childs, &Widget::on_mouse_release, key);
 }
@@ -59,7 +61,7 @@ EVENT_RES Widget::on_mouse_release(const mouse_event_t& _key) {
 EVENT_RES Widget::on_mouse_move(const mouse_event_t& _key) {
     mouse_event_t key = _key;
     
-    if (no_hit(_pos, _size, key)) { return EVENT_RES::CONT; }
+    if (no_hit(_pos - SAFETY_AROUND, _size + 2*SAFETY_AROUND, key)) { return EVENT_RES::CONT; }
 
     return default_event_handler<mouse_event_t>(_childs, &Widget::on_mouse_move, key);
 }

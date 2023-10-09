@@ -5,6 +5,7 @@
 class Window: public Widget {
 private:
     string _title;
+    bool is_moving = false;
 
     void initialise();
 
@@ -22,4 +23,8 @@ public:
         }
 
     void render(RenderTarget& target) const final;
+
+    EVENT_RES on_mouse_press   (const mouse_event_t& key) final;
+    EVENT_RES on_mouse_release (const mouse_event_t& key) final;
+    EVENT_RES on_mouse_move    (const mouse_event_t& key) final;
 };
