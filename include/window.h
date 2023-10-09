@@ -9,14 +9,14 @@ private:
     void initialise();
 
 public:
-    Window(Widget *parent, const Point& pos, const Vector& size, const string& title):
-        Widget(parent, pos, size),
+    Window(const Point& pos, const Vector& size, const string& title):
+        Widget(pos, size),
         _title(title) {
             initialise();
         }
 
-    Window(Widget *parent, const Point& pos, const Vector& size, string&& title):
-        Widget(parent, pos, size),
+    Window(const Point& pos, const Vector& size, string&& title):
+        Widget(pos, size),
         _title(title) {
             initialise();
         }

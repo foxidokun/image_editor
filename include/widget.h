@@ -4,6 +4,7 @@
 #include "point.h"
 #include "vector.h"
 #include <chrono>
+#include <cassert>
 
 class Renderable {
     virtual void render(RenderTarget& target) const = 0;
@@ -12,6 +13,9 @@ class Renderable {
 typedef char keyboard_event_t;
 
 using time_point = std::chrono::time_point<std::chrono::system_clock>;
+
+class Widget;
+using transform_f =  Widget*(*)(Widget *, void *);
 
 struct mouse_event_t {
     double x;
@@ -39,8 +43,7 @@ protected:
     Vector _size;
 
 public:
-    Widget(Widget* parent, const Point& pos, const Vector& size):
-        _parent(parent),
+    Widget(const Point& pos, const Vector& size):
         _pos(pos),
         _size(size)
         {}
@@ -54,13 +57,12 @@ public:
 
     virtual void render(RenderTarget& target) const override {
         for (const auto& child: _childs) {
+            assert (child != this);
             child->render(target);
         }
     }
 
-    void register_object(Widget *child) {
-        _childs.push_back(child);
-    }
+    void register_object(Widget *child);
 
     void unregister_object(Widget *rem_child) {
         for (auto child = _childs.begin(); child != _childs.end(); ++child) {
@@ -80,11 +82,17 @@ public:
             delete x;
         }
     }
+
+    friend void recursive_update(Widget **widget, transform_f func, void* args);
+    friend Widget* update_coords(Widget *widget, void *args);
 };
 
 class WindowManager: public Widget {
 public:
     WindowManager(double width, double height):
-        Widget(nullptr, Point(0,0), Vector(width, height))
+        Widget(Point(0,0), Vector(width, height))
         {}
 };
+
+
+void recursive_update(Widget **widget, transform_f func, void* args);

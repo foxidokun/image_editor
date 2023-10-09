@@ -1,6 +1,7 @@
 #include "button.h"
 
 EVENT_RES Button::on_mouse_press(const mouse_event_t& key) {
+     << "button callback called\n";
     _callback(_allocated_args);
     return EVENT_RES::STOP;
 }

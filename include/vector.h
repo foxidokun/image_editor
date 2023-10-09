@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include <cmath>
+#include "config.h"
 
 #define VECTOR_DIM 2
 

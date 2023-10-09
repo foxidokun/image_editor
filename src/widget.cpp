@@ -1,9 +1,11 @@
 #include "widget.h"
 #include <type_traits>
+#include <cassert>
 
 // TODO: implement priority logic
 
 static inline bool no_hit(const Point& pos, const Vector& size, const mouse_event_t& event);
+Widget* update_coords(Widget *widget, void *args);
 
 template<typename T>
 using handler_func_t = EVENT_RES (Widget::*)(const T& event);
@@ -67,10 +69,33 @@ EVENT_RES Widget::on_timer(const time_point& time) {
     return default_event_handler<time_point>(_childs, &Widget::on_timer, time);
 }
 
+void Widget::register_object(Widget *child) {
+    recursive_update(&child, update_coords, &_pos);
+    assert(child != this);
+    
+    child->_parent = this;
+    _childs.push_back(child);
+}
+
+void recursive_update(Widget **widget_ptr, transform_f func, void* args) {
+    Widget *widget = *widget_ptr;
+    for (auto child = widget->_childs.begin(); child != widget->_childs.end(); ++child) {
+        *child = func(*child, args);
+    }
+
+    widget = func(widget, args);
+    *widget_ptr = widget;
+}
 
 static inline bool no_hit(const Point& pos, const Vector& size, const mouse_event_t& event) {
     double rel_x = event.x - pos.x;
     double rel_y = event.y - pos.y;
 
     return !((0 < rel_x && rel_x < size.x) && (0 < rel_y && rel_y < size.y));
+}
+
+Widget* update_coords(Widget *const widget, void *args) {
+    Point base_point = *static_cast<Point *>(args);
+    widget->_pos += base_point;
+    return widget;
 }

@@ -1,6 +1,9 @@
 #include "window.h"
 #include "button.h"
 #include <iostream>
+#include "config.h"
+
+const Color WINDOW_COLOR = {255,255,255,255};
 
 struct WindowButtonArgs: public CallbackArgs {
     Window *window;
@@ -27,9 +30,8 @@ void Window::render(RenderTarget& target) const {
 void Window::initialise() {
     CallbackArgs *args = new WindowButtonArgs(this);
     Point pos = {_size.x - BUTTON_SIZE - LINE_THICKNESS, LINE_THICKNESS};
-    pos += _pos;
     Vector size = {BUTTON_SIZE, BUTTON_SIZE};
-    TextureButton* button = new TextureButton(this, pos, size, close_window_callback, args, close_window_button);
+    TextureButton* button = new TextureButton(pos, size, close_window_callback, args, close_window_button);
 
     register_object(button);
 }

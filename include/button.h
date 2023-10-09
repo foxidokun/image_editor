@@ -16,8 +16,8 @@ private:
     on_click_f _callback;
     CallbackArgs *_allocated_args;
 public:
-    Button(Widget *parent, const Point& pos, const Vector& size, on_click_f callback, CallbackArgs *allocated_args):
-        Widget(parent, pos, size),
+    Button(const Point& pos, const Vector& size, on_click_f callback, CallbackArgs *allocated_args):
+        Widget(pos, size),
         _callback(callback),
         _allocated_args(allocated_args) {}
 
@@ -32,9 +32,9 @@ class TextureButton: public Button {
 private:
     Texture _texture;
 public:
-    TextureButton(Widget *parent, const Point& pos, const Vector& size, on_click_f callback,
+    TextureButton(const Point& pos, const Vector& size, on_click_f callback,
         CallbackArgs *allocated_args, const sf::Texture& texture):
-        Button(parent, pos, size, callback, allocated_args),
+        Button(pos, size, callback, allocated_args),
         _texture(texture) {}
 
     void render(RenderTarget& target) const final;

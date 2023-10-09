@@ -1,6 +1,7 @@
 #include "common.h"
 #include <cassert>
 #include <iostream>
+#include "config.h"
 
 static sf::Font load_font();
 static sf::Texture load_texture(const char* path);
