@@ -43,7 +43,6 @@ EVENT_RES Window::on_mouse_press(const mouse_event_t& key) {
         bool hit_x = key.x > _pos.x && key.x < _pos.x + _size.x;
         if (hit_x && hit_y) {
             is_moving = true;
-            std::cout << "moving\n";
             return EVENT_RES::STOP;
         }
     }
@@ -58,8 +57,17 @@ EVENT_RES Window::on_mouse_release(const mouse_event_t& key) {
 
 EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
     if (is_moving) {
-        std::cout << "somehow is_moving is true\n";
-        _pos = {key.x, key.y};
+        Point new_pos = {key.x, key.y};
+        bool valid_x = new_pos.x > _parent->pos().x && (new_pos.x + _size.x) < (_parent->pos().x + _parent->size().x);
+        bool valid_y = new_pos.y > _parent->pos().y && (new_pos.y + _size.y) < (_parent->pos().y + _parent->size().y);
+        if (valid_x && valid_y) {
+            Vector delta = new_pos - _pos;
+            Widget* tmp_ptr= this;
+            recursive_update(&tmp_ptr, update_coords, &delta);
+            assert(tmp_ptr == this);
+        } else {
+            is_moving = false;
+        }
     }
 
     return Widget::on_mouse_move(key);

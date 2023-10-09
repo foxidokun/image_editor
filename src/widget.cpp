@@ -5,12 +5,11 @@
 // TODO: implement priority logic
 
 static inline bool no_hit(const Point& pos, const Vector& size, const mouse_event_t& event);
-Widget* update_coords(Widget *widget, void *args);
 
 template<typename T>
 using handler_func_t = EVENT_RES (Widget::*)(const T& event);
 
-const Vector SAFETY_AROUND = {20, 20};
+const Vector SAFETY_AROUND = {50, 50};
 
 template<typename T>
 static EVENT_RES default_event_handler(const list<Widget *>& childs, handler_func_t<T> handler_func, const T& event) {
@@ -72,17 +71,22 @@ EVENT_RES Widget::on_timer(const time_point& time) {
 }
 
 void Widget::register_object(Widget *child) {
-    recursive_update(&child, update_coords, &_pos);
+    Vector vec_mov = {_pos.x, _pos.y};
+    recursive_update(&child, update_coords, &vec_mov);
     assert(child != this);
     
     child->_parent = this;
     _childs.push_back(child);
+
+    // _reg -= child->_reg;
 }
 
 void recursive_update(Widget **widget_ptr, transform_f func, void* args) {
     Widget *widget = *widget_ptr;
     for (auto child = widget->_childs.begin(); child != widget->_childs.end(); ++child) {
-        *child = func(*child, args);
+        Widget* tmp_ptr = *child;
+        recursive_update(&tmp_ptr, func, args);
+        *child = tmp_ptr;
     }
 
     widget = func(widget, args);
@@ -97,7 +101,7 @@ static inline bool no_hit(const Point& pos, const Vector& size, const mouse_even
 }
 
 Widget* update_coords(Widget *const widget, void *args) {
-    Point base_point = *static_cast<Point *>(args);
+    Vector base_point = *static_cast<Vector *>(args);
     widget->_pos += base_point;
     widget->_reg.shift(Vector(base_point.x, base_point.y));
     return widget;

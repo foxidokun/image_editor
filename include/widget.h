@@ -101,3 +101,4 @@ public:
 
 
 void recursive_update(Widget **widget, transform_f func, void* args);
+Widget* update_coords(Widget *widget, void *args);

@@ -14,11 +14,11 @@ int main() {
     auto frame_start_time = chrono::system_clock::now();
 
     WindowManager WM(WINDOW_WIDTH, WINDOW_HEIGHT);
-    // auto main_window    = new Window(Point(200, 200), Vector(300, 300), string("Test"));
+    auto main_window    = new Window(Point(200, 200), Vector(300, 300), string("Test"));
     auto another_window = new Window(Point(600, 200), Vector(200, 200), string("aboba"));
-    // auto child_window   = new Window(Point(100, 100), Vector(100, 100), string("Child"));
-    // main_window->register_object(child_window);
-    // WM.register_object(main_window);
+    auto child_window   = new Window(Point(100, 100), Vector(100, 100), string("Child"));
+    main_window->register_object(child_window);
+    WM.register_object(main_window);
     WM.register_object(another_window);
 
     RenderTarget target(Vector(WINDOW_WIDTH, WINDOW_HEIGHT));
