@@ -97,5 +97,6 @@ static inline bool no_hit(const Point& pos, const Vector& size, const mouse_even
 Widget* update_coords(Widget *const widget, void *args) {
     Point base_point = *static_cast<Point *>(args);
     widget->_pos += base_point;
+    widget->_reg.shift(Vector(base_point.x, base_point.y));
     return widget;
 }

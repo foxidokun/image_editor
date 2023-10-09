@@ -15,32 +15,32 @@ static common_edge has_common_edge(const Rectangle& one, const Rectangle& other)
 
 Region& Region::operator+=(const Region& other) {
     Region tmp = other - *this;
-    rects.insert(rects.end(), tmp.rects.begin(), tmp.rects.end());
+    _rects.insert(_rects.end(), tmp._rects.begin(), tmp._rects.end());
     return *this;
 }
 
 void Region::optimize() {
-    for (uint i = 0; i < rects.size();) {
+    for (uint i = 0; i < _rects.size();) {
         bool increment_i = true;
         for (uint j = 0; j < i; ++j) {
-            auto common = has_common_edge(rects[i], rects[j]);
+            auto common = has_common_edge(_rects[i], _rects[j]);
             if (common != common_edge::NO_COMMON) {
                 switch (common) {
                     case (common_edge::BOTTOM):
-                        rects[i].low_y = rects[j].low_y;
+                        _rects[i].low_y = _rects[j].low_y;
                         break;
                     case (common_edge::TOP):
-                        rects[i].high_y = rects[j].high_y;
+                        _rects[i].high_y = _rects[j].high_y;
                         break;
                     case (common_edge::LEFT):
-                        rects[i].low_x = rects[j].low_x;
+                        _rects[i].low_x = _rects[j].low_x;
                         break;
                     case (common_edge::RIGHT):
-                        rects[i].high_x = rects[j].high_x;
+                        _rects[i].high_x = _rects[j].high_x;
                         break;
                 }
 
-                rects.erase(rects.begin() + j);
+                _rects.erase(_rects.begin() + j);
 
                 i = 0;
                 j = 0;
@@ -56,12 +56,12 @@ void Region::optimize() {
 }
 
 Region& Region::operator-=(const Region& other) {
-    for (uint i = 0; i < rects.size();) {
+    for (uint i = 0; i < _rects.size();) {
         bool increment_i = true;
-        for (uint j = 0; j < other.rects.size(); ++j) {
-            if (has_intersect(rects[i], other.rects[j])) {
-                const Rectangle& first_rect = rects[i];
-                const Rectangle& second_rect = other.rects[j];
+        for (uint j = 0; j < other._rects.size(); ++j) {
+            if (has_intersect(_rects[i], other._rects[j])) {
+                const Rectangle& first_rect = _rects[i];
+                const Rectangle& second_rect = other._rects[j];
                 Rectangle added[4] = {};
                 uint number = 0;
 
@@ -99,11 +99,13 @@ Region& Region::operator-=(const Region& other) {
 
                 if (number > 0) {
                     number--;
-                    rects[i] = added[number];
+                    _rects[i] = added[number];
+                } else {
+                    _rects.erase(_rects.begin() + i);
                 }
 
                 for (uint i = number; i > 0; --i) {
-                    rects.push_back(added[i - 1]);
+                    _rects.push_back(added[i - 1]);
                 }
 
                 i = 0;
@@ -137,19 +139,29 @@ std::ostream& operator<<(std::ostream& stream, const Region& self) {
     stream.setf(std::ios_base::fixed, std::ios_base::floatfield);
     stream.precision(2);
 
-    for (uint i = 0; i < self.rects.size(); ++i) {
+    for (uint i = 0; i < self._rects.size(); ++i) {
         stream << std::format("\tRect #{} {{low_x: {:.2} low_y: {:.2} high_x: {:.2} high_y: {:.2} }}\n", 
             i,
-            self.rects[i].low_x,
-            self.rects[i].low_y,
-            self.rects[i].high_x,
-            self.rects[i].high_y
+            self._rects[i].low_x,
+            self._rects[i].low_y,
+            self._rects[i].high_x,
+            self._rects[i].high_y
             );
     }
     stream << "}\n";
 
     return stream;
 }
+
+void Region::shift(const Vector &vec) {
+    for (uint i = 0; i < _rects.size(); ++i) {
+        _rects[i].low_x  += vec.x;
+        _rects[i].high_x += vec.x;
+        _rects[i].low_y  += vec.y;
+        _rects[i].high_y += vec.y;
+    }
+}
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Static 
@@ -159,11 +171,11 @@ static bool has_intersect(const Rectangle& one, const Rectangle& other) {
     bool has_common_x = false;
     has_common_x |= (other.low_x < one.low_x  && other.high_x > one.low_x);
     has_common_x |= (other.low_x < one.high_x && other.high_x > one.high_x);
-    has_common_x |= (other.low_x >= one.low_x  && other.high_x <= one.high_x);
+    has_common_x |= (other.low_x >= one.low_x && other.high_x <= one.high_x);
     bool has_common_y = false;
     has_common_y |= (other.low_y < one.low_y  && other.high_y > one.low_y);
     has_common_y |= (other.low_y < one.high_y && other.high_y > one.high_y);
-    has_common_y |= (other.low_y >= one.low_y  && other.high_y <= one.high_y);
+    has_common_y |= (other.low_y >= one.low_y && other.high_y <= one.high_y);
 
     return has_common_x && has_common_y;
 }

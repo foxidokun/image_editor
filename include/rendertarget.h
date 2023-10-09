@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "vector.h"
 #include "point.h"
+#include "regions.h"
 
 typedef sf::Texture Texture;
 
@@ -26,12 +27,12 @@ public:
 
     void display(sf::RenderWindow& window);
 
-    void drawRect(const Point& point, const Vector& size, const Color& fillcolor = {0,0,0,0},
+    void drawRect(const Region& reg, const Point& point, const Vector& size, const Color& fillcolor = {0,0,0,0},
                     const Color& bordercolor={0,0,0,255});
 
-    void drawLine(const Point& point, const Vector& size, const Color& fillcolor = {0,0,0,255});
+    void drawLine(const Region& reg, const Point& point, const Vector& size, const Color& fillcolor = {0,0,0,255});
 
-    void drawText(const Point& point, const char* text, uint size);
+    void drawText(const Region& reg, const Point& point, const char* text, uint size);
 
-    void drawTexture(const Point& point, const Vector& size, const Texture& texture);
+    void drawTexture(const Region& reg, const Point& point, const Vector& size, const Texture& texture);
 };

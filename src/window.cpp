@@ -19,10 +19,10 @@ static void close_window_callback(CallbackArgs *_args) {
 }
 
 void Window::render(RenderTarget& target) const {
-    target.drawRect(_pos, _size, WINDOW_COLOR);
+    target.drawRect(_reg, _pos, _size, WINDOW_COLOR);
 
-    target.drawLine(_pos + Point(0, HEADER_HEIGHT), {_size.x, 0});
-    target.drawText(_pos +  Point(LINE_THICKNESS, LINE_THICKNESS), _title.c_str(), TITLE_SIZE);
+    target.drawLine(_reg, _pos + Point(0, HEADER_HEIGHT), {_size.x, 0});
+    target.drawText(_reg, _pos +  Point(LINE_THICKNESS, LINE_THICKNESS), _title.c_str(), TITLE_SIZE);
 
     Widget::render(target);
 }

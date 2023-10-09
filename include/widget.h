@@ -5,6 +5,7 @@
 #include "vector.h"
 #include <chrono>
 #include <cassert>
+#include "regions.h"
 
 class Renderable {
     virtual void render(RenderTarget& target) const = 0;
@@ -41,12 +42,16 @@ protected:
     list<Widget *> _childs;
     Point _pos;
     Vector _size;
+    Region _reg;
 
 public:
     Widget(const Point& pos, const Vector& size):
         _pos(pos),
         _size(size)
-        {}
+        {
+            Rectangle whole = {_pos.x, _pos.y, _pos.x+_size.x, _pos.y+_size.y};
+            _reg.add_rectangle(whole);
+        }
 
     virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key);
     virtual EVENT_RES on_keyboard_release(const keyboard_event_t& key);
