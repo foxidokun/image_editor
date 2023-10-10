@@ -9,7 +9,7 @@ static inline bool no_hit(const Point& pos, const Vector& size, const mouse_even
 template<typename T>
 using handler_func_t = EVENT_RES (Widget::*)(const T& event);
 
-const Vector SAFETY_AROUND = {50, 50};
+const Vector SAFETY_AROUND = {100, 100};
 
 template<typename T>
 static EVENT_RES default_event_handler(const list<Widget *>& childs, handler_func_t<T> handler_func, const T& event) {

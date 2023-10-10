@@ -66,8 +66,8 @@ EVENT_RES Window::on_mouse_release(const mouse_event_t& key) {
 EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
     if (is_moving) {
         Point new_pos = {key.x, key.y};
-        bool valid_x = new_pos.x > _parent->pos().x && (new_pos.x + _size.x) < (_parent->pos().x + _parent->size().x);
-        bool valid_y = new_pos.y > _parent->pos().y && (new_pos.y + _size.y) < (_parent->pos().y + _parent->size().y);
+        bool valid_x = new_pos.x >= _parent->pos().x && (new_pos.x + _size.x) <= (_parent->pos().x + _parent->size().x);
+        bool valid_y = new_pos.y >= (_parent->pos().y + HEADER_HEIGHT) && (new_pos.y + _size.y) <= (_parent->pos().y + _parent->size().y);
         if (valid_x && valid_y) {
             Vector delta = new_pos - _pos;
             Widget* tmp_ptr= this;

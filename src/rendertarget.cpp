@@ -73,7 +73,6 @@ void RenderTarget::drawText(const Region& reg, const Point& point, const char* t
         float height = disp_rect.high_y - disp_rect.low_y;
 
         sf::Sprite part_sprite(ghost.getTexture(), sf::Rect<int>(disp_rect.low_x, disp_rect.low_y, width, height));
-        part_sprite.setColor(sf::Color::Red);
         part_sprite.setPosition(disp_rect.low_x, disp_rect.low_y);
 
         _data.draw(part_sprite);
@@ -98,7 +97,9 @@ void RenderTarget::drawTexture(const Region& reg, const Point& point, const Vect
     for (const auto &disp_rect: reg.rects()) {
         float width  = disp_rect.high_x - disp_rect.low_x;
         float height = disp_rect.high_y - disp_rect.low_y;
-        ghost.setView(sf::View(sf::Rect((float)disp_rect.low_x, (float)disp_rect.high_y, width, height)));
-        _data.draw(sf::Sprite(ghost.getTexture()));
+
+        sf::Sprite part_sprite(ghost.getTexture(), sf::Rect<int>(disp_rect.low_x, disp_rect.low_y, width, height));
+        part_sprite.setPosition(disp_rect.low_x, disp_rect.low_y);
+        _data.draw(part_sprite);
     }
 }
