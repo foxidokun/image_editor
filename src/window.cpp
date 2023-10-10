@@ -77,8 +77,6 @@ EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
             Widget* tmp_ptr= this;
             recursive_update(&tmp_ptr, update_coords, &delta);
             assert(tmp_ptr == this);
-        } else {
-            is_moving = false;
         }
     }
 
