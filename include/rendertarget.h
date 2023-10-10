@@ -27,8 +27,7 @@ public:
 
     void display(sf::RenderWindow& window);
 
-    void drawRect(const Region& reg, const Point& point, const Vector& size, const Color& fillcolor = {0,0,0,0},
-                    const Color& bordercolor={0,0,0,255});
+    void drawRect(const Region& reg, const Point& point, const Vector& size, const Color& fillcolor = {0,0,0,0});
 
     void drawLine(const Region& reg, const Point& point, const Vector& size, const Color& fillcolor = {0,0,0,255});
 

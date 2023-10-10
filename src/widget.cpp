@@ -78,7 +78,12 @@ void Widget::register_object(Widget *child) {
     child->_parent = this;
     _childs.push_back(child);
 
-    // _reg -= child->_reg;
+    Point end_point = child->_pos+child->_size;
+    Rectangle child_rec = {child->_pos.x, child->_pos.y, end_point.x, end_point.y};
+    Region child_reg;
+    child_reg.add_rectangle(child_rec);
+
+    _reg -= child_reg;
 }
 
 void recursive_update(Widget **widget_ptr, transform_f func, void* args) {

@@ -87,8 +87,8 @@ Region& Region::operator-=(const Region& other) {
                     added[number].low_x  = first_rect.low_x;
                     added[number].high_x = second_rect.low_x;
                     number++;
-                }
                 
+                }
                 if (first_rect.high_x > second_rect.high_x) {
                     added[number].high_y = first_rect.high_y;
                     added[number].low_y  = first_rect.low_y;

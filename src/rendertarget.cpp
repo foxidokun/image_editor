@@ -4,19 +4,17 @@ static sf::Color convert_color(const Color& color) {
     return sf::Color(color.r, color.g, color.b, color.a);
 }
 
-void RenderTarget::drawRect(const Region& reg, const Point& point, const Vector& size, const Color& fillcolor, const Color& bordercolor) {
+void RenderTarget::drawRect(const Region& reg, const Point& point, const Vector& size, const Color& fillcolor) {
     Region wanted;
     wanted.add_rectangle({point.x, point.y, point.x+size.x, point.y+size.y});
     wanted *= reg;
 
     sf::RectangleShape rect;
     rect.setFillColor(convert_color(fillcolor));
-    rect.setOutlineColor(convert_color(bordercolor));
-    rect.setOutlineThickness(LINE_THICKNESS);
 
     for (const auto &disp_rect: wanted.rects()) {
-        float width  = disp_rect.high_x - disp_rect.low_x;
-        float height = disp_rect.high_y - disp_rect.low_y;
+        double width  = disp_rect.high_x - disp_rect.low_x;
+        double height = disp_rect.high_y - disp_rect.low_y;
         rect.setPosition(disp_rect.low_x, disp_rect.low_y);
         rect.setSize(sf::Vector2f(width, height));
     
