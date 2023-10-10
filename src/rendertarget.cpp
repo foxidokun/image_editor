@@ -75,7 +75,9 @@ void RenderTarget::drawText(const Region& reg, const Point& point, const char* t
     }
 }
 
-void RenderTarget::drawTexture(const Region& reg, const Point& point, const Vector& size, const Texture& texture) {
+void RenderTarget::drawTexture(const Region& reg, const Point& point, const Vector& size, const Texture& texture,
+    bool invert)
+{
     sf::RenderTexture ghost;
     ghost.create(_data.getSize().x, _data.getSize().y);
 
@@ -96,6 +98,12 @@ void RenderTarget::drawTexture(const Region& reg, const Point& point, const Vect
 
         sf::Sprite part_sprite(ghost.getTexture(), sf::Rect<int>(disp_rect.low_x, disp_rect.low_y, width, height));
         part_sprite.setPosition(disp_rect.low_x, disp_rect.low_y);
-        _data.draw(part_sprite);
+
+        if (invert) {
+            _data.draw(part_sprite, &invert_shader);
+        } else {
+            _data.draw(part_sprite);
+        }
+
     }
 }

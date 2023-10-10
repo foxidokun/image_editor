@@ -17,10 +17,14 @@ struct Color {
 class RenderTarget {
 private:
     sf::RenderTexture _data;
+    sf::Shader invert_shader;
+
 public:
     RenderTarget(const Vector& size) {
             _data.create(size.x, size.y);
             clear(sf::Color(255,255,255,255));
+            invert_shader.loadFromFile(RENDER_SHADER_PATH, sf::Shader::Fragment);
+            invert_shader.setUniform("texture", sf::Shader::CurrentTexture);
         }
 
     void clear(const sf::Color& color) { _data.clear(color); };
@@ -33,7 +37,8 @@ public:
 
     void drawText(const Region& reg, const Point& point, const char* text, uint size);
 
-    void drawTexture(const Region& reg, const Point& point, const Vector& size, const Texture& texture);
+    void drawTexture(const Region& reg, const Point& point, const Vector& size, const Texture& texture,
+        bool invert = false);
 };
 
 static inline sf::Color convert_color(const Color& color) {
