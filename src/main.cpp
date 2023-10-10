@@ -216,7 +216,7 @@ static void setup_color_window(WindowManager& wm, ToolManager *tools) {
     setup_color_button(*win, tools, Color{0,255,0,255}, Point(50,0));
     setup_color_button(*win, tools, Color{0,0,255,255}, Point(100,0));
     setup_color_button(*win, tools, Color{255,255,255,255}, Point(150,0));
-    setup_color_button(*win, tools, Color{0,0,0,255}, Point(50,50));
+    setup_color_button(*win, tools, Color{0,0,0,255}, Point(0,50));
     wm.register_object(win);
 }
 
