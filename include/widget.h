@@ -39,7 +39,7 @@ enum class EVENT_RES {
 class Widget: public Renderable {
 protected:
     Widget* _parent;
-    list<Widget *> _childs;
+    linked_list<Widget *> _childs;
     Point _pos;
     Vector _size;
     Region _reg;

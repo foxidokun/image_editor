@@ -12,7 +12,7 @@ using handler_func_t = EVENT_RES (Widget::*)(const T& event);
 const Vector SAFETY_AROUND = {100, 100};
 
 template<typename T>
-static EVENT_RES default_event_handler(const list<Widget *>& childs, handler_func_t<T> handler_func, const T& event) {
+static EVENT_RES default_event_handler(const linked_list<Widget *>& childs, handler_func_t<T> handler_func, const T& event) {
     for (auto& child: childs) {
         if constexpr (std::is_same_v<T, mouse_event_t>) {
             if (no_hit(child->pos() - SAFETY_AROUND, child->size() + 2*SAFETY_AROUND, event)) {

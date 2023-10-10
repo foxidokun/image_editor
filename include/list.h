@@ -2,4 +2,4 @@
 #include <list>
 
 template<typename T>
-using list = std::list<T>;
+using linked_list = std::list<T>;
