@@ -6,24 +6,19 @@
 namespace chrono = std::chrono;
 static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, WindowManager& wm);
 static void test_regions();
+static void setup_objects(WindowManager& wm, ToolManager *tools);
+
+
 
 int main() {
-    test_regions();
+    // test_regions();
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), WINDOW_TITLE);
     auto frame_start_time = chrono::system_clock::now();
 
     WindowManager WM(WINDOW_WIDTH, WINDOW_HEIGHT);
-    auto main_window    = new Window(Point(200, 200), Vector(300, 300), string("Test"));
-    auto another_window = new Window(Point(600, 200), Vector(200, 200), string("aboba"));
-    auto child_window   = new Window(Point(100, 100), Vector(100, 100), string("Child"));
-    auto tool_manager   = new ToolManager(new Brush(5, Color(0,0,0,255)));
-    auto canvas         = new Canvas(Point(0, 0), Vector(200, 200-HEADER_HEIGHT), tool_manager);
-
-    main_window->register_object(child_window);
-    another_window->register_object(canvas);
-    WM.register_object(main_window);
-    WM.register_object(another_window);
+    ToolManager TM;
+    setup_objects(WM, &TM);
 
     RenderTarget target(Vector(WINDOW_WIDTH, WINDOW_HEIGHT));
 
@@ -46,6 +41,10 @@ int main() {
         std::this_thread::sleep_until(frame_start_time + chrono::milliseconds(33));
     }
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Event managment
+// ---------------------------------------------------------------------------------------------------------------------
 
 static inline mouse_event_t get_mouse_event(const sf::RenderWindow& window, const sf::Event& event) {
     sf::Vector2f point;
@@ -96,7 +95,9 @@ static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& wind
     }
 }
 
-
+// ---------------------------------------------------------------------------------------------------------------------
+// Test suite
+// ---------------------------------------------------------------------------------------------------------------------
 
 #include "regions.h"
 
@@ -150,4 +151,94 @@ static void test_regions() {
     opt.optimize();
 
     std::cout << "Optimised is \n" << opt;
+}
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Setup
+// ---------------------------------------------------------------------------------------------------------------------
+
+static void setup_canvas_window(WindowManager& wm, const ToolManager *tools);
+static void setup_tool_window(WindowManager& wm, ToolManager *tools);
+static void setup_color_window(WindowManager& wm, ToolManager *tools);
+static void setup_color_button(Window& win, ToolManager *tools, const Color& color, const Point& pos);
+
+static void set_brush(CallbackArgs *_args);
+static void set_color(CallbackArgs *_args);
+
+struct ToolArgs: public CallbackArgs {
+    ToolManager *tools;
+
+    ToolArgs(ToolManager *tools): tools(tools) {}
+};
+
+struct ColorArgs: public CallbackArgs {
+    ToolManager *tools;
+    Color color;
+
+    ColorArgs(ToolManager *tools, const Color &color_): tools(tools),  color(color_) {}
+};
+
+static void setup_objects(WindowManager& wm, ToolManager *tools) {
+    setup_canvas_window(wm, tools);
+    setup_tool_window(wm, tools);
+    setup_color_window(wm, tools);
+}
+
+static void setup_canvas_window(WindowManager& wm, const ToolManager *tools) {
+    auto win    = new Window(Point(0,0), Vector(800, 720), "Canvas");
+    double width  = win->active_area().high_x - win->active_area().low_x;
+    double height = win->active_area().high_y - win->active_area().low_y;
+
+    auto canvas = new Canvas(Point(0,0), Vector(width, height), tools);
+    win->register_object(canvas);
+    wm.register_object(win);
+}
+
+static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
+    tools->set_tool(new Brush(BRUSH_RADIUS));
+
+    auto btn_args = new ToolArgs(tools);
+
+    auto win    = new Window(Point(850,0), Vector(200, 400), "Tools");
+    auto button = new TextureButton(Point(0, 0), Vector(50, 50), set_brush, btn_args, brush_tool);
+    
+    win->register_object(button);
+    wm.register_object(win);
+}
+
+static void setup_color_window(WindowManager& wm, ToolManager *tools) {
+    tools->set_color({0,0,0,255});
+
+
+    auto win    = new Window(Point(850,410), Vector(200, 400), "Colors");
+    setup_color_button(*win, tools, Color{255,0,0,255}, Point(0,0));
+    setup_color_button(*win, tools, Color{0,255,0,255}, Point(50,0));
+    setup_color_button(*win, tools, Color{0,0,255,255}, Point(100,0));
+    setup_color_button(*win, tools, Color{255,255,255,255}, Point(150,0));
+    setup_color_button(*win, tools, Color{0,0,0,255}, Point(50,50));
+    wm.register_object(win);
+}
+
+static void setup_color_button(Window& win, ToolManager *tools, const Color& color, const Point& pos) {
+    auto red_args = new ColorArgs(tools, color);
+
+    auto color_texture = new sf::RenderTexture();
+    color_texture->create(50, 50);
+    color_texture->clear(convert_color(color));
+    color_texture->display();
+    auto button = new TextureButton(pos, Vector(50, 50), set_color, red_args, color_texture->getTexture());
+    win.register_object(button);
+}
+
+static void set_brush(CallbackArgs *_args) {
+    ToolArgs *args = static_cast<ToolArgs *>(_args);
+
+    args->tools->set_tool(new Brush(BRUSH_RADIUS));
+}
+
+static void set_color(CallbackArgs *_args) {
+    ColorArgs *args = static_cast<ColorArgs *>(_args);
+
+    args->tools->set_color(args->color);
 }

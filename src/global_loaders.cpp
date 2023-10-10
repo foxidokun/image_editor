@@ -8,6 +8,7 @@ static sf::Texture load_texture(const char* path);
 
 const sf::Font global_font = load_font();
 const sf::Texture close_window_button = load_texture(CLOSE_WINDOW_BUTTON_TEXTURE_PATH);
+const sf::Texture brush_tool          = load_texture(BRUSH_TOOL_TEXTURE_PATH);
 
 sf::Font load_font() {
     sf::Font font;

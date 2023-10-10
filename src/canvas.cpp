@@ -21,7 +21,7 @@ EVENT_RES Canvas::on_mouse_release(const mouse_event_t& key) {
 
 EVENT_RES Canvas::on_mouse_move(const mouse_event_t& key) {
     if (is_drawing) {
-        drawing_tool->paint(_data, Point(key.x - _pos.x, key.y - _pos.y));
+        tool_manager->paint(_data, Point(key.x - _pos.x, key.y - _pos.y));
         _data.display();
     }
     return EVENT_RES::STOP;

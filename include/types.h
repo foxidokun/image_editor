@@ -9,4 +9,5 @@
 #include "window.h"
 #include "rendertarget.h"
 #include "tools.h"
+#include "button.h"
 #include "canvas.h"

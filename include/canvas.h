@@ -7,13 +7,13 @@
 class Canvas: public Widget {
 private:
     sf::RenderTexture _data;
-    Tool* drawing_tool;
+    const ToolManager* tool_manager;
     bool is_drawing;
 
 public:
-    Canvas(const Point& pos, const Vector& size, Tool *drawing_tool):
+    Canvas(const Point& pos, const Vector& size, const ToolManager *tool_manager):
         Widget(pos, size),
-        drawing_tool(drawing_tool),
+        tool_manager(tool_manager),
         is_drawing(false) {
             _data.create(_size.x, _size.y);
             _data.clear(sf::Color::Yellow); // debug purpose only
