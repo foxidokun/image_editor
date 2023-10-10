@@ -17,7 +17,11 @@ int main() {
     auto main_window    = new Window(Point(200, 200), Vector(300, 300), string("Test"));
     auto another_window = new Window(Point(600, 200), Vector(200, 200), string("aboba"));
     auto child_window   = new Window(Point(100, 100), Vector(100, 100), string("Child"));
+    auto tool_manager   = new ToolManager(new Brush(5, Color(0,0,0,255)));
+    auto canvas         = new Canvas(Point(0, 0), Vector(200, 200-HEADER_HEIGHT), tool_manager);
+
     main_window->register_object(child_window);
+    another_window->register_object(canvas);
     WM.register_object(main_window);
     WM.register_object(another_window);
 

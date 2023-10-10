@@ -1,9 +1,5 @@
 #include "rendertarget.h"
 
-static sf::Color convert_color(const Color& color) {
-    return sf::Color(color.r, color.g, color.b, color.a);
-}
-
 void RenderTarget::drawRect(const Region& reg, const Point& point, const Vector& size, const Color& fillcolor) {
     Region wanted;
     wanted.add_rectangle({point.x, point.y, point.x+size.x, point.y+size.y});

@@ -35,3 +35,7 @@ public:
 
     void drawTexture(const Region& reg, const Point& point, const Vector& size, const Texture& texture);
 };
+
+static inline sf::Color convert_color(const Color& color) {
+    return sf::Color(color.r, color.g, color.b, color.a);
+}

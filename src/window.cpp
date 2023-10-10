@@ -19,20 +19,20 @@ static void close_window_callback(CallbackArgs *_args) {
 }
 
 void Window::render(RenderTarget& target) const {
+    Widget::render(target);
+
     target.drawRect(_reg, _pos, _size, WINDOW_COLOR);
 
     // header sep
     target.drawLine(_reg, _pos + Point(0, HEADER_HEIGHT), {_size.x, 0});
 
     // borders
-    target.drawLine(_reg, _pos,                    {_size.x, 0});
-    target.drawLine(_reg, _pos+Vector(0, _size.y), {_size.x, 0});
-    target.drawLine(_reg, _pos,                    {0, _size.y});
+    target.drawLine(_reg, _pos,                          {_size.x, 0});
+    target.drawLine(_reg, _pos+Vector(0, _size.y-LINE_THICKNESS),       {_size.x, 0});
+    target.drawLine(_reg, _pos+Vector(LINE_THICKNESS,0), {0, _size.y});
     target.drawLine(_reg, _pos+Vector(_size.x, 0), {0, _size.y});
     
     target.drawText(_reg, _pos +  Point(LINE_THICKNESS, LINE_THICKNESS), _title.c_str(), TITLE_SIZE);
-
-    Widget::render(target);
 }
 
 void Window::initialise() {
@@ -41,9 +41,12 @@ void Window::initialise() {
     Vector size = {BUTTON_SIZE, BUTTON_SIZE};
     TextureButton* button = new TextureButton(pos, size, close_window_callback, args, close_window_button);
 
-    _active_area.low_y += HEADER_HEIGHT;
-
     register_object(button);
+
+    _active_area.low_y  += HEADER_HEIGHT;
+    _active_area.low_x  += LINE_THICKNESS;
+    _active_area.high_x -= LINE_THICKNESS;
+    _active_area.high_y -= LINE_THICKNESS;
 }
 
 EVENT_RES Window::on_mouse_press(const mouse_event_t& key) {

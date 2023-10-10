@@ -71,8 +71,17 @@ EVENT_RES Widget::on_timer(const time_point& time) {
 }
 
 void Widget::register_object(Widget *child) {
-    Vector vec_mov = {_pos.x, _pos.y};
+    Vector vec_mov = {_active_area.low_x, _active_area.low_y};
     recursive_update(&child, update_coords, &vec_mov);
+
+    if (child->_pos.x + child->_size.x > _active_area.high_x) {
+        child->_size.x = _active_area.high_x - child->_pos.x;
+    }
+
+    if (child->_pos.y + child->_size.y > _active_area.high_y) {
+        child->_size.y = _active_area.high_y - child->_pos.y;
+    }
+
     assert(child != this);
     
     child->_parent = this;

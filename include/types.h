@@ -8,3 +8,5 @@
 #include "string.h"
 #include "window.h"
 #include "rendertarget.h"
+#include "tools.h"
+#include "canvas.h"
