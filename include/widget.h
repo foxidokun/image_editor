@@ -43,6 +43,7 @@ protected:
     Point _pos;
     Vector _size;
     Region _reg;
+    Rectangle _active_area;
 
 public:
     Widget(const Point& pos, const Vector& size):
@@ -51,6 +52,7 @@ public:
         {
             Rectangle whole = {_pos.x, _pos.y, _pos.x+_size.x, _pos.y+_size.y};
             _reg.add_rectangle(whole);
+            _active_area = whole;
         }
 
     virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key);
@@ -78,9 +80,10 @@ public:
         }
     }
 
-    const Point& pos()   const { return _pos;    }
-    const Vector& size() const { return _size;   }
-    Widget* parent()     const { return _parent; }
+    const Point&     pos()         const { return _pos;         }
+    const Vector&    size()        const { return _size;        }
+    const Rectangle& active_area() const { return _active_area; }
+    Widget*          parent()      const { return _parent;      }
 
     virtual ~Widget() {
         for (const auto &x: _childs) {

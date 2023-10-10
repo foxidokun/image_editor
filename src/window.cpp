@@ -41,6 +41,8 @@ void Window::initialise() {
     Vector size = {BUTTON_SIZE, BUTTON_SIZE};
     TextureButton* button = new TextureButton(pos, size, close_window_callback, args, close_window_button);
 
+    _active_area.low_y += HEADER_HEIGHT;
+
     register_object(button);
 }
 
@@ -66,8 +68,10 @@ EVENT_RES Window::on_mouse_release(const mouse_event_t& key) {
 EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
     if (is_moving) {
         Point new_pos = {key.x, key.y};
-        bool valid_x = new_pos.x >= _parent->pos().x && (new_pos.x + _size.x) <= (_parent->pos().x + _parent->size().x);
-        bool valid_y = new_pos.y >= (_parent->pos().y + HEADER_HEIGHT) && (new_pos.y + _size.y) <= (_parent->pos().y + _parent->size().y);
+        const Rectangle& area = _parent->active_area();
+        bool valid_x = new_pos.x >= area.low_x && (new_pos.x + _size.x) <= area.high_x;
+        bool valid_y = new_pos.y >= area.low_y && (new_pos.y + _size.y) <= area.high_y;
+
         if (valid_x && valid_y) {
             Vector delta = new_pos - _pos;
             Widget* tmp_ptr= this;
