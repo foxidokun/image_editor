@@ -164,6 +164,7 @@ static void setup_color_window(WindowManager& wm, ToolManager *tools);
 static void setup_color_button(Window& win, ToolManager *tools, const Color& color, const Point& pos);
 
 static void set_brush(CallbackArgs *_args);
+static void set_allien_brush(CallbackArgs *_args);
 static void set_color(CallbackArgs *_args);
 
 struct ToolArgs: public CallbackArgs {
@@ -198,12 +199,12 @@ static void setup_canvas_window(WindowManager& wm, const ToolManager *tools) {
 static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
     tools->set_tool(new Brush(BRUSH_RADIUS));
 
-    auto btn_args = new ToolArgs(tools);
-
     auto win    = new Window(Point(850,0), Vector(200, 400), "Tools");
-    auto button = new TextureButton(Point(0, 0), Vector(50, 50), set_brush, btn_args, brush_tool);
+    auto br_btn = new TextureButton(Point(0, 0), Vector(50, 50), set_brush, new ToolArgs(tools), brush_tool);
+    auto al_btn = new TextureButton(Point(50, 0), Vector(50, 50), set_allien_brush, new ToolArgs(tools), alien_brush_tool);
     
-    win->register_object(button);
+    win->register_object(br_btn);
+    win->register_object(al_btn);
     wm.register_object(win);
 }
 
@@ -235,6 +236,12 @@ static void set_brush(CallbackArgs *_args) {
     ToolArgs *args = static_cast<ToolArgs *>(_args);
 
     args->tools->set_tool(new Brush(BRUSH_RADIUS));
+}
+
+static void set_allien_brush(CallbackArgs *_args) {
+    ToolArgs *args = static_cast<ToolArgs *>(_args);
+
+    args->tools->set_tool(new AlienBrush(BRUSH_RADIUS));
 }
 
 static void set_color(CallbackArgs *_args) {

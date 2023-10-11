@@ -13,6 +13,7 @@ const double infinity = std::numeric_limits<double>::infinity();
 extern const sf::Font global_font;
 extern const sf::Texture close_window_button;
 extern const sf::Texture brush_tool;
+extern const sf::Texture alien_brush_tool;
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Random functions
