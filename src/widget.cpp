@@ -85,21 +85,50 @@ void Widget::register_object(Widget *child) {
     assert(child != this);
     
     child->_parent = this;
-    _childs.push_back(child);
 
     Point end_point = child->_pos+child->_size;
     Rectangle child_rec = {child->_pos.x, child->_pos.y, end_point.x, end_point.y};
     Region child_reg;
     child_reg.add_rectangle(child_rec);
 
-    _reg -= child_reg;
+    //Update region sets in all tree
+    Widget* tmp_this = this;
+    recursive_update(&tmp_this, cut_region, &child_reg);
+    assert(tmp_this == this);
+
+    _childs.push_back(child);
 }
 
-void recursive_update(Widget **widget_ptr, transform_f func, void* args) {
+Widget* return_region(Widget* const widget, void* args_) {
+    Region* args = (Region*)args_;
+
+    Region update;
+    update.add_rectangle({widget->pos().x, widget->pos().y, 
+                         (widget->pos() + widget->size()).x, (widget->pos() + widget->size()).y});
+    update *= *args;
+
+    widget->reg() += update;
+
+    *args -= widget->reg();
+    return widget;
+}
+
+Widget* cut_region(Widget* const widget, void* args_) {
+    Region* args = (Region*)args_;
+
+    widget->reg() -= *args;
+    return widget;
+}
+
+void recursive_update(Widget **widget_ptr, transform_f func, void* args, 
+                     checker_f check, void* check_args){
+    
     Widget *widget = *widget_ptr;
+    if (check != nullptr && !check(widget, check_args))
+        return;
     for (auto child = widget->_childs.begin(); child != widget->_childs.end(); ++child) {
         Widget* tmp_ptr = *child;
-        recursive_update(&tmp_ptr, func, args);
+        recursive_update(&tmp_ptr, func, args, check, check_args);
         *child = tmp_ptr;
     }
 

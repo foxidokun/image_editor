@@ -11,8 +11,6 @@ static void setup_objects(WindowManager& wm, ToolManager *tools);
 
 
 int main() {
-    // test_regions();
-
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), WINDOW_TITLE);
     auto frame_start_time = chrono::system_clock::now();
 
@@ -102,7 +100,7 @@ static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& wind
 #include "regions.h"
 
 static void test_regions() {
-    Rectangle a1{0, 0, 3, 3};
+    /*Rectangle a1{0, 0, 3, 3};
     Rectangle a2{6, 0, 10, 4};
     Rectangle a3{2, 4, 7, 8};
     Rectangle a4{8, 7, 13, 10};
@@ -150,7 +148,16 @@ static void test_regions() {
 
     opt.optimize();
 
-    std::cout << "Optimised is \n" << opt;
+    std::cout << "Optimised is \n" << opt;*/
+
+    Region r1;
+    Region r2;
+    r1.add_rectangle({0,   0, 400, 400});
+    r2.add_rectangle({100, 100, 100, 100});
+
+    r2 -= r1;
+
+    std::cout << "r2\n" << r2 << "\n";
 }
 
 
@@ -187,12 +194,12 @@ static void setup_objects(WindowManager& wm, ToolManager *tools) {
 }
 
 static void setup_canvas_window(WindowManager& wm, const ToolManager *tools) {
-    auto win    = new Window(Point(0,0), Vector(800, 720), "Canvas");
+    auto win    = new Window(Point(0,0), Vector(400, 400), "Canvas");
     double width  = win->active_area().high_x - win->active_area().low_x;
     double height = win->active_area().high_y - win->active_area().low_y;
 
-    auto canvas = new Canvas(Point(0,0), Vector(width, height), tools);
-    win->register_object(canvas);
+    auto sub_window = new Window(Point(100, 100), Vector(100, 200), "Loh");
+    win->register_object(sub_window);
     wm.register_object(win);
 }
 

@@ -16,7 +16,8 @@ typedef char keyboard_event_t;
 using time_point = std::chrono::time_point<std::chrono::system_clock>;
 
 class Widget;
-using transform_f =  Widget*(*)(Widget *, void *);
+using transform_f = Widget*(*)(Widget *, void *);
+using checker_f   = bool(*)(Widget *, void *); 
 
 struct mouse_event_t {
     double x;
@@ -84,6 +85,8 @@ public:
     const Vector&    size()        const { return _size;        }
     const Rectangle& active_area() const { return _active_area; }
     Widget*          parent()      const { return _parent;      }
+    
+    Region& reg() { return _reg; }
 
     virtual ~Widget() {
         for (const auto &x: _childs) {
@@ -91,7 +94,8 @@ public:
         }
     }
 
-    friend void recursive_update(Widget **widget, transform_f func, void* args);
+    friend void recursive_update(Widget **widget, transform_f func, void* args, 
+                     checker_f check, void* check_args);
     friend Widget* update_coords(Widget *widget, void *args);
 };
 
@@ -102,6 +106,8 @@ public:
         {}
 };
 
-
-void recursive_update(Widget **widget, transform_f func, void* args);
+void recursive_update(Widget **widget, transform_f func, void* args, 
+                     checker_f check = nullptr, void* check_args = nullptr);
 Widget* update_coords(Widget *widget, void *args);
+Widget* return_region(Widget* const widget, void* args_);
+Widget* cut_region(Widget* const widget, void* args_);
