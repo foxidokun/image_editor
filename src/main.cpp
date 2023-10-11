@@ -100,7 +100,7 @@ static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& wind
 #include "regions.h"
 
 static void test_regions() {
-    /*Rectangle a1{0, 0, 3, 3};
+    Rectangle a1{0, 0, 3, 3};
     Rectangle a2{6, 0, 10, 4};
     Rectangle a3{2, 4, 7, 8};
     Rectangle a4{8, 7, 13, 10};
@@ -148,16 +148,16 @@ static void test_regions() {
 
     opt.optimize();
 
-    std::cout << "Optimised is \n" << opt;*/
+    std::cout << "Optimised is \n" << opt;
 
-    Region r1;
-    Region r2;
-    r1.add_rectangle({0,   0, 400, 400});
-    r2.add_rectangle({100, 100, 100, 100});
+    Region r5;
+    Region r6;
+    r5.add_rectangle({0,   0, 400, 400});
+    r6.add_rectangle({100, 100, 100, 100});
 
-    r2 -= r1;
+    r6 -= r5;
 
-    std::cout << "r2\n" << r2 << "\n";
+    std::cout << "r6\n" << r6 << "\n";
 }
 
 
@@ -194,19 +194,19 @@ static void setup_objects(WindowManager& wm, ToolManager *tools) {
 }
 
 static void setup_canvas_window(WindowManager& wm, const ToolManager *tools) {
-    auto win    = new Window(Point(0,0), Vector(400, 400), "Canvas");
+    auto win    = new Window(Point(0,0), Vector(800, 720), "Canvas");
     double width  = win->active_area().high_x - win->active_area().low_x;
     double height = win->active_area().high_y - win->active_area().low_y;
 
-    auto sub_window = new Window(Point(100, 100), Vector(100, 200), "Loh");
-    win->register_object(sub_window);
+    auto canvas = new Canvas(Point(0,0), Vector(width, height), tools);
+    win->register_object(canvas);
     wm.register_object(win);
 }
 
 static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
     tools->set_tool(new Brush(BRUSH_RADIUS));
 
-    auto win    = new Window(Point(850,0), Vector(200, 400), "Tools");
+    auto win    = new Window(Point(850,0), Vector(8000,720), "Tools");
     auto br_btn = new TextureButton(Point(0, 0), Vector(50, 50), set_brush, new ToolArgs(tools), brush_tool);
     auto al_btn = new TextureButton(Point(50, 0), Vector(50, 50), set_allien_brush, new ToolArgs(tools), alien_brush_tool);
     

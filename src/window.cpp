@@ -52,11 +52,9 @@ void Window::initialise() {
 EVENT_RES Window::on_mouse_press(const mouse_event_t& key) {
     EVENT_RES res = Widget::on_mouse_press(key);
     if (res == EVENT_RES::CONT) {
-        std::cout<<"poddiblr move\n";
         bool hit_y = key.y > _pos.y && key.y < _pos.y + HEADER_HEIGHT;
         bool hit_x = key.x > _pos.x && key.x < _pos.x + _size.x;
         if (hit_x && hit_y) {
-            printf("ghghg\n");
             is_moving = true;
             return EVENT_RES::STOP;
         }
@@ -71,9 +69,6 @@ EVENT_RES Window::on_mouse_release(const mouse_event_t& key) {
 }
 
 bool check_self(Widget* widget, void* args) {
-    //printf("wid  = %p\n", widget);
-    //printf("args = %p\n\n", args);
-
     if (widget == args)
         return false;
     return true;
@@ -87,9 +82,6 @@ EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
         bool valid_y = true;//new_pos.y >= area.low_y && (new_pos.y + _size.y) <= area.high_y;
 
         if (valid_x && valid_y) {
-            static unsigned rt = 0;
-            rt++;
-            std::cout<< "W " << rt << "\n";
             Vector delta = new_pos - _pos;
             Widget* tmp_ptr= this;
 

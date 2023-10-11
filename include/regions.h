@@ -2,6 +2,7 @@
 
 #include "dynarray.h"
 #include <iostream>
+#include <format>
 #include "vector.h"
 
 struct Rectangle {
@@ -54,8 +55,12 @@ static Region operator-(const Region& self, const Region& other) {
 }
 
 static std::ostream& operator<<(std::ostream& stream, const Rectangle& self) {
-    stream << "{{low_x: {"  << self.low_x  << "} low_y: {"  << self.low_y;
-    stream << "} high_x: {" << self.high_x << "} high_y: {" << self.high_y <<"} }}";
+    stream << std::format("{{low_x: {} low_y: {} high_x: {} high_y: {} }}", 
+        self.low_x,
+        self.low_y,
+        self.high_x,
+        self.high_y
+        );
 
     return stream;
 }
