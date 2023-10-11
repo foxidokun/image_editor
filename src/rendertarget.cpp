@@ -53,6 +53,7 @@ void RenderTarget::display(sf::RenderWindow& window) {
 void RenderTarget::drawText(const Region& reg, const Point& point, const char* text, uint size) {
     sf::RenderTexture ghost;
     ghost.create(_data.getSize().x, _data.getSize().y);
+    ghost.clear(sf::Color::Transparent);
 
     sf::Text textobj;
     textobj.setFont(global_font);
@@ -80,6 +81,7 @@ void RenderTarget::drawTexture(const Region& reg, const Point& point, const Vect
 {
     sf::RenderTexture ghost;
     ghost.create(_data.getSize().x, _data.getSize().y);
+    ghost.clear(sf::Color::Transparent);
 
     sf::Sprite sprite(texture);
     sprite.setPosition(point.x, point.y);
