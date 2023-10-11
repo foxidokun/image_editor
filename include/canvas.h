@@ -9,6 +9,7 @@ private:
     sf::RenderTexture _data;
     const ToolManager* tool_manager;
     bool is_drawing;
+    Point last_pos;
 
 public:
     Canvas(const Point& pos, const Vector& size, const ToolManager *tool_manager):
