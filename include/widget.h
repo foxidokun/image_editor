@@ -72,14 +72,7 @@ public:
 
     void register_object(Widget *child);
 
-    void unregister_object(Widget *rem_child) {
-        for (auto child = _childs.begin(); child != _childs.end(); ++child) {
-            if (*child == rem_child) {
-                delete (*child);
-                child = _childs.erase(child);
-            }
-        }
-    }
+    void unregister_object(Widget *rem_child);
 
     const Point&     pos()         const { return _pos;         }
     const Vector&    size()        const { return _size;        }

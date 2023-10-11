@@ -33,6 +33,8 @@ void Window::render(RenderTarget& target) const {
     target.drawText(_reg, _pos +  Point(LINE_THICKNESS, LINE_THICKNESS), _title.c_str(), TITLE_SIZE);
 
     Widget::render(target);
+
+    target.drawRegions(_reg);
 }
 
 void Window::initialise() {
@@ -56,6 +58,7 @@ EVENT_RES Window::on_mouse_press(const mouse_event_t& key) {
         bool hit_x = key.x > _pos.x && key.x < _pos.x + _size.x;
         if (hit_x && hit_y) {
             is_moving = true;
+            last_pos = Point( _pos.x, _pos.y);
             return EVENT_RES::STOP;
         }
     }
@@ -78,12 +81,12 @@ EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
     if (is_moving) {
         Point new_pos = {key.x, key.y};
         const Rectangle& area = _parent->active_area();
-        bool valid_x = true;//new_pos.x >= area.low_x && (new_pos.x + _size.x) <= area.high_x;
-        bool valid_y = true;//new_pos.y >= area.low_y && (new_pos.y + _size.y) <= area.high_y;
+        bool valid_x = true; //new_pos.x >= area.low_x && (new_pos.x + _size.x) <= area.high_x;
+        bool valid_y = true; //new_pos.y >= area.low_y && (new_pos.y + _size.y) <= area.high_y;
 
         if (valid_x && valid_y) {
-            Vector delta = new_pos - _pos;
-            Widget* tmp_ptr= this;
+            Vector delta = new_pos - last_pos;
+            Widget* tmp_ptr = this;
 
             Region old_reg;
             old_reg.add_rectangle({_pos.x, _pos.y, (_pos + _size).x, (_pos + _size).y});
@@ -95,6 +98,8 @@ EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
             recursive_update(&_parent, return_region, &old_reg);
             
             recursive_update(&_parent, cut_region, &new_reg, check_self, this);
+
+            last_pos = new_pos;
 
             assert(tmp_ptr == this);
         }

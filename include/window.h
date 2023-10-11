@@ -6,6 +6,7 @@ class Window: public Widget {
 private:
     string _title;
     bool is_moving = false;
+    Point last_pos;
 
     void initialise();
 

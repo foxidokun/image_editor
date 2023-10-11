@@ -2,6 +2,7 @@
 #include "config.h"
 #include <chrono>
 #include <thread>
+#include <unistd.h> 
 
 namespace chrono = std::chrono;
 static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, WindowManager& wm);
@@ -36,7 +37,8 @@ int main() {
             }
         }
 
-        std::this_thread::sleep_until(frame_start_time + chrono::milliseconds(33));
+        sleep(1);
+        // std::this_thread::sleep_until(frame_start_time + chrono::milliseconds(1000));
     }
 }
 
@@ -194,19 +196,21 @@ static void setup_objects(WindowManager& wm, ToolManager *tools) {
 }
 
 static void setup_canvas_window(WindowManager& wm, const ToolManager *tools) {
-    auto win    = new Window(Point(0,0), Vector(800, 720), "Canvas");
+    auto win      = new Window(Point(0,0), Vector(600, 600), "Canvas");
     double width  = win->active_area().high_x - win->active_area().low_x;
     double height = win->active_area().high_y - win->active_area().low_y;
 
-    auto canvas = new Canvas(Point(0,0), Vector(width, height), tools);
-    win->register_object(canvas);
+    auto subwindow      = new Window(Point(200,200), Vector(200, 200), "SubWindow");
+
+    // auto canvas = new Canvas(Point(0,0), Vector(width, height), tools);
+    win->register_object(subwindow);
     wm.register_object(win);
 }
 
 static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
     tools->set_tool(new Brush(BRUSH_RADIUS));
 
-    auto win    = new Window(Point(850,0), Vector(8000,720), "Tools");
+    auto win    = new Window(Point(850,0), Vector(200,400), "Tools");
     auto br_btn = new TextureButton(Point(0, 0), Vector(50, 50), set_brush, new ToolArgs(tools), brush_tool);
     auto al_btn = new TextureButton(Point(50, 0), Vector(50, 50), set_allien_brush, new ToolArgs(tools), alien_brush_tool);
     

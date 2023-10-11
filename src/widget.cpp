@@ -124,8 +124,10 @@ void recursive_update(Widget **widget_ptr, transform_f func, void* args,
                      checker_f check, void* check_args){
     
     Widget *widget = *widget_ptr;
-    if (check != nullptr && !check(widget, check_args))
+    if (check != nullptr && !check(widget, check_args)) {
         return;
+    }
+
     for (auto child = widget->_childs.begin(); child != widget->_childs.end(); ++child) {
         Widget* tmp_ptr = *child;
         recursive_update(&tmp_ptr, func, args, check, check_args);
@@ -149,3 +151,19 @@ Widget* update_coords(Widget *const widget, void *args) {
     widget->_reg.shift(Vector(base_point.x, base_point.y));
     return widget;
 }
+
+void Widget::unregister_object(Widget *rem_child) {
+        for (auto child = _childs.begin(); child != _childs.end(); ++child) {
+            if (*child == rem_child) {
+                // Rectangle whole = {rem_child->_pos.x, rem_child->_pos.y,
+                //                   rem_child->_pos.x + rem_child->_size.x,
+                //                   rem_child->_pos.y + rem_child->_size.y};
+                // Region child_reg;
+                // child_reg.add_rectangle(whole);
+                // recursive_update(&_parent, return_region, &child_reg);
+
+                delete (*child);
+                child = _childs.erase(child);
+            }
+        }
+    }

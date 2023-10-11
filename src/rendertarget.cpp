@@ -109,3 +109,26 @@ void RenderTarget::drawTexture(const Region& reg, const Point& point, const Vect
 
     }
 }
+
+
+const int color_len = 6;
+const sf::Color COLORS[color_len] = {sf::Color::Red, sf::Color::Blue, sf::Color::Cyan, sf::Color::Black, sf::Color::Magenta, sf::Color::Yellow};
+
+void RenderTarget::drawRegions(const Region& reg) {
+    int color_i = 0;
+
+    for (uint i = 0; i < reg.rects().size(); ++i) {
+        color_i = (color_i+1) % color_len;
+        sf::RectangleShape rect;
+        rect.setPosition(reg.rects()[i].low_x, reg.rects()[i].low_y);
+        rect.setSize(sf::Vector2f(reg.rects()[i].high_x - reg.rects()[i].low_x, reg.rects()[i].high_y - reg.rects()[i].low_y));
+        rect.setOutlineThickness(1);
+        auto black =  sf::Color::Black;
+        black.a = 50;
+        rect.setOutlineColor(black);
+        sf::Color fillcolor = COLORS[color_i];
+        fillcolor.a = 50;
+        rect.setFillColor(fillcolor);
+        _data.draw(rect);
+    }
+}

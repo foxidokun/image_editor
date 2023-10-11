@@ -13,6 +13,8 @@ enum class common_edge {
 
 static common_edge has_common_edge(const Rectangle& one, const Rectangle& other);
 
+static inline bool eq(double lhs, double rhs) { return fabs(lhs - rhs) < 0.1; } 
+
 Region& Region::operator+=(const Region& other) {
     Region tmp = other - *this;
     _rects.insert(_rects.end(), tmp._rects.begin(), tmp._rects.end());
@@ -181,26 +183,26 @@ static bool has_intersect(const Rectangle& one, const Rectangle& other) {
 }
 
 static common_edge has_common_edge(const Rectangle& one, const Rectangle& other) {
-    if (one.high_x == other.low_x) {
-        if (one.low_y == other.low_y && one.high_y == other.high_y) {
+    if (eq(one.high_x, other.low_x)) {
+        if (eq(one.low_y, other.low_y) && eq(one.high_y, other.high_y)) {
             return common_edge::RIGHT;
         }
     }
 
-    if (one.low_x == other.high_x) {
-        if (one.low_y == other.low_y && one.high_y == other.high_y) {
+    if (eq(one.low_x, other.high_x)) {
+        if (eq(one.low_y, other.low_y) && eq(one.high_y, other.high_y)) {
             return common_edge::LEFT;
         }
     }
 
-    if (one.high_y == other.low_y) {
-        if (one.low_x == other.low_x && one.high_x == other.high_x) {
+    if (eq(one.high_y, other.low_y)) {
+        if (eq(one.low_x, other.low_x) && eq(one.high_x, other.high_x)) {
             return common_edge::TOP;
         }
     }
 
-    if (one.low_y == other.high_y) {
-        if (one.low_x == other.low_x && one.high_x == other.high_x) {
+    if (eq(one.low_y, other.high_y)) {
+        if (eq(one.low_x, other.low_x) && eq(one.high_x, other.high_x)) {
             return common_edge::BOTTOM;
         }
     }

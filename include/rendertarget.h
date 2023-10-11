@@ -39,6 +39,8 @@ public:
 
     void drawTexture(const Region& reg, const Point& point, const Vector& size, const Texture& texture,
         bool invert = false);
+
+    void drawRegions(const Region& reg);
 };
 
 static inline sf::Color convert_color(const Color& color) {
