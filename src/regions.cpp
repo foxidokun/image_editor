@@ -141,12 +141,12 @@ std::ostream& operator<<(std::ostream& stream, const Region& self) {
 
     for (uint i = 0; i < self._rects.size(); ++i) {
         stream << std::format("\tRect #{} {{low_x: {:.2} low_y: {:.2} high_x: {:.2} high_y: {:.2} }}\n", 
-            i,
-            self._rects[i].low_x,
-            self._rects[i].low_y,
-            self._rects[i].high_x,
-            self._rects[i].high_y
-            );
+           i,
+           self._rects[i].low_x,
+           self._rects[i].low_y,
+           self._rects[i].high_x,
+           self._rects[i].high_y
+           );
     }
     stream << "}\n";
 

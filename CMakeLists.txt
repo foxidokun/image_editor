@@ -15,6 +15,6 @@ file(GLOB SRCS
         "${PROJECT_SOURCE_DIR}/src/*.c"
 )
 
-add_executable(vector ${SRCS})
-target_link_libraries(vector PRIVATE sfml-graphics sfml-system sfml-window)
+add_executable(image_editor ${SRCS})
+target_link_libraries(image_editor PRIVATE sfml-graphics sfml-system sfml-window)
 # target_link_libraries(vector PUBLIC OpenMP::OpenMP_CXX)

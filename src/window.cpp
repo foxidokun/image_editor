@@ -19,12 +19,10 @@ static void close_window_callback(CallbackArgs *_args) {
 }
 
 void Window::render(RenderTarget& target) const {
-    Widget::render(target);
-
     target.drawRect(_reg, _pos, _size, WINDOW_COLOR);
 
     // header sep
-    target.drawLine(_reg, _pos + Point(0, HEADER_HEIGHT), {_size.x, 0});
+    target.drawLine(_reg, _pos + Point(0, HEADER_HEIGHT - LINE_THICKNESS), {_size.x, 0});
 
     // borders
     target.drawLine(_reg, _pos,                          {_size.x, 0});
@@ -33,6 +31,8 @@ void Window::render(RenderTarget& target) const {
     target.drawLine(_reg, _pos+Vector(_size.x, 0), {0, _size.y});
     
     target.drawText(_reg, _pos +  Point(LINE_THICKNESS, LINE_THICKNESS), _title.c_str(), TITLE_SIZE);
+
+    Widget::render(target);
 }
 
 void Window::initialise() {
@@ -68,17 +68,34 @@ EVENT_RES Window::on_mouse_release(const mouse_event_t& key) {
     return Widget::on_mouse_release(key);
 }
 
+bool check_self(Widget* widget, void* args) {
+    if (widget == args)
+        return false;
+    return true;
+}
+
 EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
     if (is_moving) {
         Point new_pos = {key.x, key.y};
         const Rectangle& area = _parent->active_area();
-        bool valid_x = new_pos.x >= area.low_x && (new_pos.x + _size.x) <= area.high_x;
-        bool valid_y = new_pos.y >= area.low_y && (new_pos.y + _size.y) <= area.high_y;
+        bool valid_x = true;//new_pos.x >= area.low_x && (new_pos.x + _size.x) <= area.high_x;
+        bool valid_y = true;//new_pos.y >= area.low_y && (new_pos.y + _size.y) <= area.high_y;
 
         if (valid_x && valid_y) {
             Vector delta = new_pos - _pos;
             Widget* tmp_ptr= this;
+
+            Region old_reg;
+            old_reg.add_rectangle({_pos.x, _pos.y, (_pos + _size).x, (_pos + _size).y});
+
             recursive_update(&tmp_ptr, update_coords, &delta);
+
+            Region new_reg;
+            new_reg.add_rectangle({_pos.x, _pos.y, (_pos + _size).x, (_pos + _size).y});
+            recursive_update(&_parent, return_region, &old_reg);
+            
+            recursive_update(&_parent, cut_region, &new_reg, check_self, this);
+
             assert(tmp_ptr == this);
         }
     }
