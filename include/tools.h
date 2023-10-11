@@ -4,9 +4,15 @@
 #include "point.h"
 #include "rendertarget.h"
 
+struct click_info_t {
+    Point pos;
+    Point last_pos;
+    Point start_pos;
+};
+
 class Tool {
 public:
-    virtual void paint(sf::RenderTexture& canvas, const Point& pos, const Color& color) = 0;
+    virtual void paint(sf::RenderTexture& canvas, const click_info_t& click_info, const Color& color) = 0;
     virtual ~Tool() = default;
 };
 
@@ -20,9 +26,9 @@ public:
     ToolManager(Tool *tool): active_tool(tool), color(Color{0,0,0,255}) {}
     ToolManager(Tool *tool, const Color& color): active_tool(tool), color(color) {}
 
-    void paint(sf::RenderTexture& canvas, const Point& pos) const {
+    void paint(sf::RenderTexture& canvas, const click_info_t& click_info) const {
         if (active_tool) {
-            active_tool->paint(canvas, pos, color);
+            active_tool->paint(canvas, click_info, color);
         }
     }
 
@@ -46,5 +52,14 @@ private:
 public:
     Brush(double radius): _radius(radius) {}
 
-    void paint(sf::RenderTexture& canvas, const Point& pos, const Color& color) final;
+    void paint(sf::RenderTexture& canvas, const click_info_t& click_info, const Color& color) final;
+};
+
+class AlienBrush: public Tool {
+private:
+    double _radius;
+public:
+    AlienBrush(double radius): _radius(radius) {}
+
+    void paint(sf::RenderTexture& canvas, const click_info_t& click_info, const Color& color) final;
 };
