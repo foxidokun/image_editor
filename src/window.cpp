@@ -81,21 +81,20 @@ EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
     if (is_moving) {
         Point new_pos = {key.x, key.y};
         const Rectangle& area = _parent->active_area();
-        bool valid_x = true; //new_pos.x >= area.low_x && (new_pos.x + _size.x) <= area.high_x;
-        bool valid_y = true; //new_pos.y >= area.low_y && (new_pos.y + _size.y) <= area.high_y;
+        new_pos.x = std::max(area.low_x, new_pos.x);
+        new_pos.x = std::min(new_pos.x, area.high_x - _size.x);
+        new_pos.y = std::max(area.low_y, new_pos.y);
+        new_pos.y = std::min(new_pos.y, area.high_y - _size.y);
 
-        if (valid_x && valid_y) {
-            Vector delta = new_pos - last_pos;
-            Widget* tmp_ptr = this;
+        Vector delta = new_pos - last_pos;
+        Widget* tmp_ptr = this;
 
-            recursive_update(&tmp_ptr, update_coords, &delta);
+        recursive_update(&tmp_ptr, update_coords, &delta);
+        assert(tmp_ptr == this);
 
-            _root->recalc_regions();
+        _root->recalc_regions();
 
-            last_pos = new_pos;
-
-            assert(tmp_ptr == this);
-        }
+        last_pos = new_pos;
     }
 
     return Widget::on_mouse_move(key);

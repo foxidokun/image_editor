@@ -145,6 +145,13 @@ Widget* update_coords(Widget *const widget, void *args) {
     Vector base_point = *static_cast<Vector *>(args);
     widget->_pos += base_point;
     widget->_reg.shift(Vector(base_point.x, base_point.y));
+    
+    // update active area
+    widget->_active_area.low_x  += base_point.x;
+    widget->_active_area.high_x += base_point.x;
+    widget->_active_area.low_y  += base_point.y;
+    widget->_active_area.high_y += base_point.y;
+    
     return widget;
 }
 
