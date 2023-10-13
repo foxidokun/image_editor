@@ -18,6 +18,9 @@ static inline bool eq(double lhs, double rhs) { return fabs(lhs - rhs) < 0.1; }
 Region& Region::operator+=(const Region& other) {
     Region tmp = other - *this;
     _rects.insert(_rects.end(), tmp._rects.begin(), tmp._rects.end());
+
+    optimize();
+
     return *this;
 }
 
@@ -139,10 +142,10 @@ std::ostream& operator<<(std::ostream& stream, const Region& self) {
     stream << "Region {\n";
 
     stream.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    stream.precision(2);
+    // stream.precision(10);
 
     for (uint i = 0; i < self._rects.size(); ++i) {
-        stream << std::format("\tRect #{} {{low_x: {:.2} low_y: {:.2} high_x: {:.2} high_y: {:.2} }}\n", 
+        stream << std::format("\tRect #{} {{low_x: {} low_y: {} high_x: {} high_y: {} }}\n", 
            i,
            self._rects[i].low_x,
            self._rects[i].low_y,

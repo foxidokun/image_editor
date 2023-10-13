@@ -1,4 +1,5 @@
 #include "widget.h"
+#include "window.h"
 #include <type_traits>
 #include <cassert>
 
@@ -14,11 +15,11 @@ const Vector SAFETY_AROUND = {100, 100};
 template<typename T>
 static EVENT_RES default_event_handler(const linked_list<Widget *>& childs, handler_func_t<T> handler_func, const T& event) {
     for (auto& child: childs) {
-        if constexpr (std::is_same_v<T, mouse_event_t>) {
-            if (no_hit(child->pos() - SAFETY_AROUND, child->size() + 2*SAFETY_AROUND, event)) {
-                continue;
-            }
-        }
+        // if constexpr (std::is_same_v<T, mouse_event_t>) {
+        //     if (no_hit(child->pos() - SAFETY_AROUND, child->size() + 2*SAFETY_AROUND, event)) {
+        //         continue;
+        //     }
+        // }
 
         if ((child->*handler_func)(event) == EVENT_RES::STOP) {
             return EVENT_RES::STOP;
@@ -43,7 +44,7 @@ EVENT_RES Widget::on_keyboard_release(const keyboard_event_t& key) {
 EVENT_RES Widget::on_mouse_press(const mouse_event_t& _key) {
     mouse_event_t key = _key;
 
-    if (no_hit(_pos, _size, key)) { return EVENT_RES::CONT; }
+    // if (no_hit(_pos, _size, key)) { return EVENT_RES::CONT; }
 
     return default_event_handler<mouse_event_t>(_childs, &Widget::on_mouse_press, key);
 }
@@ -52,7 +53,7 @@ EVENT_RES Widget::on_mouse_press(const mouse_event_t& _key) {
 EVENT_RES Widget::on_mouse_release(const mouse_event_t& _key) {
     mouse_event_t key = _key;
     
-    if (no_hit(_pos - SAFETY_AROUND, _size + 2*SAFETY_AROUND, key)) { return EVENT_RES::CONT; }
+    // if (no_hit(_pos - SAFETY_AROUND, _size + 2*SAFETY_AROUND, key)) { return EVENT_RES::CONT; }
 
     return default_event_handler<mouse_event_t>(_childs, &Widget::on_mouse_release, key);
 }
@@ -60,7 +61,7 @@ EVENT_RES Widget::on_mouse_release(const mouse_event_t& _key) {
 EVENT_RES Widget::on_mouse_move(const mouse_event_t& _key) {
     mouse_event_t key = _key;
     
-    if (no_hit(_pos - SAFETY_AROUND, _size + 2*SAFETY_AROUND, key)) { return EVENT_RES::CONT; }
+    // if (no_hit(_pos - SAFETY_AROUND, _size + 2*SAFETY_AROUND, key)) { return EVENT_RES::CONT; }
 
     return default_event_handler<mouse_event_t>(_childs, &Widget::on_mouse_move, key);
 }
@@ -124,7 +125,7 @@ void recursive_update(Widget **widget_ptr, transform_f func, void* args,
                      checker_f check, void* check_args){
     
     Widget *widget = *widget_ptr;
-    if (check != nullptr && !check(widget, check_args)) {
+    if (check && !check(widget, check_args)) {
         return;
     }
 
