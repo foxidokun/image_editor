@@ -28,4 +28,8 @@ public:
     EVENT_RES on_mouse_press   (const mouse_event_t& key) final;
     EVENT_RES on_mouse_release (const mouse_event_t& key) final;
     EVENT_RES on_mouse_move    (const mouse_event_t& key) final;
+
+    void print(std::ostream& stream) const final {
+        stream << "Window " << _title;
+    }
 };

@@ -88,16 +88,9 @@ EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
             Vector delta = new_pos - last_pos;
             Widget* tmp_ptr = this;
 
-            Region old_reg;
-            old_reg.add_rectangle({_pos.x, _pos.y, (_pos + _size).x, (_pos + _size).y});
-
             recursive_update(&tmp_ptr, update_coords, &delta);
 
-            Region new_reg;
-            new_reg.add_rectangle({_pos.x, _pos.y, (_pos + _size).x, (_pos + _size).y});
-            recursive_update(&_parent, return_region, &old_reg);
-            
-            recursive_update(&_parent, cut_region, &new_reg, check_self, this);
+            _root->recalc_regions();
 
             last_pos = new_pos;
 

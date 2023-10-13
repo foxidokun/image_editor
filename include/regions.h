@@ -19,7 +19,11 @@ private:
 public:
     Region() = default;
 
-    void add_rectangle(Rectangle rec) {
+    Region(const Rectangle& rec) {
+        add_rectangle(rec);
+    }
+
+    void add_rectangle(const Rectangle rec) {
         _rects.push_back(rec);
     }
     

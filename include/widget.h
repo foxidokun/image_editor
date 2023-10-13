@@ -5,6 +5,7 @@
 #include "vector.h"
 #include <chrono>
 #include <cassert>
+#include <iostream>
 #include "regions.h"
 
 class Renderable {
@@ -39,7 +40,8 @@ enum class EVENT_RES {
 
 class Widget: public Renderable {
 protected:
-    Widget* _parent;
+    Widget* _parent = nullptr;
+    Widget* _root   = this;
     linked_list<Widget *> _childs;
     Point _pos;
     Vector _size;
@@ -90,13 +92,30 @@ public:
     friend void recursive_update(Widget **widget, transform_f func, void* args, 
                      checker_f check, void* check_args);
     friend Widget* update_coords(Widget *widget, void *args);
+    friend Widget* set_root(Widget *const widget, void *args);
+
+    void recalc_regions();
+
+    virtual void print(std::ostream& stream) const {
+        stream << "basic widget";
+    }
+
+    Rectangle get_hit_rectangle() {
+        return {_pos.x, _pos.y, _pos.x + _size.x, _pos.y + _size.y};
+    }
 };
 
 class WindowManager: public Widget {
 public:
     WindowManager(double width, double height):
         Widget(Point(0,0), Vector(width, height))
-        {}
+        {
+            _root = this;
+        }
+
+    void print(std::ostream& stream) const final {
+        stream << "Window manager";
+    }
 };
 
 void recursive_update(Widget **widget, transform_f func, void* args, 

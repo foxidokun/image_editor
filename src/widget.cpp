@@ -7,6 +7,8 @@
 
 static inline bool no_hit(const Point& pos, const Vector& size, const mouse_event_t& event);
 
+Widget* set_root(Widget *const widget, void *args);
+
 template<typename T>
 using handler_func_t = EVENT_RES (Widget::*)(const T& event);
 
@@ -86,18 +88,11 @@ void Widget::register_object(Widget *child) {
     assert(child != this);
     
     child->_parent = this;
-
-    Point end_point = child->_pos+child->_size;
-    Rectangle child_rec = {child->_pos.x, child->_pos.y, end_point.x, end_point.y};
-    Region child_reg;
-    child_reg.add_rectangle(child_rec);
-
-    //Update region sets in all tree
-    Widget* tmp_this = this;
-    recursive_update(&tmp_this, cut_region, &child_reg);
-    assert(tmp_this == this);
-
+    recursive_update(&child, set_root, _root);
+    
     _childs.push_back(child);
+    
+    _root->recalc_regions();
 }
 
 Widget* return_region(Widget* const widget, void* args_) {
@@ -153,18 +148,52 @@ Widget* update_coords(Widget *const widget, void *args) {
     return widget;
 }
 
-void Widget::unregister_object(Widget *rem_child) {
-        for (auto child = _childs.begin(); child != _childs.end(); ++child) {
-            if (*child == rem_child) {
-                // Rectangle whole = {rem_child->_pos.x, rem_child->_pos.y,
-                //                   rem_child->_pos.x + rem_child->_size.x,
-                //                   rem_child->_pos.y + rem_child->_size.y};
-                // Region child_reg;
-                // child_reg.add_rectangle(whole);
-                // recursive_update(&_parent, return_region, &child_reg);
+Widget* set_root(Widget *const widget, void *args) {
+    Widget *root = static_cast<Widget *>(args);
+    widget->_root = root;
+    return widget;
+}
 
-                delete (*child);
-                child = _childs.erase(child);
-            }
+void Widget::unregister_object(Widget *rem_child) {
+    for (auto child = _childs.begin(); child != _childs.end(); ++child) {
+        if (*child == rem_child) {
+            // Rectangle whole = {rem_child->_pos.x, rem_child->_pos.y,
+            //                   rem_child->_pos.x + rem_child->_size.x,
+            //                   rem_child->_pos.y + rem_child->_size.y};
+            // Region child_reg;
+            // child_reg.add_rectangle(whole);
+            // recursive_update(&_parent, return_region, &child_reg);
+
+            delete (*child);
+            child = _childs.erase(child);
         }
     }
+
+    _root->recalc_regions();
+}
+
+void Widget::recalc_regions() {
+    Region new_reg(get_hit_rectangle());
+
+    if (_parent) {
+        new_reg *= _parent->_reg;
+
+        bool is_upper_than_me = false;
+        for (const auto& subling: _parent->_childs) {
+            if (is_upper_than_me) {
+                new_reg -= Region(subling->get_hit_rectangle());
+            }
+            if (subling == this) { is_upper_than_me = true; }
+        }
+    }
+
+    _reg = new_reg;
+
+    for (const auto& child: _childs) {
+        child->recalc_regions();
+    }
+
+    for (const auto& child: _childs) {
+        _reg -= child->get_hit_rectangle();
+    }
+}

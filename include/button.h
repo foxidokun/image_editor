@@ -43,4 +43,8 @@ public:
         _texture(texture) {}
 
     void render(RenderTarget& target) const final;
+
+    void print(std::ostream& stream) const final {
+        stream << "TextureButton";
+    }
 };
