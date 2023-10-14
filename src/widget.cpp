@@ -185,12 +185,9 @@ void Widget::recalc_regions() {
     if (_parent) {
         new_reg *= _parent->_reg;
 
-        bool is_upper_than_me = false;
         for (const auto& subling: _parent->_childs) {
-            if (is_upper_than_me) {
-                new_reg -= Region(subling->get_hit_rectangle());
-            }
-            if (subling == this) { is_upper_than_me = true; }
+            if (subling == this) { break; }
+            new_reg -= Region(subling->get_hit_rectangle());
         }
     }
 

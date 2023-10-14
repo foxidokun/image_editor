@@ -66,9 +66,9 @@ public:
     virtual EVENT_RES on_timer           (const time_point& time);
 
     virtual void render(RenderTarget& target) override {
-        for (const auto& child: _childs) {
-            assert (child != this);
-            child->render(target);
+        for (auto child = _childs.rbegin(); child != _childs.rend(); ++child) {
+            assert (*child != this);
+            (*child)->render(target);
         }
     }
 

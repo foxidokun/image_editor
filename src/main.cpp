@@ -236,10 +236,17 @@ static void setup_color_button(Window& win, ToolManager *tools, const Color& col
     auto red_args = new ColorArgs(tools, color);
 
     auto color_texture = new sf::RenderTexture();
-    color_texture->create(50, 50);
+    color_texture->create(30, 30);
     color_texture->clear(convert_color(color));
+    sf::RectangleShape borders;
+    borders.setOutlineColor(sf::Color(0,0,0,100));
+    borders.setFillColor(sf::Color::Transparent);
+    borders.setOutlineThickness(30);
+    borders.setPosition(1, 1);
+    borders.setSize(sf::Vector2f(24, 24));
+    color_texture->draw(borders);
     color_texture->display();
-    auto button = new TextureButton(pos, Vector(50, 50), set_color, red_args, color_texture->getTexture());
+    auto button = new TextureButton(pos + Vector(10, 10), Vector(30, 30), set_color, red_args, color_texture->getTexture());
     win.register_object(button);
 }
 
