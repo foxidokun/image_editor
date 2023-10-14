@@ -24,6 +24,7 @@ static EVENT_RES default_event_handler(const linked_list<Widget *>& childs, hand
         // }
 
         if ((child->*handler_func)(event) == EVENT_RES::STOP) {
+            // child_iter = childs.erase(child_iter);
             return EVENT_RES::STOP;
         }
     }

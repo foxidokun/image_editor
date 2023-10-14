@@ -48,7 +48,6 @@ void Region::optimize() {
                 _rects.erase(_rects.begin() + j);
 
                 i = 0;
-                j = 0;
                 increment_i = false;
                 break;
             }

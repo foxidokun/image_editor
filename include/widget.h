@@ -116,6 +116,12 @@ public:
     void print(std::ostream& stream) const final {
         stream << "Window manager";
     }
+
+    virtual void render(RenderTarget& target) override {
+        target.drawRect(_reg, _pos, _size, {0, 255, 255, 255});
+
+        Widget::render(target);
+    }
 };
 
 void recursive_update(Widget **widget, transform_f func, void* args, 

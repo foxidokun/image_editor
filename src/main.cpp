@@ -21,9 +21,10 @@ int main() {
 
     RenderTarget target(Vector(WINDOW_WIDTH, WINDOW_HEIGHT));
 
+    window.clear(sf::Color::Cyan);
+    target.clear(sf::Color::Cyan);
+
     while (window.isOpen()) {
-        window.clear(sf::Color::Cyan);
-        target.clear(sf::Color::Cyan);
 
         WM.render(target);
         target.display(window);
@@ -191,8 +192,8 @@ struct ColorArgs: public CallbackArgs {
 
 static void setup_objects(WindowManager& wm, ToolManager *tools) {
     setup_canvas_window(wm, tools);
-    setup_tool_window(wm, tools);
     setup_color_window(wm, tools);
+    setup_tool_window(wm, tools);
 }
 
 static void setup_canvas_window(WindowManager& wm, const ToolManager *tools) {
@@ -224,11 +225,11 @@ static void setup_color_window(WindowManager& wm, ToolManager *tools) {
 
 
     auto win    = new Window(Point(850,410), Vector(200, 400), "Colors");
-    setup_color_button(*win, tools, Color{255,0,0,255}, Point(0,0));
-    setup_color_button(*win, tools, Color{0,255,0,255}, Point(50,0));
-    setup_color_button(*win, tools, Color{0,0,255,255}, Point(100,0));
-    setup_color_button(*win, tools, Color{255,255,255,255}, Point(150,0));
-    setup_color_button(*win, tools, Color{0,0,0,255}, Point(0,50));
+    setup_color_button(*win, tools, Color{255,0,0,0}, Point(0,0));
+    setup_color_button(*win, tools, Color{0,255,0,0}, Point(50,0));
+    setup_color_button(*win, tools, Color{0,0,255,0}, Point(100,0));
+    setup_color_button(*win, tools, Color{255,255,255,0}, Point(150,0));
+    setup_color_button(*win, tools, Color{0,0,0,0}, Point(0,50));
     wm.register_object(win);
 }
 

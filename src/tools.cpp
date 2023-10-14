@@ -45,7 +45,7 @@ void AlienBrush::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const
     Vector dist = (point_pos - start_pos);
     double dist_length = dist.length();
 
-    uint num_of_steps = (uint) floor(dist_length /(_radius * 3)) + 1;
+    uint num_of_steps = (uint) floor(dist_length / (_radius * 3)) + 1;
 
     if (num_of_steps == 1) {
         return;

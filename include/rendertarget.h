@@ -14,7 +14,7 @@ struct Color {
     uint a;
 };
 
-#define DRAW_REGIONS 0
+#define DRAW_REGIONS 1
 
 class RenderTarget {
 private:
