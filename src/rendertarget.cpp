@@ -29,6 +29,7 @@ void RenderTarget::drawRect(const Point& point, const Vector& size, const Color&
 void RenderTarget::drawLine(const Region& reg, const Point& point, const Vector& size, const Color& fillcolor) {
     sf::RectangleShape rect;
     rect.setFillColor(convert_color(fillcolor));
+    // Vertex Array
     rect.setRotation(radians_to_degrees(atan(size.y / size.x)));
 
     for (const auto &disp_rect: reg.rects()) {

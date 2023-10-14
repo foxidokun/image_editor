@@ -25,102 +25,95 @@ Region& Region::operator+=(const Region& other) {
 }
 
 void Region::optimize() {
-    for (uint i = 0; i < _rects.size();) {
-        bool increment_i = true;
-        for (uint j = 0; j < i; ++j) {
-            auto common = has_common_edge(_rects[i], _rects[j]);
-            if (common != common_edge::NO_COMMON) {
-                switch (common) {
-                    case (common_edge::BOTTOM):
-                        _rects[i].low_y = _rects[j].low_y;
-                        break;
-                    case (common_edge::TOP):
-                        _rects[i].high_y = _rects[j].high_y;
-                        break;
-                    case (common_edge::LEFT):
-                        _rects[i].low_x = _rects[j].low_x;
-                        break;
-                    case (common_edge::RIGHT):
-                        _rects[i].high_x = _rects[j].high_x;
-                        break;
+    bool is_done = false;
+    while (!is_done) {
+        is_done = true;
+        for (uint i = 0; i < _rects.size(); ++i) {
+            for (uint j = 0; j < i; ++j) {
+                auto common = has_common_edge(_rects[i], _rects[j]);
+                if (common != common_edge::NO_COMMON) {
+                    is_done = false;
+
+                    switch (common) {
+                        case (common_edge::BOTTOM):
+                            _rects[i].low_y = _rects[j].low_y;
+                            break;
+                        case (common_edge::TOP):
+                            _rects[i].high_y = _rects[j].high_y;
+                            break;
+                        case (common_edge::LEFT):
+                            _rects[i].low_x = _rects[j].low_x;
+                            break;
+                        case (common_edge::RIGHT):
+                            _rects[i].high_x = _rects[j].high_x;
+                            break;
+                    }
+
+                    _rects.erase(_rects.begin() + j);
                 }
-
-                _rects.erase(_rects.begin() + j);
-
-                i = 0;
-                increment_i = false;
-                break;
             }
-        }
-
-        if (increment_i) {
-            ++i;
         }
     }
 }
 
 Region& Region::operator-=(const Region& other) {
-    for (uint i = 0; i < _rects.size();) {
-        bool increment_i = true;
-        for (uint j = 0; j < other._rects.size(); ++j) {
-            if (has_intersect(_rects[i], other._rects[j])) {
-                const Rectangle& first_rect = _rects[i];
-                const Rectangle& second_rect = other._rects[j];
-                Rectangle added[4] = {};
-                uint number = 0;
+    bool is_done = false;
+    while (!is_done) {
+        is_done = true;
+        for (uint i = 0; i < _rects.size(); ++i) {
+            for (uint j = 0; j < other._rects.size(); ++j) {
+                if (has_intersect(_rects[i], other._rects[j])) {
+                    is_done = false;
 
-                if (first_rect.high_y > second_rect.high_y) {
-                    added[number].high_y = first_rect.high_y;
-                    added[number].low_y  = second_rect.high_y;
-                    added[number].low_x  = std::max(first_rect.low_x, second_rect.low_x);
-                    added[number].high_x = std::min(first_rect.high_x, second_rect.high_x);
-                    number++;
-                }
+                    const Rectangle& first_rect = _rects[i];
+                    const Rectangle& second_rect = other._rects[j];
+                    Rectangle added[4] = {};
+                    uint number = 0;
 
-                if (first_rect.low_y < second_rect.low_y) {
-                    added[number].high_y = second_rect.low_y;
-                    added[number].low_y  = first_rect.low_y;
-                    added[number].low_x  = std::max(first_rect.low_x, second_rect.low_x);
-                    added[number].high_x = std::min(first_rect.high_x, second_rect.high_x);
-                    number++;
-                }
+                    if (first_rect.high_y > second_rect.high_y) {
+                        added[number].high_y = first_rect.high_y;
+                        added[number].low_y  = second_rect.high_y;
+                        added[number].low_x  = std::max(first_rect.low_x,  second_rect.low_x);
+                        added[number].high_x = std::min(first_rect.high_x, second_rect.high_x);
+                        number++;
+                    }
 
-                if (first_rect.low_x < second_rect.low_x) {
-                    added[number].high_y = first_rect.high_y;
-                    added[number].low_y  = first_rect.low_y;
-                    added[number].low_x  = first_rect.low_x;
-                    added[number].high_x = second_rect.low_x;
-                    number++;
-                
-                }
-                if (first_rect.high_x > second_rect.high_x) {
-                    added[number].high_y = first_rect.high_y;
-                    added[number].low_y  = first_rect.low_y;
-                    added[number].low_x  = second_rect.high_x;
-                    added[number].high_x = first_rect.high_x;
-                    number++;
-                }
+                    if (first_rect.low_y < second_rect.low_y) {
+                        added[number].high_y = second_rect.low_y;
+                        added[number].low_y  = first_rect.low_y;
+                        added[number].low_x  = std::max(first_rect.low_x,  second_rect.low_x);
+                        added[number].high_x = std::min(first_rect.high_x, second_rect.high_x);
+                        number++;
+                    }
 
-                if (number > 0) {
-                    number--;
-                    _rects[i] = added[number];
-                } else {
-                    _rects.erase(_rects.begin() + i);
-                }
+                    if (first_rect.low_x < second_rect.low_x) {
+                        added[number].high_y = first_rect.high_y;
+                        added[number].low_y  = first_rect.low_y;
+                        added[number].low_x  = first_rect.low_x;
+                        added[number].high_x = second_rect.low_x;
+                        number++;
+                    
+                    }
+                    if (first_rect.high_x > second_rect.high_x) {
+                        added[number].high_y = first_rect.high_y;
+                        added[number].low_y  = first_rect.low_y;
+                        added[number].low_x  = second_rect.high_x;
+                        added[number].high_x = first_rect.high_x;
+                        number++;
+                    }
 
-                for (uint i = number; i > 0; --i) {
-                    _rects.push_back(added[i - 1]);
-                }
+                    if (number > 0) {
+                        number--;
+                        _rects[i] = added[number];
+                    } else {
+                        _rects.erase(_rects.begin() + i);
+                    }
 
-                i = 0;
-                j = 0;
-                increment_i = false;
-                break;
+                    for (uint i = number; i > 0; --i) {
+                        _rects.push_back(added[i - 1]);
+                    }
+                }
             }
-        }
-
-        if (increment_i) {
-            ++i;
         }
     }
 
