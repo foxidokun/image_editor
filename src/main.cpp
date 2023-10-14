@@ -200,10 +200,10 @@ static void setup_canvas_window(WindowManager& wm, const ToolManager *tools) {
     double width  = win->active_area().high_x - win->active_area().low_x;
     double height = win->active_area().high_y - win->active_area().low_y;
 
-    auto subwindow      = new Window(Point(240,240), Vector(200, 200), "SubWindow");
+    // auto subwindow      = new Window(Point(240,240), Vector(200, 200), "SubWindow");
 
-    // auto canvas = new Canvas(Point(0,0), Vector(width, height), tools);
-    win->register_object(subwindow);
+    auto canvas = new Canvas(Point(0,0), Vector(width, height), tools);
+    win->register_object(canvas);
     wm.register_object(win);
 }
 

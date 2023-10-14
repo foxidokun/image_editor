@@ -23,7 +23,7 @@ public:
             initialise();
         }
 
-    void render(RenderTarget& target) const final;
+    void render(RenderTarget& target) final;
 
     EVENT_RES on_mouse_press   (const mouse_event_t& key) final;
     EVENT_RES on_mouse_release (const mouse_event_t& key) final;

@@ -15,6 +15,7 @@ struct Rectangle {
 class Region {
 private:
     dynarray<Rectangle> _rects;
+    bool has_limits = true;
 
 public:
     Region() = default;
@@ -34,6 +35,14 @@ public:
     Region& operator*=(const Region& other);
 
     void shift(const Vector &vec);
+
+    static Region create_infinite() {
+        Region new_reg;
+        new_reg.has_limits = false;
+        return new_reg;
+    }
+
+    bool is_limited() const { return has_limits; }
 
     const dynarray<Rectangle>& rects() const {return _rects;}
 

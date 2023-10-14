@@ -3,16 +3,13 @@
 #include <SFML/Graphics.hpp>
 #include "point.h"
 #include "rendertarget.h"
-
-struct click_info_t {
-    Point pos;
-    Point last_pos;
-    Point start_pos;
-};
+#include "widget.h"
 
 class Tool {
 public:
-    virtual void paint(sf::RenderTexture& canvas, const click_info_t& click_info, const Color& color) = 0;
+    virtual void paint_on_press  (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) = 0;
+    virtual void paint_on_move   (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) = 0;
+    virtual void paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) = 0;
     virtual ~Tool() = default;
 };
 
@@ -22,14 +19,18 @@ private:
     Color color;
 
 public:
-    ToolManager(): active_tool(nullptr), color(Color{0,0,0,255}) {}
-    ToolManager(Tool *tool): active_tool(tool), color(Color{0,0,0,255}) {}
-    ToolManager(Tool *tool, const Color& color): active_tool(tool), color(color) {}
+    ToolManager(Tool *tool = nullptr, const Color& color = Color{0,0,0,255}): active_tool(tool), color(color) {}
 
-    void paint(sf::RenderTexture& canvas, const click_info_t& click_info) const {
-        if (active_tool) {
-            active_tool->paint(canvas, click_info, color);
-        }
+    void paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos) const {
+        active_tool->paint_on_press(permanent, tmp, point_pos, color);
+    }
+
+    void paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos) const {
+        active_tool->paint_on_move(permanent, tmp, point_pos, color);
+    }
+
+    void paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos) const {
+        active_tool->paint_on_release(permanent, tmp, point_pos, color);
     }
 
     void set_tool(Tool *new_tool) {
@@ -49,17 +50,30 @@ public:
 class Brush: public Tool {
 private:
     double _radius;
+    Point last_pos;
+
+    void paint(RenderTarget& permanent, const Point& point_pos, const Color& color) const;
+
 public:
     Brush(double radius): _radius(radius) {}
 
-    void paint(sf::RenderTexture& canvas, const click_info_t& click_info, const Color& color) final;
+    void paint_on_press  (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final;
+    void paint_on_move   (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final;
+    void paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final
+    {}
 };
 
 class AlienBrush: public Tool {
 private:
     double _radius;
+    Point start_pos;
+
+    void paint(RenderTarget& permanent, const Point& point_pos, const Color& color) const;
+
 public:
     AlienBrush(double radius): _radius(radius) {}
 
-    void paint(sf::RenderTexture& canvas, const click_info_t& click_info, const Color& color) final;
+    void paint_on_press  (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final;
+    void paint_on_move   (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final;
+    void paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final {}
 };

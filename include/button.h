@@ -42,7 +42,7 @@ public:
         Button(pos, size, callback, allocated_args),
         _texture(texture) {}
 
-    void render(RenderTarget& target) const final;
+    void render(RenderTarget& target) final;
 
     void print(std::ostream& stream) const final {
         stream << "TextureButton";

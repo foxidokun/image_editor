@@ -18,7 +18,7 @@ static void close_window_callback(CallbackArgs *_args) {
     parent->unregister_object(args->window);
 }
 
-void Window::render(RenderTarget& target) const {
+void Window::render(RenderTarget& target) {
     target.drawRect(_reg, _pos, _size, WINDOW_COLOR);
 
     // header sep

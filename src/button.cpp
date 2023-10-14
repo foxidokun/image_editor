@@ -29,6 +29,6 @@ EVENT_RES Button::on_mouse_move(const mouse_event_t& key) {
     }
 }
 
-void TextureButton::render(RenderTarget& target) const {
+void TextureButton::render(RenderTarget& target) {
     target.drawTexture(_reg, _pos, _size, _texture, _is_clicked);
 }
