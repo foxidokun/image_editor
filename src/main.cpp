@@ -225,11 +225,11 @@ static void setup_color_window(WindowManager& wm, ToolManager *tools) {
 
 
     auto win    = new Window(Point(850,410), Vector(200, 400), "Colors");
-    setup_color_button(*win, tools, Color{255,0,0,0}, Point(0,0));
-    setup_color_button(*win, tools, Color{0,255,0,0}, Point(50,0));
-    setup_color_button(*win, tools, Color{0,0,255,0}, Point(100,0));
-    setup_color_button(*win, tools, Color{255,255,255,0}, Point(150,0));
-    setup_color_button(*win, tools, Color{0,0,0,0}, Point(0,50));
+    setup_color_button(*win, tools, Color{255,   0,   0, 255}, Point(  0,  0));
+    setup_color_button(*win, tools, Color{0,   255,   0, 255}, Point( 50,  0));
+    setup_color_button(*win, tools, Color{0,     0, 255, 255}, Point(100,  0));
+    setup_color_button(*win, tools, Color{255, 255, 255, 255}, Point(150,  0));
+    setup_color_button(*win, tools, Color{0,     0,   0, 255}, Point(  0, 50));
     wm.register_object(win);
 }
 

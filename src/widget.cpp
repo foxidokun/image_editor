@@ -177,7 +177,7 @@ void Widget::unregister_object(Widget *rem_child) {
         }
     }
 
-    _root->recalc_regions();
+    recalc_regions();
 }
 
 void Widget::recalc_regions() {
