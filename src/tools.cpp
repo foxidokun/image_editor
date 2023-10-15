@@ -91,8 +91,6 @@ void Polyline::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, cons
     }
 }
 
-
-
 void RectTool::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
     start_point = extract_point(point_pos);
     is_drawing = true;

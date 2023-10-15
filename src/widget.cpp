@@ -180,8 +180,14 @@ void Widget::unregister_object(Widget *rem_child) {
     recalc_regions();
 }
 
+#include "button.h"
+
 void Widget::recalc_regions() {
     Region new_reg(get_hit_rectangle());
+
+    if (typeid(*this) == typeid(Menu)) {
+        std::cout << "Menu reg 1 " << new_reg << "\n";
+    }
 
     if (_parent) {
         new_reg *= _parent->_reg;
@@ -192,13 +198,34 @@ void Widget::recalc_regions() {
         }
     }
 
+    if (typeid(*this) == typeid(Menu)) {
+        std::cout << "Menu reg 2 " << new_reg << "\n";
+    }
+
     _reg = new_reg;
 
     for (const auto& child: _childs) {
         child->recalc_regions();
     }
 
+    if (typeid(*this) == typeid(Menu)) {
+        std::cout << "Menu reg 2.5 " << _reg << "\n";
+    }
+
     for (const auto& child: _childs) {
+        if (typeid(*this) == typeid(Menu)) {
+            std::cout << "Menu self reg -- unknown id " << _reg << "\n";
+        }
+        if (typeid(*this) == typeid(Menu)) {
+            std::cout << "Menu other reg -- unknown id " << child->get_hit_rectangle() << "\n";
+        }
         _reg -= child->get_hit_rectangle();
+        if (typeid(*this) == typeid(Menu)) {
+            std::cout << "Menu res reg -- unknown id " <<_reg << "\n";
+        }
+    }
+
+    if (typeid(*this) == typeid(Menu)) {
+        std::cout << "Menu reg 3 " << _reg << "\n";
     }
 }

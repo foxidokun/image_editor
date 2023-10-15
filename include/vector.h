@@ -44,6 +44,9 @@ public:
         x(point[0]),
         y(point[1])
         {}
+
+    explicit Vector(sf::Vector2f vec): x(vec.x), y(vec.y) {}
+    explicit operator sf::Vector2f() const { return sf::Vector2f(x, y); }
 #endif
 
     static Vector random() {

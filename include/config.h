@@ -17,6 +17,8 @@ const uint BUTTON_SIZE    = 20;
 
 const uint BRUSH_RADIUS   = 5;
 
+const double MENU_ITEM_HEIGHT = 30;
+
 
 const char FONT_FILENAME[]                    = "assets/font.ttf";
 const char CLOSE_WINDOW_BUTTON_TEXTURE_PATH[] = "assets/close_window_button.png";

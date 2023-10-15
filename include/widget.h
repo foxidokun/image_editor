@@ -81,6 +81,9 @@ public:
     const Rectangle& active_area() const { return _active_area; }
     Widget*          parent()      const { return _parent;      }
     
+    void             set_pos   (const Point&   pos) { _pos  = pos;  }
+    void             set_size  (const Vector& size) { _size = size; }
+    
     Region& reg() { return _reg; }
 
     virtual ~Widget() {
