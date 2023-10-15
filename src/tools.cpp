@@ -80,12 +80,18 @@ void Polyline::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, cons
         tmp.clear(sf::Color::Transparent);
     }
 
+    if (point_pos.button == mouse_event_t::button_type::UNKNOWN) {
+        has_drawn = false;
+        return;
+    }
+
     if (has_drawn) {
         Point new_point = extract_point(point_pos);
         permanent.drawLine(last_point, new_point - last_point, color);
         last_point = new_point;
 
-        if (point_pos.button == mouse_event_t::button_type::RIGHT) {
+        if (point_pos.button == mouse_event_t::button_type::RIGHT)
+        {
             has_drawn = false;
         }
     }

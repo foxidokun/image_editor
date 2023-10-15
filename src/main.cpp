@@ -25,8 +25,6 @@ int main() {
     target.clear(sf::Color::Cyan);
 
     while (window.isOpen()) {
-        static uint16_t frame_i = 0;
-        std::cout << "TICK " << ++frame_i << "\n";
         WM.render(target);
         target.display(window);
         window.display();
