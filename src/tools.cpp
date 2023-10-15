@@ -60,6 +60,26 @@ void AlienBrush::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const
 }
 
 void Polyline::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    if (!has_drawn) {
+        last_point = extract_point(point_pos);
+        has_drawn = true;
+    }
+}
+
+void Polyline::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    if (has_drawn) {
+        tmp.clear(sf::Color::Transparent);
+        Point new_point = extract_point(point_pos);
+        tmp.drawLine(last_point, new_point - last_point, color);
+        unclear_tmp = true;
+    }
+}
+
+void Polyline::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    if (unclear_tmp) {
+        tmp.clear(sf::Color::Transparent);
+    }
+
     if (has_drawn) {
         Point new_point = extract_point(point_pos);
         permanent.drawLine(last_point, new_point - last_point, color);
@@ -68,16 +88,5 @@ void Polyline::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const 
         if (point_pos.button == mouse_event_t::button_type::RIGHT) {
             has_drawn = false;
         }
-    } else {
-        last_point = extract_point(point_pos);
-        has_drawn = true;
     }
-}
-
-void Polyline::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
-
-}
-
-void Polyline::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
-
 }

@@ -76,6 +76,7 @@ class Polyline: public Tool {
 private:
     Point last_point;
     bool has_drawn = false;
+    bool unclear_tmp = false;
 
 public:
     Polyline() = default;

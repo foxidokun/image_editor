@@ -22,7 +22,10 @@ EVENT_RES Canvas::on_mouse_press(const mouse_event_t& key) {
 }
 
 EVENT_RES Canvas::on_mouse_release(const mouse_event_t& key) {
-    tool_manager->paint_on_release(_permanent, _tmp, key);
+    mouse_event_t key_copy = key;
+    key_copy.x -= _pos.x;
+    key_copy.y -= _pos.y;
+    tool_manager->paint_on_release(_permanent, _tmp, key_copy);
     is_drawing = false;
     return EVENT_RES::CONT;
 }
