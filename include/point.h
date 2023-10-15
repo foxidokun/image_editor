@@ -32,6 +32,12 @@ public:
     Point& operator+=(const Point& vec);
 
     Point& operator-=(const Vector& vec);
+
+    #if POINT_DIM == 2
+    explicit operator sf::Vector2f() const {
+        return sf::Vector2f(x, y);
+    }
+    #endif
 };
 
 static inline Point operator+(const Point& point, const Vector& vec) {

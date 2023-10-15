@@ -5,7 +5,7 @@ static inline Point extract_point(const mouse_event_t& key) {
 }
 
 void Brush::paint(RenderTarget& permanent, const Point& point_pos, const Color& color) const {
-    permanent.drawCircle(point_pos, _radius, color);
+    permanent.drawCircle(point_pos, BRUSH_RADIUS, color);
 }
 
 void Brush::paint_on_press(RenderTarget& permanent, RenderTarget&, const mouse_event_t& key, const Color& color) {
@@ -18,7 +18,7 @@ void Brush::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const mous
 
     Vector step = (point_pos - last_pos);
     double step_length = step.length();
-    double num_of_steps = step_length / _radius * 5;
+    double num_of_steps = step_length / BRUSH_RADIUS * 5;
     num_of_steps = std::max(num_of_steps, 1.0);
     step = step / num_of_steps;
 
@@ -31,7 +31,7 @@ void Brush::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const mous
 }
 
 void AlienBrush::paint(RenderTarget& permanent, const Point& point_pos, const Color& color) const {
-    permanent.drawCircle(point_pos, _radius, color);
+    permanent.drawCircle(point_pos, BRUSH_RADIUS, color);
 }
 
 void AlienBrush::paint_on_press(RenderTarget& permanent, RenderTarget&, const mouse_event_t& key, const Color& color) {
@@ -45,16 +45,39 @@ void AlienBrush::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const
     Vector dist = (point_pos - start_pos);
     double dist_length = dist.length();
 
-    uint num_of_steps = (uint) floor(dist_length / (_radius * 3)) + 1;
+    uint num_of_steps = (uint) floor(dist_length / (BRUSH_RADIUS * 3)) + 1;
 
     if (num_of_steps == 1) {
         return;
     }
 
-    Vector step = dist.norm() * (3 * _radius);
+    Vector step = dist.norm() * (3 * BRUSH_RADIUS);
 
     for (uint i = 0; i < num_of_steps; ++i) {
         Point draw_point = start_pos + step * i;
         paint(permanent, draw_point, color);
     }
+}
+
+void Polyline::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    if (has_drawn) {
+        Point new_point = extract_point(point_pos);
+        permanent.drawLine(last_point, new_point - last_point, color);
+        last_point = new_point;
+
+        if (point_pos.button == mouse_event_t::button_type::RIGHT) {
+            has_drawn = false;
+        }
+    } else {
+        last_point = extract_point(point_pos);
+        has_drawn = true;
+    }
+}
+
+void Polyline::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+
+}
+
+void Polyline::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+
 }

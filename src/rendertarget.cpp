@@ -53,14 +53,21 @@ void RenderTarget::drawLine(const Region& reg, const Point& point, const Vector&
     }
 }
 
-void RenderTarget::drawLine(const Point& point, const Vector& size, const Color& fillcolor) {
-    sf::RectangleShape rect;
-    rect.setFillColor(convert_color(fillcolor));
-    rect.setRotation(radians_to_degrees(atan(size.y / size.x)));
-    rect.setSize(sf::Vector2f(size.length(), LINE_THICKNESS));
-    rect.setPosition(point.x, point.y);
-    
-    _data.draw(rect);
+void RenderTarget::drawLine(const Point& start_point, const Vector& size, const Color& fillcolor) {
+    Point end_point = start_point + size;
+    Vector ortho = Vector(size.y, -size.x).norm() * LINE_THICKNESS;
+
+    sf::VertexArray line(sf::TriangleStrip, 4);
+    line[0].position = (sf::Vector2f) (start_point - ortho);
+    line[1].position = (sf::Vector2f) (start_point + ortho);
+    line[2].position = (sf::Vector2f) (  end_point - ortho);
+    line[3].position = (sf::Vector2f) (  end_point + ortho);
+
+    for (int i = 0; i < 4; ++i) {
+        line[i].color = convert_color(fillcolor);
+    }
+
+    _data.draw(line);
 }
 
 void RenderTarget::display(sf::RenderWindow& window) {
