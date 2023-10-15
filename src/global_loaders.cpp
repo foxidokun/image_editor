@@ -11,6 +11,7 @@ const sf::Texture close_window_button = load_texture(CLOSE_WINDOW_BUTTON_TEXTURE
 const sf::Texture brush_tool          = load_texture(BRUSH_TOOL_TEXTURE_PATH);
 const sf::Texture alien_brush_tool    = load_texture(ALIEN_BRUSH_TOOL_TEXTURE_PATH);
 const sf::Texture polyline_tool       = load_texture(POLYLINE_TOOL_TEXTURE_PATH);
+const sf::Texture rectangle_tool      = load_texture(RECTANGLE_TOOL_TEXTURE_PATH);
 
 sf::Font load_font() {
     sf::Font font;

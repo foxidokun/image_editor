@@ -15,6 +15,7 @@ extern const sf::Texture close_window_button;
 extern const sf::Texture brush_tool;
 extern const sf::Texture alien_brush_tool;
 extern const sf::Texture polyline_tool;
+extern const sf::Texture rectangle_tool;
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Random functions
