@@ -63,8 +63,8 @@ struct _DynArrayIterator
     friend bool operator>  (const _DynArrayIterator& a, const _DynArrayIterator& b) { return a.m_ptr >  b.m_ptr; };
     friend bool operator<= (const _DynArrayIterator& a, const _DynArrayIterator& b) { return a.m_ptr <= b.m_ptr; };
     friend bool operator>= (const _DynArrayIterator& a, const _DynArrayIterator& b) { return a.m_ptr >= b.m_ptr; };
-    friend bool operator+  (const difference_type& a, const _DynArrayIterator& b) { return b + a; };
-    friend bool operator-  (const _DynArrayIterator& a, const _DynArrayIterator& b) { return a.m_ptr - b.m_ptr; };
+    friend _DynArrayIterator operator+(const difference_type& a, const _DynArrayIterator& b) { return b + a; };
+    friend difference_type operator-(const _DynArrayIterator& a, const _DynArrayIterator& b) { return a.m_ptr - b.m_ptr; };
     friend bool operator!= (const _DynArrayIterator& a, const _DynArrayIterator& b) { return a.m_ptr != b.m_ptr; };  
 
 private:
