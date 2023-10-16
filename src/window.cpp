@@ -25,12 +25,12 @@ void Window::render(RenderTarget& target) {
     target.drawLine(_reg, _pos + Point(0, HEADER_HEIGHT - LINE_THICKNESS), {_size.x, 0});
 
     // borders
-    target.drawLine(_reg, _pos,                          {_size.x, 0});
-    target.drawLine(_reg, _pos+Vector(0, _size.y-LINE_THICKNESS),       {_size.x, 0});
+    target.drawLine(_reg, _pos, {_size.x, 0});
+    target.drawLine(_reg, _pos+Vector(0, _size.y-LINE_THICKNESS), {_size.x, 0});
     target.drawLine(_reg, _pos+Vector(LINE_THICKNESS,0), {0, _size.y});
     target.drawLine(_reg, _pos+Vector(_size.x, 0), {0, _size.y});
     
-    target.drawText(_reg, _pos +  Point(LINE_THICKNESS, LINE_THICKNESS), _title.c_str(), TITLE_SIZE);
+    target.drawText(_reg, _pos + Point(LINE_THICKNESS, LINE_THICKNESS), _title.c_str(), TITLE_SIZE);
 
     Widget::render(target);
 
