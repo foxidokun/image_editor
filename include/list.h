@@ -74,6 +74,7 @@ public:
     linked_list& operator=(linked_list&& other) = default;
     
     void push_back(const T& elem);
+    void push_front(const T& elem);
     size_t size() { return size; }
     ListIterator<T> begin()    const { return ListIterator<T>(first);       }
     ListIterator<T> end()      const { return ListIterator<T>(nullptr);     }
@@ -93,6 +94,22 @@ void linked_list<T>::push_back(const T& elem) {
 
     if (!first) {
         first = node;
+    }
+
+    ++_size;
+}
+
+template<class T>
+void linked_list<T>::push_front(const T& elem) {
+    auto node = new list_node<T>(elem);
+    node->next = first;
+    if (first) {
+        first->prev = node;
+    }
+    first = node;
+
+    if (!last) {
+        last = node;
     }
 
     ++_size;
