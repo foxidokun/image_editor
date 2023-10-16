@@ -14,19 +14,26 @@ using handler_func_t = EVENT_RES (Widget::*)(const T& event);
 
 const Vector SAFETY_AROUND = {100, 100};
 
-template<typename T>
-static EVENT_RES default_event_handler(const linked_list<Widget *>& childs, handler_func_t<T> handler_func, const T& event) {
-    for (auto& child: childs) {
+template<typename T, bool reorder = false>
+static EVENT_RES default_event_handler(linked_list<Widget *>& childs, handler_func_t<T> handler_func, const T& event) {
+    for (auto child_iter = childs.begin(); child_iter != childs.end();) {
         // if constexpr (std::is_same_v<T, mouse_event_t>) {
         //     if (no_hit(child->pos() - SAFETY_AROUND, child->size() + 2*SAFETY_AROUND, event)) {
         //         continue;
         //     }
         // }
 
-        if ((child->*handler_func)(event) == EVENT_RES::STOP) {
-            // child_iter = childs.erase(child_iter);
+        if (((*child_iter)->*handler_func)(event) == EVENT_RES::STOP) {
+            if constexpr (reorder) {
+                childs.push_front(*child_iter);
+                child_iter = childs.erase(child_iter);
+            } else {
+                ++child_iter;
+            }
             return EVENT_RES::STOP;
         }
+
+        ++child_iter;
     }
 
     return EVENT_RES::CONT;
@@ -49,7 +56,7 @@ EVENT_RES Widget::on_mouse_press(const mouse_event_t& _key) {
 
     // if (no_hit(_pos, _size, key)) { return EVENT_RES::CONT; }
 
-    return default_event_handler<mouse_event_t>(_childs, &Widget::on_mouse_press, key);
+    return default_event_handler<mouse_event_t, true>(_childs, &Widget::on_mouse_press, key);
 }
 
 
@@ -58,7 +65,7 @@ EVENT_RES Widget::on_mouse_release(const mouse_event_t& _key) {
     
     // if (no_hit(_pos - SAFETY_AROUND, _size + 2*SAFETY_AROUND, key)) { return EVENT_RES::CONT; }
 
-    return default_event_handler<mouse_event_t>(_childs, &Widget::on_mouse_release, key);
+    return default_event_handler<mouse_event_t, true>(_childs, &Widget::on_mouse_release, key);
 }
 
 EVENT_RES Widget::on_mouse_move(const mouse_event_t& _key) {
