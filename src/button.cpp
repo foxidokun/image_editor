@@ -62,15 +62,12 @@ void Menu::open() {
     _size = Vector(_size.x, last_btn_pos.y);
     _root->recalc_regions();
     is_open = true;
-
-    std::cout << "MENU OPEN\n";
 }
 
 void Menu::close() {
     _size = default_size;
     _root->recalc_regions();
     is_open = false;
-    std::cout << "MENU CLOSE\n";
 }
 
 EVENT_RES Menu::on_mouse_press(const mouse_event_t& key) {

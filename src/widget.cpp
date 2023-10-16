@@ -3,8 +3,6 @@
 #include <type_traits>
 #include <cassert>
 
-// TODO: implement priority logic
-
 static inline bool no_hit(const Point& pos, const Vector& size, const mouse_event_t& event);
 
 Widget* set_root(Widget *const widget, void *args);
@@ -172,13 +170,6 @@ Widget* set_root(Widget *const widget, void *args) {
 void Widget::unregister_object(Widget *rem_child) {
     for (auto child = _childs.begin(); child != _childs.end(); ++child) {
         if (*child == rem_child) {
-            // Rectangle whole = {rem_child->_pos.x, rem_child->_pos.y,
-            //                   rem_child->_pos.x + rem_child->_size.x,
-            //                   rem_child->_pos.y + rem_child->_size.y};
-            // Region child_reg;
-            // child_reg.add_rectangle(whole);
-            // recursive_update(&_parent, return_region, &child_reg);
-
             delete (*child);
             child = _childs.erase(child);
         }
@@ -192,10 +183,6 @@ void Widget::unregister_object(Widget *rem_child) {
 void Widget::recalc_regions() {
     Region new_reg(get_hit_rectangle());
 
-    if (typeid(*this) == typeid(Menu)) {
-        std::cout << "Menu reg 1 " << new_reg << "\n";
-    }
-
     if (_parent) {
         new_reg *= _parent->_reg;
 
@@ -205,34 +192,13 @@ void Widget::recalc_regions() {
         }
     }
 
-    if (typeid(*this) == typeid(Menu)) {
-        std::cout << "Menu reg 2 " << new_reg << "\n";
-    }
-
     _reg = new_reg;
 
     for (const auto& child: _childs) {
         child->recalc_regions();
     }
 
-    if (typeid(*this) == typeid(Menu)) {
-        std::cout << "Menu reg 2.5 " << _reg << "\n";
-    }
-
     for (const auto& child: _childs) {
-        if (typeid(*this) == typeid(Menu)) {
-            std::cout << "Menu self reg -- unknown id " << _reg << "\n";
-        }
-        if (typeid(*this) == typeid(Menu)) {
-            std::cout << "Menu other reg -- unknown id " << child->get_hit_rectangle() << "\n";
-        }
         _reg -= child->get_hit_rectangle();
-        if (typeid(*this) == typeid(Menu)) {
-            std::cout << "Menu res reg -- unknown id " <<_reg << "\n";
-        }
-    }
-
-    if (typeid(*this) == typeid(Menu)) {
-        std::cout << "Menu reg 3 " << _reg << "\n";
     }
 }

@@ -62,7 +62,6 @@ public:
         last_btn_pos(Vector(0, _size.y)),
         default_size(size)
         {
-            std::cout << "size = " << _size << " pos =  " << _pos  << " reg = " << _reg << "\n";
             initialize();
         }
 
