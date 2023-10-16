@@ -25,6 +25,7 @@ int main() {
     target.clear(sf::Color::Cyan);
 
     while (window.isOpen()) {
+        frame_start_time = chrono::system_clock::now();
         WM.render(target);
         target.display(window);
         window.display();
@@ -38,7 +39,7 @@ int main() {
         }
 
         // sleep(1);
-        // std::this_thread::sleep_until(frame_start_time + chrono::milliseconds(1000));
+        std::this_thread::sleep_until(frame_start_time + chrono::milliseconds(33));
     }
 }
 
