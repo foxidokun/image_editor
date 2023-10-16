@@ -50,6 +50,7 @@ void Region::optimize() {
                     }
 
                     _rects.erase(_rects.begin() + j);
+                    break;
                 }
             }
         }
@@ -112,9 +113,12 @@ Region& Region::operator-=(const Region& other) {
                     for (uint i = number; i > 0; --i) {
                         _rects.push_back(added[i - 1]);
                     }
+                    goto break_both_loops; //  because .size() check is invalidated
                 }
             }
         }
+
+        break_both_loops: ;
     }
 
     optimize();
