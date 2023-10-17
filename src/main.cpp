@@ -197,7 +197,7 @@ static void setup_objects(WindowManager& wm, ToolManager *tools) {
 }
 
 static void setup_canvas_window(WindowManager& wm, const ToolManager *tools) {
-    auto win      = new Window(Point(0,0), Vector(600, 600), "Canvas");
+    auto win      = new Window(Point(110,0), Vector(970, 690), "Canvas");
     double width  = win->active_area().high_x - win->active_area().low_x;
     double height = win->active_area().high_y - win->active_area().low_y;
 
@@ -211,12 +211,12 @@ static void setup_canvas_window(WindowManager& wm, const ToolManager *tools) {
 static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
     tools->set_tool(new Brush());
 
-    auto win     = new Window(Point(850,0), Vector(200,400), "Tools");
+    auto win     = new Window(Point(0,0), Vector(100,345), "Tools");
     auto br_btn  = new TextureButton(Point(0,   0), Vector(50, 50), set_brush<Brush>,      new ToolArgs(tools), global_resources::brush);
     auto al_btn  = new TextureButton(Point(50,  0), Vector(50, 50), set_brush<AlienBrush>, new ToolArgs(tools), global_resources::alien);
-    auto pol_btn = new TextureButton(Point(100, 0), Vector(50, 50), set_brush<Polyline>,   new ToolArgs(tools), global_resources::polyline);
-    auto rec_btn = new TextureButton(Point(150, 0), Vector(50, 50), set_brush<RectTool>,   new ToolArgs(tools), global_resources::rectangle);
-    auto ell_btn = new TextureButton(Point(0,  50), Vector(50, 50), set_brush<EllipseTool>,new ToolArgs(tools), global_resources::ellipse);
+    auto pol_btn = new TextureButton(Point(0,  50), Vector(50, 50), set_brush<Polyline>,   new ToolArgs(tools), global_resources::polyline);
+    auto rec_btn = new TextureButton(Point(50, 50), Vector(50, 50), set_brush<RectTool>,   new ToolArgs(tools), global_resources::rectangle);
+    auto ell_btn = new TextureButton(Point(0, 100), Vector(50, 50), set_brush<EllipseTool>,new ToolArgs(tools), global_resources::ellipse);
 
     win->register_object(br_btn);
     win->register_object(al_btn);
@@ -229,13 +229,12 @@ static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
 static void setup_color_window(WindowManager& wm, ToolManager *tools) {
     tools->set_color({0,0,0,255});
 
-
-    auto win    = new Window(Point(850,410), Vector(200, 400), "Colors");
-    setup_color_button(*win, tools, Color{255,   0,   0, 255}, Point(  0,  0));
-    setup_color_button(*win, tools, Color{0,   255,   0, 255}, Point( 50,  0));
-    setup_color_button(*win, tools, Color{0,     0, 255, 255}, Point(100,  0));
-    setup_color_button(*win, tools, Color{255, 255, 255, 255}, Point(150,  0));
-    setup_color_button(*win, tools, Color{0,     0,   0, 255}, Point(  0, 50));
+    auto win    = new Window(Point(0,345), Vector(100, 345), "Colors");
+    setup_color_button(*win, tools, Color{255,   0,   0, 255}, Point(0,   0));
+    setup_color_button(*win, tools, Color{0,   255,   0, 255}, Point(50,  0));
+    setup_color_button(*win, tools, Color{0,     0, 255, 255}, Point(0,  50));
+    setup_color_button(*win, tools, Color{255, 255, 255, 255}, Point(50, 50));
+    setup_color_button(*win, tools, Color{0,     0,   0, 255}, Point(0, 100));
     wm.register_object(win);
 }
 

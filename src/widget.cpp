@@ -32,8 +32,6 @@ static EVENT_RES default_event_handler(Widget &root, linked_list<Widget *>& chil
     return EVENT_RES::CONT;
 }
 
-
-
 EVENT_RES Widget::on_keyboard_press(const keyboard_event_t& key) {
     return default_event_handler<keyboard_event_t>(*_root, _childs, &Widget::on_keyboard_press, key);
 }

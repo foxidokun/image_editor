@@ -124,6 +124,7 @@ public:
 
     virtual void render(RenderTarget& target) override {
         target.drawRect(_reg, _pos, _size, WM_BACKGROUND_COLOR);
+        target.drawLine(_reg, _pos + Vector(0, HEADER_HEIGHT), Vector(_size.x, 0), sf::Color::Black);
 
         Widget::render(target);
     }

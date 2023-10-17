@@ -95,9 +95,11 @@ EVENT_RES Menu::on_mouse_press(const mouse_event_t& key) {
         if (hit_x && hit_y) {
             close();
         }
+
+        Widget::on_mouse_press(key);
     }
 
-    return Widget::on_mouse_press(key);
+    return EVENT_RES::CONT;
 }
 
 EVENT_RES Menu::on_mouse_move(const mouse_event_t& key) {
