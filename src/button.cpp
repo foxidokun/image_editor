@@ -33,6 +33,10 @@ void TextureButton::render(RenderTarget& target) {
     target.drawTexture(_reg, _pos, _size, _texture, _is_clicked);
 }
 
+void TextButton::render(RenderTarget& target) {
+    target.drawText(_reg, _pos, text.c_str(), TITLE_SIZE);
+}
+
 void Menu::register_object(Widget *widget) {
     widget->set_pos(last_btn_pos);
     last_btn_pos.y += MENU_ITEM_HEIGHT;
@@ -48,7 +52,7 @@ void Menu::register_object(Widget *widget) {
 void Menu::render(RenderTarget& target) {
     Vector tmp_size = _size;
     _size = default_size;
-    TextureButton::render(target);
+    TextButton::render(target);
     _size = tmp_size;
 
     if (is_open) {

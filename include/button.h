@@ -48,7 +48,25 @@ public:
     }
 };
 
-class Menu: public TextureButton {
+class TextButton: public Button {
+private:
+    string text;
+public:
+    TextButton(const Point& pos, const Vector& size, on_click_f callback,
+        CallbackArgs *allocated_args, const string& text):
+        Button(pos, size, callback, allocated_args),
+        text(text)
+        {}
+
+    void render(RenderTarget& target) override;
+
+    void print(std::ostream& stream) const override {
+        stream << "TextButton";
+    }
+};
+
+
+class Menu: public TextButton {
 private:
     bool is_open = false;
     Point last_btn_pos;
@@ -57,8 +75,8 @@ private:
     void initialize();
 
 public:
-    Menu(const Point& pos, const Vector& size, const sf::Texture& texture): 
-        TextureButton(pos, size, nullptr, nullptr, texture),
+    Menu(const Point& pos, const Vector& size, const string& text): 
+        TextButton(pos, size, nullptr, nullptr, text),
         last_btn_pos(Vector(0, _size.y)),
         default_size(size)
         {
@@ -74,6 +92,10 @@ public:
     EVENT_RES on_mouse_press  (const mouse_event_t& key) final;
     EVENT_RES on_mouse_move   (const mouse_event_t& key) final;
     EVENT_RES on_mouse_release(const mouse_event_t& key) final;
+
+    void print(std::ostream& stream) const override {
+        stream << "Menu";
+    }
 
     friend void show_menu_callback(CallbackArgs *);
 };
