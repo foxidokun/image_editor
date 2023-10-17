@@ -175,6 +175,8 @@ static void setup_color_button(Window& win, ToolManager *tools, const Color& col
 
 template<typename BrushType>
 static void set_brush(CallbackArgs *_args);
+template<>
+void set_brush<ColorPicker>(CallbackArgs *_args);
 static void set_color(CallbackArgs *_args);
 
 struct ToolArgs: public CallbackArgs {
@@ -212,17 +214,19 @@ static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
     tools->set_tool(new Brush());
 
     auto win     = new Window(Point(0,0), Vector(100,345), "Tools");
-    auto br_btn  = new TextureButton(Point(0,   0), Vector(50, 50), set_brush<Brush>,      new ToolArgs(tools), global_resources::brush);
-    auto al_btn  = new TextureButton(Point(50,  0), Vector(50, 50), set_brush<AlienBrush>, new ToolArgs(tools), global_resources::alien);
-    auto pol_btn = new TextureButton(Point(0,  50), Vector(50, 50), set_brush<Polyline>,   new ToolArgs(tools), global_resources::polyline);
-    auto rec_btn = new TextureButton(Point(50, 50), Vector(50, 50), set_brush<RectTool>,   new ToolArgs(tools), global_resources::rectangle);
-    auto ell_btn = new TextureButton(Point(0, 100), Vector(50, 50), set_brush<EllipseTool>,new ToolArgs(tools), global_resources::ellipse);
+    auto br_btn  = new TextureButton(Point(10, 10) , Vector(30, 30), set_brush<Brush>,      new ToolArgs(tools), global_resources::brush);
+    auto al_btn  = new TextureButton(Point(60, 10) , Vector(30, 30), set_brush<AlienBrush>, new ToolArgs(tools), global_resources::alien);
+    auto pol_btn = new TextureButton(Point(10, 60) , Vector(30, 30), set_brush<Polyline>,   new ToolArgs(tools), global_resources::polyline);
+    auto rec_btn = new TextureButton(Point(60, 60) , Vector(30, 30), set_brush<RectTool>,   new ToolArgs(tools), global_resources::rectangle);
+    auto ell_btn = new TextureButton(Point(10, 110), Vector(30, 30), set_brush<EllipseTool>,new ToolArgs(tools), global_resources::ellipse);
+    auto pic_btn = new TextureButton(Point(60, 110), Vector(30, 30), set_brush<ColorPicker>,new ToolArgs(tools), global_resources::pick);
 
     win->register_object(br_btn);
     win->register_object(al_btn);
     win->register_object(pol_btn);
     win->register_object(rec_btn);
     win->register_object(ell_btn);
+    win->register_object(pic_btn);
     wm.register_object(win);
 }
 
@@ -272,6 +276,13 @@ static void set_brush(CallbackArgs *_args) {
     ToolArgs *args = static_cast<ToolArgs *>(_args);
 
     args->tools->set_tool(new BrushType());
+}
+
+template<>
+void set_brush<ColorPicker>(CallbackArgs *_args) {
+    ToolArgs *args = static_cast<ToolArgs *>(_args);
+
+    args->tools->set_tool(new ColorPicker(args->tools));
 }
 
 static void set_color(CallbackArgs *_args) {

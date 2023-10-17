@@ -260,3 +260,8 @@ void RenderTarget::saveToFile(const char *filename) {
     sf::Image image = _data.getTexture().copyToImage();
     image.saveToFile(filename);
 }
+
+Color RenderTarget::get_pixel(const Vector& pos) const {
+    sf::Image img_copy = _data.getTexture().copyToImage();
+    return img_copy.getPixel(pos.x, pos.y);
+}

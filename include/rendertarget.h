@@ -54,6 +54,8 @@ public:
 
     void drawRenderTarget(const Region& reg, const Point& point, const RenderTarget& rt);
 
+    Color get_pixel(const Vector& pos) const;
+
     #if DRAW_REGIONS
         void drawRegions(const Region& reg);
     #else

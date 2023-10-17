@@ -111,3 +111,17 @@ public:
     void paint_on_move   (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final;
     void paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final;
 };
+
+class ColorPicker: public Tool {
+private:
+    ToolManager *tm;
+    bool is_drawing;
+
+    void set_color(RenderTarget& permanent, const mouse_event_t& point_pos);
+public:
+    ColorPicker(ToolManager *tm): tm(tm) {}
+
+    void paint_on_press  (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final;
+    void paint_on_move   (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final;
+    void paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final;
+};

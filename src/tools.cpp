@@ -8,7 +8,8 @@ void Brush::paint(RenderTarget& permanent, const Point& point_pos, const Color& 
     permanent.drawCircle(point_pos, BRUSH_RADIUS, color);
 }
 
-void Brush::paint_on_press(RenderTarget& permanent, RenderTarget&, const mouse_event_t& key, const Color& color) {
+void Brush::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& key, const Color& color) {
+    tmp.clear(sf::Color::Transparent);
     last_pos = extract_point(key);
     paint(permanent, last_pos, color);
 }
@@ -34,7 +35,8 @@ void AlienBrush::paint(RenderTarget& permanent, const Point& point_pos, const Co
     permanent.drawCircle(point_pos, BRUSH_RADIUS, color);
 }
 
-void AlienBrush::paint_on_press(RenderTarget& permanent, RenderTarget&, const mouse_event_t& key, const Color& color) {
+void AlienBrush::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& key, const Color& color) {
+    tmp.clear(sf::Color::Transparent);
     start_pos = extract_point(key);
     paint(permanent, start_pos, color);
 }
@@ -60,6 +62,7 @@ void AlienBrush::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const
 }
 
 void Polyline::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    tmp.clear(sf::Color::Transparent);
     if (!has_drawn) {
         last_point = extract_point(point_pos);
         has_drawn = true;
@@ -98,6 +101,7 @@ void Polyline::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, cons
 }
 
 void RectTool::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    tmp.clear(sf::Color::Transparent);
     start_point = extract_point(point_pos);
     is_drawing = true;
 }
@@ -123,6 +127,7 @@ void RectTool::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, cons
 
 
 void EllipseTool::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    tmp.clear(sf::Color::Transparent);
     start_point = extract_point(point_pos);
     is_drawing = true;
 }
@@ -144,4 +149,25 @@ void EllipseTool::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, c
         permanent.drawEllipse(start_point, end_point-start_point, color);
         is_drawing = false;
     }
+}
+
+void ColorPicker::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    tmp.clear(sf::Color::Transparent);
+    is_drawing = true;
+    set_color(permanent, point_pos);
+}
+
+void ColorPicker::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    if (is_drawing) {
+        set_color(permanent, point_pos);
+    }
+}
+
+void ColorPicker::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    is_drawing = false;
+}
+
+void ColorPicker::set_color(RenderTarget& permanent, const mouse_event_t& point_pos) {
+    Color color = permanent.get_pixel(extract_point(point_pos));
+    tm->set_color(color);
 }
