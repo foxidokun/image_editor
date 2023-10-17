@@ -97,6 +97,7 @@ EVENT_RES Menu::on_mouse_press(const mouse_event_t& key) {
         }
 
         Widget::on_mouse_press(key);
+        return EVENT_RES::STOP;
     }
 
     return EVENT_RES::CONT;
