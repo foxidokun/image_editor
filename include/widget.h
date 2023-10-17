@@ -114,7 +114,7 @@ public:
         Widget(Point(0,0), Vector(width, height))
         {
             _root = this;
-            // _active_area.low_y += MENU_HEIGHT;
+            _active_area.low_y += MENU_HEIGHT;
         }
 
     void print(std::ostream& stream) const final {

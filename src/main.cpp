@@ -205,12 +205,6 @@ static void setup_canvas_window(WindowManager& wm, const ToolManager *tools) {
     auto canvas = new Canvas(Point(0,0), Vector(width, height), tools);
     win->register_object(canvas);
     wm.register_object(win);
-
-    auto load_btn = new TextureButton(Point(0,   700), Vector(50, 50), load_canvas_callback, new SaveLoadCanvasArgs(canvas), global_resources::brush);
-    auto save_btn = new TextureButton(Point(100, 700), Vector(50, 50), save_canvas_callback, new SaveLoadCanvasArgs(canvas), global_resources::rectangle);
-
-    wm.register_object(load_btn);
-    wm.register_object(save_btn);
 }
 
 static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
