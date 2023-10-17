@@ -10,12 +10,18 @@
 
 const double infinity = std::numeric_limits<double>::infinity();
 
-extern const sf::Font global_font;
-extern const sf::Texture close_window_button;
-extern const sf::Texture brush_tool;
-extern const sf::Texture alien_brush_tool;
-extern const sf::Texture polyline_tool;
-extern const sf::Texture rectangle_tool;
+
+namespace global_resources {
+    extern const sf::Font    font;
+
+    extern const sf::Texture close_button;
+    extern const sf::Texture brush;
+    extern const sf::Texture alien;
+    extern const sf::Texture polyline;
+    extern const sf::Texture rectangle;
+    extern const sf::Texture ellipse;
+    extern const sf::Texture pick;
+}
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Random functions

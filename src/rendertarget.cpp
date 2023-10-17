@@ -80,11 +80,11 @@ void RenderTarget::drawText(const Region& reg, const Point& point, const char* t
     ghost.clear(sf::Color::Transparent);
 
     sf::Text textobj;
-    textobj.setFont(global_font);
+    textobj.setFont(global_resources::font);
     textobj.setString(text);
     textobj.setPosition(point.x, point.y);
     textobj.setCharacterSize(size);
-    textobj.setFillColor(sf::Color(0,0,0,255));
+    textobj.setFillColor(TEXT_COLOR);
 
     ghost.draw(textobj);
     ghost.display();

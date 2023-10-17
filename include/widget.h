@@ -114,6 +114,7 @@ public:
         Widget(Point(0,0), Vector(width, height))
         {
             _root = this;
+            // _active_area.low_y += MENU_HEIGHT;
         }
 
     void print(std::ostream& stream) const final {
@@ -121,7 +122,7 @@ public:
     }
 
     virtual void render(RenderTarget& target) override {
-        target.drawRect(_reg, _pos, _size, {0, 255, 255, 255});
+        target.drawRect(_reg, _pos, _size, WM_BACKGROUND_COLOR);
 
         Widget::render(target);
     }

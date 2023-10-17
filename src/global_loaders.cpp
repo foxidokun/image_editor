@@ -6,12 +6,17 @@
 static sf::Font load_font();
 static sf::Texture load_texture(const char* path);
 
-const sf::Font global_font = load_font();
-const sf::Texture close_window_button = load_texture(CLOSE_WINDOW_BUTTON_TEXTURE_PATH);
-const sf::Texture brush_tool          = load_texture(BRUSH_TOOL_TEXTURE_PATH);
-const sf::Texture alien_brush_tool    = load_texture(ALIEN_BRUSH_TOOL_TEXTURE_PATH);
-const sf::Texture polyline_tool       = load_texture(POLYLINE_TOOL_TEXTURE_PATH);
-const sf::Texture rectangle_tool      = load_texture(RECTANGLE_TOOL_TEXTURE_PATH);
+namespace global_resources {
+    const sf::Font    font  = load_font();
+
+    const sf::Texture close_button = load_texture(CLOSE_WINDOW_BUTTON_TEXTURE_PATH);
+    const sf::Texture brush        = load_texture(BRUSH_TOOL_TEXTURE_PATH);
+    const sf::Texture alien        = load_texture(ALIEN_BRUSH_TOOL_TEXTURE_PATH);
+    const sf::Texture polyline     = load_texture(POLYLINE_TOOL_TEXTURE_PATH);
+    const sf::Texture rectangle    = load_texture(RECTANGLE_TOOL_TEXTURE_PATH);
+    const sf::Texture ellipse      = load_texture(ELLIPSE_TOOL_TEXTURE_PATH);
+    const sf::Texture pick         = load_texture(PICK_TOOL_TEXTURE_PATH);
+}
 
 sf::Font load_font() {
     sf::Font font;

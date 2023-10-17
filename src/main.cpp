@@ -206,8 +206,8 @@ static void setup_canvas_window(WindowManager& wm, const ToolManager *tools) {
     win->register_object(canvas);
     wm.register_object(win);
 
-    auto load_btn = new TextureButton(Point(0,   700), Vector(50, 50), load_canvas_callback, new SaveLoadCanvasArgs(canvas), brush_tool);
-    auto save_btn = new TextureButton(Point(100, 700), Vector(50, 50), save_canvas_callback, new SaveLoadCanvasArgs(canvas), rectangle_tool);
+    auto load_btn = new TextureButton(Point(0,   700), Vector(50, 50), load_canvas_callback, new SaveLoadCanvasArgs(canvas), global_resources::brush);
+    auto save_btn = new TextureButton(Point(100, 700), Vector(50, 50), save_canvas_callback, new SaveLoadCanvasArgs(canvas), global_resources::rectangle);
 
     wm.register_object(load_btn);
     wm.register_object(save_btn);
@@ -217,11 +217,11 @@ static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
     tools->set_tool(new Brush());
 
     auto win     = new Window(Point(850,0), Vector(200,400), "Tools");
-    auto br_btn  = new TextureButton(Point(0,   0), Vector(50, 50), set_brush<Brush>,      new ToolArgs(tools), brush_tool);
-    auto al_btn  = new TextureButton(Point(50,  0), Vector(50, 50), set_brush<AlienBrush>, new ToolArgs(tools), alien_brush_tool);
-    auto pol_btn = new TextureButton(Point(100, 0), Vector(50, 50), set_brush<Polyline>,   new ToolArgs(tools), polyline_tool);
-    auto rec_btn = new TextureButton(Point(150, 0), Vector(50, 50), set_brush<RectTool>,   new ToolArgs(tools), rectangle_tool);
-    auto ell_btn = new TextureButton(Point(0,  50), Vector(50, 50), set_brush<EllipseTool>,new ToolArgs(tools), rectangle_tool);
+    auto br_btn  = new TextureButton(Point(0,   0), Vector(50, 50), set_brush<Brush>,      new ToolArgs(tools), global_resources::brush);
+    auto al_btn  = new TextureButton(Point(50,  0), Vector(50, 50), set_brush<AlienBrush>, new ToolArgs(tools), global_resources::alien);
+    auto pol_btn = new TextureButton(Point(100, 0), Vector(50, 50), set_brush<Polyline>,   new ToolArgs(tools), global_resources::polyline);
+    auto rec_btn = new TextureButton(Point(150, 0), Vector(50, 50), set_brush<RectTool>,   new ToolArgs(tools), global_resources::rectangle);
+    auto ell_btn = new TextureButton(Point(0,  50), Vector(50, 50), set_brush<EllipseTool>,new ToolArgs(tools), global_resources::ellipse);
 
     win->register_object(br_btn);
     win->register_object(al_btn);

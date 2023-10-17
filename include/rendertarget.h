@@ -4,22 +4,9 @@
 #include "vector.h"
 #include "point.h"
 #include "regions.h"
+#include "colors.h"
 
 typedef sf::Texture Texture;
-
-struct Color {
-    uint r;
-    uint g;
-    uint b;
-    uint a;
-
-    Color(const sf::Color &sfc): r(sfc.r), g(sfc.g), b(sfc.b), a(sfc.a) {}
-    Color(uint r, uint g, uint b, uint a): r(r), g(g), b(b), a(a) {}
-
-    operator sf::Color() const {
-        return sf::Color(r, g, b, a);
-    }
-};
 
 #define DRAW_REGIONS 0
 

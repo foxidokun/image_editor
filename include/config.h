@@ -19,11 +19,14 @@ const uint BRUSH_RADIUS   = 5;
 
 const double MENU_ITEM_HEIGHT = 30;
 
+const double MENU_HEIGHT = 30;
 
 const char FONT_FILENAME[]                    = "assets/font.ttf";
 const char CLOSE_WINDOW_BUTTON_TEXTURE_PATH[] = "assets/close_window_button.png";
-const char BRUSH_TOOL_TEXTURE_PATH[]          = "assets/brush.png";
+const char BRUSH_TOOL_TEXTURE_PATH[]          = "assets/brush.svg.png";
 const char ALIEN_BRUSH_TOOL_TEXTURE_PATH[]    = "assets/alien.png";
-const char POLYLINE_TOOL_TEXTURE_PATH[]       = "assets/polyline.png";
-const char RECTANGLE_TOOL_TEXTURE_PATH[]      = "assets/rectangle.png";
+const char POLYLINE_TOOL_TEXTURE_PATH[]       = "assets/polyline.svg.png";
+const char RECTANGLE_TOOL_TEXTURE_PATH[]      = "assets/rectangle.svg.png";
 const char RENDER_SHADER_PATH[]               = "assets/inverter.shader";
+const char ELLIPSE_TOOL_TEXTURE_PATH[]        = "assets/ellipse.svg.png";
+const char PICK_TOOL_TEXTURE_PATH[]           = "assets/colorpick.svg.png";
