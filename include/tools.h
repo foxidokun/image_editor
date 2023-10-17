@@ -42,6 +42,8 @@ public:
         color = new_color;
     }
 
+    const Color* get_color_ptr() const { return &color; }
+
     ~ToolManager() {
         delete active_tool;
     }

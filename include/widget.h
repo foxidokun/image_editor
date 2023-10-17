@@ -130,6 +130,20 @@ public:
     }
 };
 
+class ColorIndicator: public Widget {
+private:
+    const Color *color_ptr;
+public:
+    ColorIndicator(const Point& pos, const Vector& size, const Color* color_ptr): 
+        Widget(pos, size),
+        color_ptr(color_ptr)
+        {}
+
+    virtual void render(RenderTarget& target) override {
+        target.drawRect(_reg, _pos, _size, *color_ptr);
+    }
+};
+
 void recursive_update(Widget **widget, transform_f func, void* args, 
                      checker_f check = nullptr, void* check_args = nullptr);
 Widget* update_coords(Widget *widget, void *args);

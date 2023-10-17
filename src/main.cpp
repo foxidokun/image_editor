@@ -239,6 +239,10 @@ static void setup_color_window(WindowManager& wm, ToolManager *tools) {
     setup_color_button(*win, tools, Color{0,     0, 255, 255}, Point(0,  50));
     setup_color_button(*win, tools, Color{255, 255, 255, 255}, Point(50, 50));
     setup_color_button(*win, tools, Color{0,     0,   0, 255}, Point(0, 100));
+
+    auto indicator = new ColorIndicator(Vector(40, 275), Vector(20, 20), tools->get_color_ptr());
+    win->register_object(indicator);
+
     wm.register_object(win);
 }
 
