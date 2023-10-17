@@ -74,10 +74,11 @@ void RenderTarget::display(sf::RenderWindow& window) {
     window.draw(sf::Sprite(_data.getTexture()));
 }
 
-void RenderTarget::drawText(const Region& reg, const Point& point, const char* text, uint size) {
+void RenderTarget::drawText(const Region& reg, const Point& point, const char* text, uint size, const Color& backcolor)
+{
     sf::RenderTexture ghost;
     ghost.create(_data.getSize().x, _data.getSize().y);
-    ghost.clear(sf::Color::Transparent);
+    ghost.clear(backcolor);
 
     sf::Text textobj;
     textobj.setFont(global_resources::font);

@@ -73,6 +73,7 @@ public:
     }
 
     void register_object(Widget *child);
+    void register_object_exact_pos(Widget *child);
 
     void unregister_object(Widget *rem_child);
 

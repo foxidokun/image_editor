@@ -169,6 +169,7 @@ static void test_regions() {
 
 static void setup_canvas_window(WindowManager& wm, const ToolManager *tools);
 static void setup_tool_window(WindowManager& wm, ToolManager *tools);
+static void setup_file_menu(WindowManager& wm, Canvas* canvas);
 static void setup_color_window(WindowManager& wm, ToolManager *tools);
 static void setup_color_button(Window& win, ToolManager *tools, const Color& color, const Point& pos);
 
@@ -200,11 +201,11 @@ static void setup_canvas_window(WindowManager& wm, const ToolManager *tools) {
     double width  = win->active_area().high_x - win->active_area().low_x;
     double height = win->active_area().high_y - win->active_area().low_y;
 
-    // auto subwindow      = new Window(Point(240,240), Vector(200, 200), "SubWindow");
-
     auto canvas = new Canvas(Point(0,0), Vector(width, height), tools);
     win->register_object(canvas);
     wm.register_object(win);
+
+    setup_file_menu(wm, canvas);
 }
 
 static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
@@ -245,7 +246,7 @@ static void setup_color_button(Window& win, ToolManager *tools, const Color& col
     color_texture->create(30, 30);
     color_texture->clear(convert_color(color));
     sf::RectangleShape borders;
-    borders.setOutlineColor(sf::Color(0,0,0,100));
+    borders.setOutlineColor(sf::Color(100,100,100,255));
     borders.setFillColor(sf::Color::Transparent);
     borders.setOutlineThickness(30);
     borders.setPosition(1, 1);
@@ -254,6 +255,17 @@ static void setup_color_button(Window& win, ToolManager *tools, const Color& col
     color_texture->display();
     auto button = new TextureButton(pos + Vector(10, 10), Vector(30, 30), set_color, red_args, color_texture->getTexture());
     win.register_object(button);
+}
+
+static void setup_file_menu(WindowManager& wm, Canvas* canvas) {
+    auto file_menu = new Menu(Point(0,0), Vector(50, HEADER_HEIGHT), "File");
+
+    auto load_button = new TextButton(Point(), Vector(), load_canvas_callback, new SaveLoadCanvasArgs(canvas), "Open");
+    auto save_button = new TextButton(Point(), Vector(), save_canvas_callback, new SaveLoadCanvasArgs(canvas), "Save");
+
+    file_menu->register_object(load_button);
+    file_menu->register_object(save_button);
+    wm.register_object_exact_pos(file_menu);
 }
 
 template<typename BrushType>

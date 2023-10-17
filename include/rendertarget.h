@@ -45,7 +45,7 @@ public:
     
     void drawEllipse(const Point& point, const Vector& size, const Color& fillcolor = {0,0,0,0});
 
-    void drawText(const Region& reg, const Point& point, const char* text, uint size);
+    void drawText(const Region& reg, const Point& point, const char* text, uint size, const Color& backcolor = sf::Color::Transparent);
 
     void drawTexture(const Region& reg, const Point& point, const Vector& size, const Texture& texture,
         bool invert = false);

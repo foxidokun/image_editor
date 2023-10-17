@@ -34,7 +34,11 @@ void TextureButton::render(RenderTarget& target) {
 }
 
 void TextButton::render(RenderTarget& target) {
-    target.drawText(_reg, _pos, text.c_str(), TITLE_SIZE);
+    if (_is_clicked) {
+        target.drawText(_reg, _pos, text.c_str(), TITLE_SIZE, BUTTON_ACTIVE_COLOR);
+    } else {
+        target.drawText(_reg, _pos, text.c_str(), TITLE_SIZE, BUTTON_INACTIVE_COLOR);
+    }
 }
 
 void Menu::register_object(Widget *widget) {
