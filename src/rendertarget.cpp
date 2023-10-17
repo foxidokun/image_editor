@@ -196,6 +196,19 @@ void RenderTarget::drawCircle(const Point& point, double radius, const Color& fi
     _data.draw(circle);
 }
 
+void RenderTarget::drawEllipse(const Point& point, const Vector& size, const Color& fillcolor) {
+    sf::CircleShape circle;
+
+    double max_size = std::max(fabs(size.x), fabs(size.y));
+
+    circle.setPosition((sf::Vector2f)point);
+    circle.setFillColor(convert_color(fillcolor));
+    circle.setRadius(max_size / 2);
+    circle.setScale(size.x / max_size, size.y / max_size);
+
+    _data.draw(circle);
+}
+
 void RenderTarget::drawRenderTarget(const Region& reg, const Point& point, const RenderTarget& rt) {
     sf::RenderTexture ghost;
     ghost.create(_data.getSize().x, _data.getSize().y);

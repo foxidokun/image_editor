@@ -52,6 +52,8 @@ public:
     void drawLine(const Point& point, const Vector& size, const Color& fillcolor = {0,0,0,255});
     
     void drawCircle(const Point& point, double radius, const Color& fillcolor = {0,0,0,255});
+    
+    void drawEllipse(const Point& point, const Vector& size, const Color& fillcolor = {0,0,0,0});
 
     void drawText(const Region& reg, const Point& point, const char* text, uint size);
 

@@ -38,7 +38,6 @@ int main() {
             }
         }
 
-        // sleep(1);
         std::this_thread::sleep_until(frame_start_time + chrono::milliseconds(33));
     }
 }
@@ -212,20 +211,17 @@ static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
     tools->set_tool(new Brush());
 
     auto win     = new Window(Point(850,0), Vector(200,400), "Tools");
-    auto menu    = new Menu(Point(0,   0), Vector(50, 20), brush_tool);
-    // auto br_btn  = new TextureButton(Point(0,   0), Vector(50, 50), set_brush<Brush>,      new ToolArgs(tools), brush_tool);
+    auto br_btn  = new TextureButton(Point(0,   0), Vector(50, 50), set_brush<Brush>,      new ToolArgs(tools), brush_tool);
     auto al_btn  = new TextureButton(Point(50,  0), Vector(50, 50), set_brush<AlienBrush>, new ToolArgs(tools), alien_brush_tool);
     auto pol_btn = new TextureButton(Point(100, 0), Vector(50, 50), set_brush<Polyline>,   new ToolArgs(tools), polyline_tool);
     auto rec_btn = new TextureButton(Point(150, 0), Vector(50, 50), set_brush<RectTool>,   new ToolArgs(tools), rectangle_tool);
+    auto ell_btn = new TextureButton(Point(0,  50), Vector(50, 50), set_brush<EllipseTool>,new ToolArgs(tools), rectangle_tool);
 
-    menu->register_object(al_btn);
-    menu->register_object(pol_btn);
-    menu->register_object(rec_btn);
-
-    win->register_object(menu);
-    // win->register_object(al_btn);
-    // win->register_object(pol_btn);
-    // win->register_object(rec_btn);
+    win->register_object(br_btn);
+    win->register_object(al_btn);
+    win->register_object(pol_btn);
+    win->register_object(rec_btn);
+    win->register_object(ell_btn);
     wm.register_object(win);
 }
 
