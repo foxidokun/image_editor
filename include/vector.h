@@ -46,6 +46,7 @@ public:
         {}
 
     explicit Vector(sf::Vector2f vec): x(vec.x), y(vec.y) {}
+    explicit Vector(sf::Vector2u vec): x(vec.x), y(vec.y) {}
     explicit operator sf::Vector2f() const { return sf::Vector2f(x, y); }
 #endif
 

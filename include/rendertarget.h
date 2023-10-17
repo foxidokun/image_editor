@@ -36,6 +36,9 @@ public:
             invert_shader.setUniform("texture", sf::Shader::CurrentTexture);
         }
 
+    void loadFromFile(const char *filename);
+    void saveToFile(const char *filename);
+
     void clear(const Color& color) { _data.clear(color); };
     
     void display() { _data.display(); }
@@ -58,6 +61,8 @@ public:
     void drawText(const Region& reg, const Point& point, const char* text, uint size);
 
     void drawTexture(const Region& reg, const Point& point, const Vector& size, const Texture& texture,
+        bool invert = false);
+    void drawTexture(const Point& point, const Vector& size, const Texture& texture,
         bool invert = false);
 
     void drawRenderTarget(const Region& reg, const Point& point, const RenderTarget& rt);

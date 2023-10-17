@@ -1,4 +1,5 @@
 #include "canvas.h"
+#include <nfd.h>
 
 void Canvas::render(RenderTarget& target) {
     _permanent.display();
@@ -54,4 +55,36 @@ EVENT_RES Canvas::on_mouse_move(const mouse_event_t& key) {
     tool_manager->paint_on_release(_permanent, _tmp, key_copy);
 
     return EVENT_RES::CONT;
+}
+
+void load_canvas_callback(CallbackArgs *args_) {
+    SaveLoadCanvasArgs *args = static_cast<SaveLoadCanvasArgs *>(args_);
+
+    nfdchar_t *path = NULL;
+    nfdresult_t result = NFD_OpenDialog("png;jpg;bmp", NULL, &path);
+    
+    if (result == NFD_OKAY) {
+        args->self->load_from_file(path);
+        free(path);
+    } else if (result == NFD_CANCEL) {
+        return;
+    } else {
+        std::cerr << "Error: " << NFD_GetError() << '\n';
+    }
+}
+
+void save_canvas_callback(CallbackArgs *args_) {
+    SaveLoadCanvasArgs *args = static_cast<SaveLoadCanvasArgs *>(args_);
+
+    nfdchar_t *path = NULL;
+    nfdresult_t result = NFD_SaveDialog("png;jpg;bmp", NULL, &path);
+    
+    if (result == NFD_OKAY) {
+        args->self->save_to_file(path);
+        free(path);
+    } else if (result == NFD_CANCEL) {
+        return;
+    } else {
+        std::cerr << "Error: " << NFD_GetError() << '\n';
+    }
 }

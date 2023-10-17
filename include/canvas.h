@@ -3,6 +3,7 @@
 #include "rendertarget.h"
 #include "widget.h"
 #include "tools.h"
+#include "button.h"
 
 class Canvas: public Widget {
 private:
@@ -27,4 +28,22 @@ public:
     EVENT_RES on_mouse_press(const mouse_event_t& key) final;
     EVENT_RES on_mouse_release(const mouse_event_t& key) final;
     EVENT_RES on_mouse_move(const mouse_event_t& key) final;
+
+    void load_from_file(const char* filename) {
+        _permanent.loadFromFile(filename);
+        _tmp.clear(sf::Color::Transparent);
+    };
+
+    void save_to_file(const char* filename) {
+        _permanent.saveToFile(filename);
+    };
 };
+
+struct SaveLoadCanvasArgs: public CallbackArgs {
+    Canvas* self;
+
+    SaveLoadCanvasArgs(Canvas *self): self(self) {}
+};
+
+void load_canvas_callback(CallbackArgs *args);
+void save_canvas_callback(CallbackArgs *args);

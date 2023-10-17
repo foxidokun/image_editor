@@ -134,6 +134,24 @@ void RenderTarget::drawTexture(const Region& reg, const Point& point, const Vect
     }
 }
 
+void RenderTarget::drawTexture(const Point& point, const Vector& size, const Texture& texture,
+    bool invert)
+{
+    sf::Sprite sprite(texture);
+    sprite.setPosition(point.x, point.y);
+
+    double x_scale = size.x / texture.getSize().x;
+    double y_scale = size.y / texture.getSize().y;
+
+    sprite.setScale(x_scale, y_scale);
+
+    if (invert) {
+        _data.draw(sprite, &invert_shader);
+    } else {
+        _data.draw(sprite);
+    }
+}
+
 
 const int color_len = 6;
 const sf::Color COLORS[color_len] = {
@@ -228,4 +246,16 @@ void RenderTarget::drawRenderTarget(const Region& reg, const Point& point, const
 
         _data.draw(part_sprite);
     }
+}
+
+void RenderTarget::loadFromFile(const char *filename) {
+    sf::Texture texture;
+    texture.loadFromFile(filename);
+
+    drawTexture(Point(0,0), (Vector)_data.getSize(), texture);
+}
+
+void RenderTarget::saveToFile(const char *filename) {
+    sf::Image image = _data.getTexture().copyToImage();
+    image.saveToFile(filename);
 }
