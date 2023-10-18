@@ -21,7 +21,7 @@ public:
     RawImage(uint width, uint height, const uint8_t* pixel_array):
         _width(width), _height(height), pixels(new Color[width*height])
     {
-        memmove(pixels, pixel_array, width*height*sizeof(Color));
+        memcpy(pixels, pixel_array, width*height*sizeof(Color));
     }
 
     ~RawImage() {

@@ -27,10 +27,6 @@ void RenderTarget::drawRect(const Point& point, const Vector& size, const Color&
 }
 
 void RenderTarget::drawLine(const Region& reg, const Point& point, const Vector& size, const Color& fillcolor) {
-    sf::RectangleShape rect;
-    rect.setFillColor(convert_color(fillcolor));
-    rect.setRotation(radians_to_degrees(atan(size.y / size.x)));
-
     for (const auto &disp_rect: reg.rects()) {
         Point start_point = point;
         Point end_point   = point + size;
@@ -45,10 +41,7 @@ void RenderTarget::drawLine(const Region& reg, const Point& point, const Vector&
             continue;
         }
 
-        rect.setSize(sf::Vector2f(new_size.length(), LINE_THICKNESS));
-        rect.setPosition(start_point.x, start_point.y);
-
-        _data.draw(rect);
+        drawLine(start_point, new_size, fillcolor);
     }
 }
 
