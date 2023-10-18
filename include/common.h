@@ -21,6 +21,7 @@ namespace global_resources {
     extern const sf::Texture rectangle;
     extern const sf::Texture ellipse;
     extern const sf::Texture pick;
+    extern const sf::Texture fill;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

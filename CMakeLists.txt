@@ -4,7 +4,8 @@ project(image_editor)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 20)
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -iquote ${PROJECT_SOURCE_DIR}/include")
+
 include_directories(${CMAKE_SOURCE_DIR}/lib/nativefiledialog/src/include)
 find_package(SFML REQUIRED COMPONENTS graphics window system)
 # find_package(OpenMP)

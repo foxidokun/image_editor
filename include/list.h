@@ -1,7 +1,7 @@
 #pragma once
 #include <list>
 
-#define DISABLE_LIST_FOR_SECURITY 0
+#define DISABLE_LIST_FOR_SECURITY 1
 
 #if DISABLE_LIST_FOR_SECURITY
 template<typename T>

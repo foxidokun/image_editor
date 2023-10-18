@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstring>
 #include <SFML/Graphics.hpp>
 #include "vector.h"
 #include "point.h"
@@ -9,6 +10,37 @@
 typedef sf::Texture Texture;
 
 #define DRAW_REGIONS 0
+
+class RawImage {
+private:
+    uint _width;
+    uint _height;
+    Color* pixels;
+    
+public:
+    RawImage(uint width, uint height, const uint8_t* pixel_array):
+        _width(width), _height(height), pixels(new Color[width*height])
+    {
+        memmove(pixels, pixel_array, width*height*sizeof(Color));
+    }
+
+    ~RawImage() {
+        delete[] pixels;
+    }
+
+    const uint8_t *get_bytes() const { return (const uint8_t *) pixels; }
+    uint width() const  { return _width; };
+    uint height() const { return _height; };
+
+
+    Color get_pixel(uint x, uint y) {
+        return pixels[_width * y + x];
+    }
+
+    void set_pixel(uint x, uint y, const Color& color) {
+        pixels[_width * y + x] = color;
+    }
+};
 
 class RenderTarget {
 private:
@@ -54,7 +86,8 @@ public:
 
     void drawRenderTarget(const Region& reg, const Point& point, const RenderTarget& rt);
 
-    Color get_pixel(const Vector& pos) const;
+    RawImage get_image() const;
+    void set_image(const RawImage& img);
 
     #if DRAW_REGIONS
         void drawRegions(const Region& reg);

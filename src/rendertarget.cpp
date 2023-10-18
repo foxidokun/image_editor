@@ -261,7 +261,15 @@ void RenderTarget::saveToFile(const char *filename) {
     image.saveToFile(filename);
 }
 
-Color RenderTarget::get_pixel(const Vector& pos) const {
-    sf::Image img_copy = _data.getTexture().copyToImage();
-    return img_copy.getPixel(pos.x, pos.y);
+RawImage RenderTarget::get_image() const {
+    sf::Image img = _data.getTexture().copyToImage();
+    const uint8_t *pix_ptr = img.getPixelsPtr();
+    return RawImage(_data.getSize().x, _data.getSize().y, pix_ptr);
+}
+
+void RenderTarget::set_image(const RawImage& img) {
+    sf::Texture texture;
+    texture.create(img.width(), img.height());
+    texture.update(img.get_bytes());
+    _data.draw(sf::Sprite(texture));
 }

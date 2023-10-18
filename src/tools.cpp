@@ -168,6 +168,45 @@ void ColorPicker::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, c
 }
 
 void ColorPicker::set_color(RenderTarget& permanent, const mouse_event_t& point_pos) {
-    Color color = permanent.get_pixel(extract_point(point_pos));
+    Point pos = extract_point(point_pos);
+    Color color = permanent.get_image().get_pixel(pos.x, pos.y);
     tm->set_color(color);
+}
+
+void FillTool::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    tmp.clear(sf::Color::Transparent);
+
+    Point pos = extract_point(point_pos);
+    RawImage img = permanent.get_image();
+    Color ref_color = img.get_pixel(pos.x, pos.y);
+    
+    linked_list<Point> queue;
+    queue.push_back(pos);
+    while (queue.size() > 0) {
+        Point cur_pos = queue.front();
+        queue.pop_front();
+
+        if (cur_pos.x < 0 || cur_pos.x + 1 > img.width()) {
+            continue;
+        }
+
+        if (cur_pos.y < 0 || cur_pos.y + 1> img.height()) {
+            continue;
+        }
+
+        if (img.get_pixel(cur_pos.x, cur_pos.y) == ref_color) {
+            img.set_pixel(cur_pos.x, cur_pos.y, color);
+            Vector diff = cur_pos - pos;
+            double diff_length = diff.length_square();
+            for (int i = -1; i <= 1; ++i) {
+                for (int j = -1; j <= 1; ++j) {
+                    if ((diff+Vector(i, j)).length_square() > diff_length) {
+                        queue.push_back(cur_pos + Vector(i, j));
+                    }
+                }
+            }
+        }
+    }
+
+    permanent.set_image(img);
 }

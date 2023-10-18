@@ -4,17 +4,22 @@
 typedef unsigned int uint;
 
 struct Color {
-    uint r;
-    uint g;
-    uint b;
-    uint a;
+    uint8_t r = 0;
+    uint8_t g = 0;
+    uint8_t b = 0;
+    uint8_t a = 0;
 
     Color(const sf::Color &sfc): r(sfc.r), g(sfc.g), b(sfc.b), a(sfc.a) {}
     Color(uint r, uint g, uint b, uint a=255): r(r), g(g), b(b), a(a) {}
+    Color() = default;
 
     operator sf::Color() const {
         return sf::Color(r, g, b, a);
     }
+
+    bool operator==(const Color& other) const {
+        return ((sf::Color)(*this) == (sf::Color)(other));
+    } 
 };
 
 #define BREEZE_DARK 1
@@ -30,5 +35,5 @@ const Color BUTTON_INACTIVE_COLOR(49,54,59);
 const Color BUTTON_ACTIVE_COLOR(61,174,233);
 
 #else
-#error "Unknown scheme"
+#error "Unknown color scheme"
 #endif
