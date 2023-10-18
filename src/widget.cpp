@@ -18,10 +18,8 @@ static EVENT_RES default_event_handler(Widget &root, linked_list<Widget *>& chil
         if (((*child_iter)->*handler_func)(event) == EVENT_RES::STOP) {
             if constexpr (reorder) {
                 childs.push_front(*child_iter);
-                child_iter = childs.erase(child_iter);
+                childs.erase(child_iter);
                 root.recalc_regions();
-            } else {
-                ++child_iter;
             }
             return EVENT_RES::STOP;
         }
@@ -164,19 +162,6 @@ Widget* set_root(Widget *const widget, void *args) {
     return widget;
 }
 
-void Widget::unregister_object(Widget *rem_child) {
-    for (auto child = _childs.begin(); child != _childs.end(); ++child) {
-        if (*child == rem_child) {
-            delete (*child);
-            child = _childs.erase(child);
-        }
-    }
-
-    recalc_regions();
-}
-
-#include "button.h"
-
 void Widget::recalc_regions() {
     Region new_reg(get_hit_rectangle());
 
@@ -198,4 +183,19 @@ void Widget::recalc_regions() {
     for (const auto& child: _childs) {
         _reg -= child->get_hit_rectangle();
     }
+}
+
+bool Widget::recursive_cleanup() {
+    bool has_deleted = false;
+    for (auto child = _childs.begin(); child != _childs.end(); ++child) {
+        if (!((*child)->is_alive())) {
+            delete (*child);
+            child = _childs.erase(child);
+            has_deleted = true;
+        }
+
+        (*child)->recursive_cleanup();
+    }
+
+    return has_deleted;
 }

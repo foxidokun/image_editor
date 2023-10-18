@@ -13,8 +13,7 @@ struct WindowButtonArgs: public CallbackArgs {
 static void close_window_callback(CallbackArgs *_args) {
     WindowButtonArgs *args = static_cast<WindowButtonArgs *>(_args);
 
-    Widget *parent = args->window->parent();
-    parent->unregister_object(args->window);
+    args->window->kill();
 }
 
 void Window::render(RenderTarget& target) {

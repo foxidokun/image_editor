@@ -47,6 +47,10 @@ protected:
     Vector _size;
     Region _reg;
     Rectangle _active_area;
+    bool _is_alive = true;
+
+protected:
+    bool recursive_cleanup();
 
 public:
     Widget(const Point& pos, const Vector& size):
@@ -75,7 +79,8 @@ public:
     void register_object(Widget *child);
     void register_object_exact_pos(Widget *child);
 
-    void unregister_object(Widget *rem_child);
+    void kill()     { _is_alive = false; }
+    bool is_alive() { return _is_alive; }
 
     const Point&     pos()         const { return _pos;         }
     const Vector&    size()        const { return _size;        }
@@ -122,7 +127,15 @@ public:
         stream << "Window manager";
     }
 
+    void cleanup() {
+        bool cleaned = recursive_cleanup();
+        if (cleaned) {
+            recalc_regions();
+        }
+    }
+
     virtual void render(RenderTarget& target) override {
+        cleanup();
         target.drawRect(_reg, _pos, _size, WM_BACKGROUND_COLOR);
         target.drawLine(_reg, _pos + Vector(0, HEADER_HEIGHT), Vector(_size.x, 0), sf::Color::Black);
 
