@@ -1,8 +1,10 @@
+#include <QApplication>
 #include "types.h"
 #include "config.h"
 #include <chrono>
 #include <thread>
 #include <unistd.h> 
+#include <QColorDialog>
 
 namespace chrono = std::chrono;
 static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, WindowManager& wm);
@@ -11,7 +13,8 @@ static void setup_objects(WindowManager& wm, ToolManager *tools);
 
 
 
-int main() {
+int main(int argc, char **argv) {
+    QApplication app (argc, argv);
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), WINDOW_TITLE);
     auto frame_start_time = chrono::system_clock::now();
 
@@ -178,6 +181,7 @@ static void set_brush(CallbackArgs *_args);
 template<>
 void set_brush<ColorPicker>(CallbackArgs *_args);
 static void set_color(CallbackArgs *_args);
+static void ask_color(CallbackArgs *_args);
 
 struct ToolArgs: public CallbackArgs {
     ToolManager *tools;
@@ -189,7 +193,7 @@ struct ColorArgs: public CallbackArgs {
     ToolManager *tools;
     Color color;
 
-    ColorArgs(ToolManager *tools, const Color &color_): tools(tools),  color(color_) {}
+    ColorArgs(ToolManager *tools, const Color &color_ = sf::Color::Black): tools(tools),  color(color_) {}
 };
 
 static void setup_objects(WindowManager& wm, ToolManager *tools) {
@@ -242,7 +246,10 @@ static void setup_color_window(WindowManager& wm, ToolManager *tools) {
     setup_color_button(*win, tools, Color{255, 255, 255, 255}, Point(50, 50));
     setup_color_button(*win, tools, Color{0,     0,   0, 255}, Point(0, 100));
 
+    auto color_picker = new TextureButton(Vector(25, 210), Vector(50, 50), ask_color, new ColorArgs(tools),
+                                            global_resources::palette);
     auto indicator = new ColorIndicator(Vector(40, 275), Vector(20, 20), tools->get_color_ptr());
+    win->register_object(color_picker);
     win->register_object(indicator);
 
     wm.register_object(win);
@@ -295,4 +302,13 @@ static void set_color(CallbackArgs *_args) {
     ColorArgs *args = static_cast<ColorArgs *>(_args);
 
     args->tools->set_color(args->color);
+}
+
+static void ask_color(CallbackArgs *_args) {
+    ColorArgs *args = static_cast<ColorArgs *>(_args);
+
+    QColor color = QColorDialog::getColor();
+    if (color.isValid()) {
+        args->tools->set_color(Color(color.red(), color.green(), color.blue(), color.alpha()));
+    }
 }

@@ -8,6 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -iquote ${PROJECT_SOURCE_DIR}/include")
 
 include_directories(${CMAKE_SOURCE_DIR}/lib/nativefiledialog/src/include)
 find_package(SFML REQUIRED COMPONENTS graphics window system)
+find_package(Qt6 REQUIRED COMPONENTS Widgets) 
 # find_package(OpenMP)
 
 file(GLOB SRCS
@@ -18,5 +19,5 @@ file(GLOB SRCS
 )
 
 add_executable(image_editor ${SRCS})
-target_link_libraries(image_editor PRIVATE sfml-graphics sfml-system sfml-window glib-2.0 gtk-3 ${CMAKE_SOURCE_DIR}/lib/nativefiledialog/build/lib/Release/x64/libnfd.a)
+target_link_libraries(image_editor PRIVATE Qt6::Widgets sfml-graphics sfml-system sfml-window glib-2.0 gtk-3 ${CMAKE_SOURCE_DIR}/lib/nativefiledialog/build/lib/Release/x64/libnfd.a)
 # target_link_libraries(vector PUBLIC OpenMP::OpenMP_CXX)
