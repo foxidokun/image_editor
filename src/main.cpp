@@ -1,9 +1,9 @@
-#include <QApplication>
 #include "types.h"
 #include "config.h"
 #include <chrono>
 #include <thread>
 #include <unistd.h> 
+#include <QApplication>
 #include <QColorDialog>
 
 namespace chrono = std::chrono;
@@ -12,9 +12,8 @@ static void test_regions();
 static void setup_objects(WindowManager& wm, ToolManager *tools);
 
 
-
 int main(int argc, char **argv) {
-    QApplication app (argc, argv);
+    QApplication app(argc, argv); // for color picker
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), WINDOW_TITLE);
     auto frame_start_time = chrono::system_clock::now();
 
@@ -37,6 +36,7 @@ int main(int argc, char **argv) {
         while (window.pollEvent(event)) {
             EVENT_RES res = event_dispatcher(event, window, WM);
             if (res == EVENT_RES::STOP) {
+                app.quit();
                 return 0;
             }
         }
