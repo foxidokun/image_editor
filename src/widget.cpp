@@ -3,17 +3,20 @@
 #include <type_traits>
 #include <cassert>
 
-static inline bool no_hit(const Point& pos, const Vector& size, const mouse_event_t& event);
+// ---------------------------------------------------------------------------------------------------------------------
 
+static inline bool no_hit(const Point& pos, const Vector& size, const mouse_event_t& event);
 Widget* set_root(Widget *const widget, void *args);
 
 template<typename T>
 using handler_func_t = EVENT_RES (Widget::*)(const T& event);
 
-const Vector SAFETY_AROUND = {100, 100};
+// ---------------------------------------------------------------------------------------------------------------------
 
 template<typename T, bool reorder = false>
-static EVENT_RES default_event_handler(Widget &root, linked_list<Widget *>& childs, handler_func_t<T> handler_func, const T& event) {
+static EVENT_RES default_event_handler(Widget &root, linked_list<Widget *>& childs, handler_func_t<T> handler_func,
+    const T& event)
+{
     for (auto child_iter = childs.begin(); child_iter != childs.end();) {
         if (((*child_iter)->*handler_func)(event) == EVENT_RES::STOP) {
             if constexpr (reorder) {
@@ -30,6 +33,8 @@ static EVENT_RES default_event_handler(Widget &root, linked_list<Widget *>& chil
     return EVENT_RES::CONT;
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+
 EVENT_RES Widget::on_keyboard_press(const keyboard_event_t& key) {
     return default_event_handler<keyboard_event_t>(*_root, _childs, &Widget::on_keyboard_press, key);
 }
@@ -40,28 +45,16 @@ EVENT_RES Widget::on_keyboard_release(const keyboard_event_t& key) {
 }
 
 
-EVENT_RES Widget::on_mouse_press(const mouse_event_t& _key) {
-    mouse_event_t key = _key;
-
-    // if (no_hit(_pos, _size, key)) { return EVENT_RES::CONT; }
-
+EVENT_RES Widget::on_mouse_press(const mouse_event_t& key) {
     return default_event_handler<mouse_event_t, true>(*_root, _childs, &Widget::on_mouse_press, key);
 }
 
 
-EVENT_RES Widget::on_mouse_release(const mouse_event_t& _key) {
-    mouse_event_t key = _key;
-    
-    // if (no_hit(_pos - SAFETY_AROUND, _size + 2*SAFETY_AROUND, key)) { return EVENT_RES::CONT; }
-
+EVENT_RES Widget::on_mouse_release(const mouse_event_t& key) {
     return default_event_handler<mouse_event_t, true>(*_root, _childs, &Widget::on_mouse_release, key);
 }
 
-EVENT_RES Widget::on_mouse_move(const mouse_event_t& _key) {
-    mouse_event_t key = _key;
-    
-    // if (no_hit(_pos - SAFETY_AROUND, _size + 2*SAFETY_AROUND, key)) { return EVENT_RES::CONT; }
-
+EVENT_RES Widget::on_mouse_move(const mouse_event_t& key) {
     return default_event_handler<mouse_event_t>(*_root, _childs, &Widget::on_mouse_move, key);
 }
 
@@ -69,6 +62,8 @@ EVENT_RES Widget::on_mouse_move(const mouse_event_t& _key) {
 EVENT_RES Widget::on_timer(const time_point& time) {
     return default_event_handler<time_point>(*_root, _childs, &Widget::on_timer, time);
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 void Widget::register_object(Widget *child) {
     Vector vec_mov = {_active_area.low_x, _active_area.low_y};
@@ -96,26 +91,7 @@ void Widget::register_object_exact_pos(Widget *child) {
     _root->recalc_regions();
 }
 
-Widget* return_region(Widget* const widget, void* args_) {
-    Region* args = (Region*)args_;
-
-    Region update;
-    update.add_rectangle({widget->pos().x, widget->pos().y, 
-                         (widget->pos() + widget->size()).x, (widget->pos() + widget->size()).y});
-    update *= *args;
-
-    widget->reg() += update;
-
-    *args -= widget->reg();
-    return widget;
-}
-
-Widget* cut_region(Widget* const widget, void* args_) {
-    Region* args = (Region*)args_;
-
-    widget->reg() -= *args;
-    return widget;
-}
+// ---------------------------------------------------------------------------------------------------------------------
 
 void recursive_update(Widget **widget_ptr, transform_f func, void* args, 
                      checker_f check, void* check_args){
@@ -135,12 +111,16 @@ void recursive_update(Widget **widget_ptr, transform_f func, void* args,
     *widget_ptr = widget;
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+
 static inline bool no_hit(const Point& pos, const Vector& size, const mouse_event_t& event) {
     double rel_x = event.x - pos.x;
     double rel_y = event.y - pos.y;
 
     return !((0 < rel_x && rel_x < size.x) && (0 < rel_y && rel_y < size.y));
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 Widget* update_coords(Widget *const widget, void *args) {
     Vector base_point = *static_cast<Vector *>(args);
@@ -156,11 +136,15 @@ Widget* update_coords(Widget *const widget, void *args) {
     return widget;
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+
 Widget* set_root(Widget *const widget, void *args) {
     Widget *root = static_cast<Widget *>(args);
     widget->_root = root;
     return widget;
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 void Widget::recalc_regions() {
     Region new_reg(get_hit_rectangle());
@@ -185,6 +169,8 @@ void Widget::recalc_regions() {
     }
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+
 bool Widget::recursive_cleanup() {
     bool has_deleted = false;
     for (auto child = _childs.begin(); child != _childs.end(); ++child) {
@@ -198,4 +184,42 @@ bool Widget::recursive_cleanup() {
     }
 
     return has_deleted;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void Widget::render(RenderTarget& target) {
+    for (auto child = _childs.rbegin(); child != _childs.rend(); ++child) {
+        assert (*child != this);
+        (*child)->render(target);
+    }
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void WindowManager::render(RenderTarget& target) {
+    cleanup();
+    target.drawRect(_reg, _pos, _size, WM_BACKGROUND_COLOR);
+    target.drawLine(_reg, _pos + Vector(0, HEADER_HEIGHT), Vector(_size.x, 0), sf::Color::Black);
+
+    Widget::render(target);
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void WindowManager::cleanup() {
+    bool cleaned = recursive_cleanup();
+    if (cleaned) {
+        recalc_regions();
+    }
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void ColorIndicator::render(RenderTarget& target) {
+    target.drawLine(_reg, _pos,                      Vector(_size.x, 0), sf::Color::White);
+    target.drawLine(_reg, _pos + Vector(0, _size.y), Vector(_size.x, 0), sf::Color::White);
+    target.drawLine(_reg, _pos,                      Vector(0, _size.y), sf::Color::White);
+    target.drawLine(_reg, _pos + Vector(_size.x, 0), Vector(0, _size.y), sf::Color::White);
+    target.drawRect(_reg, _pos, _size, *color_ptr);
 }

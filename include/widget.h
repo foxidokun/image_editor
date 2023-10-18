@@ -8,9 +8,13 @@
 #include <iostream>
 #include "regions.h"
 
+// ---------------------------------------------------------------------------------------------------------------------
+
 class Renderable {
     virtual void render(RenderTarget& target) = 0;
 };
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 typedef char keyboard_event_t;
 
@@ -19,6 +23,8 @@ using time_point = std::chrono::time_point<std::chrono::system_clock>;
 class Widget;
 using transform_f = Widget*(*)(Widget *, void *);
 using checker_f   = bool(*)(Widget *, void *); 
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 struct mouse_event_t {
     double x;
@@ -37,6 +43,8 @@ enum class EVENT_RES {
     CONT,
     STOP
 };
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 class Widget: public Renderable {
 protected:
@@ -69,12 +77,7 @@ public:
     virtual EVENT_RES on_mouse_move      (const mouse_event_t& key);
     virtual EVENT_RES on_timer           (const time_point& time);
 
-    virtual void render(RenderTarget& target) override {
-        for (auto child = _childs.rbegin(); child != _childs.rend(); ++child) {
-            assert (*child != this);
-            (*child)->render(target);
-        }
-    }
+    virtual void render(RenderTarget& target) override;
 
     void register_object(Widget *child);
     void register_object_exact_pos(Widget *child);
@@ -114,6 +117,8 @@ public:
     }
 };
 
+// ---------------------------------------------------------------------------------------------------------------------
+
 class WindowManager: public Widget {
 public:
     WindowManager(double width, double height):
@@ -123,25 +128,14 @@ public:
             _active_area.low_y += MENU_HEIGHT;
         }
 
-    void print(std::ostream& stream) const final {
-        stream << "Window manager";
-    }
+    void print(std::ostream& stream) const final { stream << "Window manager"; }
 
-    void cleanup() {
-        bool cleaned = recursive_cleanup();
-        if (cleaned) {
-            recalc_regions();
-        }
-    }
+    void cleanup();
 
-    virtual void render(RenderTarget& target) override {
-        cleanup();
-        target.drawRect(_reg, _pos, _size, WM_BACKGROUND_COLOR);
-        target.drawLine(_reg, _pos + Vector(0, HEADER_HEIGHT), Vector(_size.x, 0), sf::Color::Black);
-
-        Widget::render(target);
-    }
+    virtual void render(RenderTarget& target) override;
 };
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 class ColorIndicator: public Widget {
 private:
@@ -152,13 +146,15 @@ public:
         color_ptr(color_ptr)
         {}
 
-    virtual void render(RenderTarget& target) override {
-        target.drawRect(_reg, _pos, _size, *color_ptr);
-    }
+    void print(std::ostream& stream) const final { stream << "Color Indicator"; }
+
+    virtual void render(RenderTarget& target) override;
 };
+
+// ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
 void recursive_update(Widget **widget, transform_f func, void* args, 
                      checker_f check = nullptr, void* check_args = nullptr);
 Widget* update_coords(Widget *widget, void *args);
-Widget* return_region(Widget* const widget, void* args_);
-Widget* cut_region(Widget* const widget, void* args_);
