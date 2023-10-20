@@ -56,7 +56,7 @@ EVENT_RES Window::on_mouse_press(const mouse_event_t& key) {
         bool hit_x = key.x > _pos.x && key.x < _pos.x + _size.x;
         if (hit_x && hit_y) {
             is_moving = true;
-            last_pos = Point( _pos.x, _pos.y);
+            last_pos = Point( key.x, key.y);
             return EVENT_RES::STOP;
         }
     }
