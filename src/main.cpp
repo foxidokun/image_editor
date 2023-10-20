@@ -223,14 +223,16 @@ static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
     auto pol_btn = new TextureButton(Point(10, 60) , Vector(30, 30), set_brush<Polyline>,   new ToolArgs(tools), global_resources::polyline);
     auto rec_btn = new TextureButton(Point(60, 60) , Vector(30, 30), set_brush<RectTool>,   new ToolArgs(tools), global_resources::rectangle);
     auto ell_btn = new TextureButton(Point(10, 110), Vector(30, 30), set_brush<EllipseTool>,new ToolArgs(tools), global_resources::ellipse);
-    auto pic_btn = new TextureButton(Point(60, 110), Vector(30, 30), set_brush<ColorPicker>,new ToolArgs(tools), global_resources::pick);
-    auto fil_btn = new TextureButton(Point(10, 160), Vector(30, 30), set_brush<FillTool>,   new ToolArgs(tools), global_resources::fill);
+    auto spl_btn = new TextureButton(Point(60, 110), Vector(30, 30), set_brush<SplineTool>, new ToolArgs(tools), global_resources::spline);
+    auto pic_btn = new TextureButton(Point(10, 160), Vector(30, 30), set_brush<ColorPicker>,new ToolArgs(tools), global_resources::pick);
+    auto fil_btn = new TextureButton(Point(60, 160), Vector(30, 30), set_brush<FillTool>,   new ToolArgs(tools), global_resources::fill);
 
     win->register_object(br_btn);
     win->register_object(al_btn);
     win->register_object(pol_btn);
     win->register_object(rec_btn);
     win->register_object(ell_btn);
+    win->register_object(spl_btn);
     win->register_object(pic_btn);
     win->register_object(fil_btn);
     wm.register_object(win);

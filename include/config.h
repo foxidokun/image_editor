@@ -32,3 +32,4 @@ const char ELLIPSE_TOOL_TEXTURE_PATH[]        = "assets/ellipse.svg.png";
 const char PICK_TOOL_TEXTURE_PATH[]           = "assets/colorpick.svg.png";
 const char FILL_TOOL_TEXTURE_PATH[]           = "assets/fill.svg.png";
 const char PALETTE_TEXTURE_PATH[]             = "assets/palette.svg.png";
+const char SPLINE_TOOL_TEXTURE_PATH[]         = "assets/spline.svg.png";

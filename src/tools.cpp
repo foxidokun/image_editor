@@ -210,3 +210,28 @@ void FillTool::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const 
 
     permanent.set_image(img);
 }
+
+
+void SplineTool::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    if (cnt == 0) { tmp.clear(sf::Color::Transparent); }
+
+    cnt++;
+}
+
+void SplineTool::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    // BE ME, DO NOTHING
+}
+
+void SplineTool::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
+    if (cnt <= 0) { return; }
+    if (point_pos.button == mouse_event_t::button_type::UNKNOWN) { return; }
+
+    points[cnt - 1] = extract_point(point_pos);
+    if (cnt < 4) { return; }
+
+    for (int i = 0; i < 3; ++i) {
+        permanent.drawLine(points[i], points[i+1] - points[i], color);
+    }
+
+    cnt = 0;
+}

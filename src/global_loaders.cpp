@@ -18,6 +18,7 @@ namespace global_resources {
     const sf::Texture pick         = load_texture(PICK_TOOL_TEXTURE_PATH);
     const sf::Texture fill         = load_texture(FILL_TOOL_TEXTURE_PATH);
     const sf::Texture palette      = load_texture(PALETTE_TEXTURE_PATH);
+    const sf::Texture spline       = load_texture(SPLINE_TOOL_TEXTURE_PATH);
 }
 
 sf::Font load_font() {
