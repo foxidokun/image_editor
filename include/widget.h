@@ -3,10 +3,10 @@
 #include "list.h"
 #include "point.h"
 #include "vector.h"
-#include <chrono>
 #include <cassert>
 #include <iostream>
 #include "regions.h"
+#include "event.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -16,37 +16,13 @@ class Renderable {
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-typedef char keyboard_event_t;
-
-using time_point = std::chrono::time_point<std::chrono::system_clock>;
-
 class Widget;
 using transform_f = Widget*(*)(Widget *, void *);
 using checker_f   = bool(*)(Widget *, void *); 
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-struct mouse_event_t {
-    double x;
-    double y;
-
-    enum class button_type {
-        NONE,
-        LEFT,
-        RIGHT,
-        UNKNOWN
-    } button;
-};
-
-
-enum class EVENT_RES {
-    CONT,
-    STOP
-};
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-class Widget: public Renderable {
+class Widget: public Renderable, public EventSubscriber {
 protected:
     Widget* _parent = nullptr;
     Widget* _root   = this;
@@ -70,12 +46,12 @@ public:
             _active_area = whole;
         }
 
-    virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key);
-    virtual EVENT_RES on_keyboard_release(const keyboard_event_t& key);
-    virtual EVENT_RES on_mouse_press     (const mouse_event_t& key);
-    virtual EVENT_RES on_mouse_release   (const mouse_event_t& key);
-    virtual EVENT_RES on_mouse_move      (const mouse_event_t& key);
-    virtual EVENT_RES on_timer           (const time_point& time);
+    virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key) override;
+    virtual EVENT_RES on_keyboard_release(const keyboard_event_t& key) override;
+    virtual EVENT_RES on_mouse_press     (const mouse_event_t& key) override;
+    virtual EVENT_RES on_mouse_release   (const mouse_event_t& key) override;
+    virtual EVENT_RES on_mouse_move      (const mouse_event_t& key) override;
+    virtual EVENT_RES on_timer           (const time_point& time) override;
 
     virtual void render(RenderTarget& target) override;
 
