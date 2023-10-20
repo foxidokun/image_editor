@@ -4,6 +4,8 @@ static inline Point extract_point(const mouse_event_t& key) {
     return Point(key.x, key.y);
 }
 
+static Point bezier_curve(Point points[4], double t);
+
 void Brush::paint(RenderTarget& permanent, const Point& point_pos, const Color& color) const {
     permanent.drawCircle(point_pos, BRUSH_RADIUS, color);
 }
@@ -218,20 +220,48 @@ void SplineTool::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, cons
     cnt++;
 }
 
-void SplineTool::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
-    // BE ME, DO NOTHING
-}
-
 void SplineTool::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
     if (cnt <= 0) { return; }
     if (point_pos.button == mouse_event_t::button_type::UNKNOWN) { return; }
 
     points[cnt - 1] = extract_point(point_pos);
-    if (cnt < 4) { return; }
+    if (cnt < 4) {
+        Color color_copy = color;
+        color_copy.a /= 2;
 
-    for (int i = 0; i < 3; ++i) {
-        permanent.drawLine(points[i], points[i+1] - points[i], color);
+        tmp.drawCircle(extract_point(point_pos), BRUSH_RADIUS, color_copy);
+        return;
     }
 
+    tmp.clear(sf::Color::Transparent);
+
+    permanent.drawCircle(points[0], BRUSH_RADIUS, color);
+    Point last_point = points[0];
+    for (double t = 0; t <= 1;) {
+        double new_t = t + 0.05;
+        
+        Point new_point = bezier_curve(points, new_t);
+        while ((new_point - last_point).length_square() > 1) {
+            new_t = t + (new_t - t) / 2;
+            new_point = bezier_curve(points, new_t);
+        }
+
+        permanent.drawCircle(new_point, BRUSH_RADIUS, color);
+        t = new_t;
+        last_point = new_point;
+    }
+    permanent.drawCircle(points[3], BRUSH_RADIUS, color);
+
     cnt = 0;
+}
+
+
+static Point bezier_curve(Point points[4], double t) {
+    Point p = Point(0,0);
+    p +=   (1-t)*(1-t)*(1-t) * points[0];
+    p += 3 * t  *(1-t)*(1-t)   * points[1];
+    p += 3 * t  *  t  *(1-t)   * points[2];
+    p +=     t  *  t  *  t     * points[3];
+    
+    return p;
 }
