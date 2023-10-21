@@ -42,3 +42,34 @@ EVENT_RES EventManager::on_mouse_move(const mouse_event_t& key) {
 EVENT_RES EventManager::on_timer(const time_point& time) {
     return default_event_handler<time_point>(&EventSubscriber::on_timer, time);
 }
+
+
+EVENT_RES EventLogger::on_keyboard_press(const keyboard_event_t& key) {
+    stream << "Keyboard Press <" << key << ">\n";
+    return EVENT_RES::CONT;
+}
+
+EVENT_RES EventLogger::on_keyboard_release(const keyboard_event_t& key) {
+    stream << "Keyboard Release <" << key << ">\n";
+    return EVENT_RES::CONT;
+}
+
+EVENT_RES EventLogger::on_mouse_press(const mouse_event_t& key) {
+    stream << "Mouse Press <" << key << ">\n";
+    return EVENT_RES::CONT;
+}
+
+EVENT_RES EventLogger::on_mouse_release(const mouse_event_t& key) {
+    stream << "Mouse Release <" << key << ">\n";
+    return EVENT_RES::CONT;
+}
+
+EVENT_RES EventLogger::on_mouse_move(const mouse_event_t& key) {
+    stream << "Mouse Move <" << key << ">\n";
+    return EVENT_RES::CONT;
+}
+
+EVENT_RES EventLogger::on_timer(const time_point& time) {
+    stream << "Timer <" << time << ">\n";
+    return EVENT_RES::CONT;
+}

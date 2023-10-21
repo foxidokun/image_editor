@@ -20,7 +20,9 @@ int main(int argc, char **argv) {
     WindowManager WM(WINDOW_WIDTH, WINDOW_HEIGHT);
     ToolManager TM;
     EventManager EM;
+    EventLogger event_logger(std::cout);
     EM.register_object(&WM);
+    EM.register_object(&event_logger);
     setup_objects(WM, &TM);
 
     RenderTarget target(Vector(WINDOW_WIDTH, WINDOW_HEIGHT));
@@ -42,6 +44,7 @@ int main(int argc, char **argv) {
                 return 0;
             }
         }
+        EM.timer_event();
 
         std::this_thread::sleep_until(frame_start_time + chrono::milliseconds(33));
     }

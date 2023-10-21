@@ -10,7 +10,7 @@ struct mouse_event_t {
     double y;
 
     enum class button_type {
-        NONE,
+        NONE = 0,
         LEFT,
         RIGHT,
         UNKNOWN
@@ -61,4 +61,36 @@ public:
     virtual EVENT_RES on_mouse_release   (const mouse_event_t& key)    override;
     virtual EVENT_RES on_mouse_move      (const mouse_event_t& key)    override;
     virtual EVENT_RES on_timer           (const time_point& time)      override;
+
+    void timer_event() {
+        on_timer(std::chrono::system_clock::now());
+    }
 };
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+class EventLogger: public EventSubscriber {
+private:
+    std::ostream& stream;
+
+public:
+    EventLogger(std::ostream& stream): stream(stream) {}
+
+    virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key) override;
+    virtual EVENT_RES on_keyboard_release(const keyboard_event_t& key) override;
+    virtual EVENT_RES on_mouse_press     (const mouse_event_t& key)    override;
+    virtual EVENT_RES on_mouse_release   (const mouse_event_t& key)    override;
+    virtual EVENT_RES on_mouse_move      (const mouse_event_t& key)    override;
+    virtual EVENT_RES on_timer           (const time_point& time)      override;
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+static std::ostream& operator<<(std::ostream& stream, const mouse_event_t& event) {
+    const char BUTTON_NAMES[][10] = {"NONE", "Left", "Right", "UNKNOWN"};
+
+    const char *button_name = BUTTON_NAMES[(int) event.button];
+
+    stream << "{ pos: (" << event.x << ", " << event.y << ") KEY: " << button_name << "}";
+    return stream;
+}
