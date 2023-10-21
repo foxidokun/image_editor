@@ -7,7 +7,7 @@
 #include <QColorDialog>
 
 namespace chrono = std::chrono;
-static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, WindowManager& wm);
+static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, EventManager& wm);
 static void test_regions();
 static void setup_objects(WindowManager& wm, ToolManager *tools);
 
@@ -19,6 +19,8 @@ int main(int argc, char **argv) {
 
     WindowManager WM(WINDOW_WIDTH, WINDOW_HEIGHT);
     ToolManager TM;
+    EventManager EM;
+    EM.register_object(&WM);
     setup_objects(WM, &TM);
 
     RenderTarget target(Vector(WINDOW_WIDTH, WINDOW_HEIGHT));
@@ -34,7 +36,7 @@ int main(int argc, char **argv) {
 
         sf::Event event;
         while (window.pollEvent(event)) {
-            EVENT_RES res = event_dispatcher(event, window, WM);
+            EVENT_RES res = event_dispatcher(event, window, EM);
             if (res == EVENT_RES::STOP) {
                 app.quit();
                 return 0;
@@ -75,22 +77,22 @@ static inline mouse_event_t get_mouse_event(const sf::RenderWindow& window, cons
     return mouse_event;
 } 
 
-static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, WindowManager& wm) {
+static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, EventManager& em) {
     switch (event.type) {
         case (sf::Event::Closed):
             window.close();
             return EVENT_RES::STOP;
         
         case (sf::Event::MouseButtonPressed):
-            wm.on_mouse_press(get_mouse_event(window, event));
+            em.on_mouse_press(get_mouse_event(window, event));
             return EVENT_RES::CONT;
 
         case (sf::Event::MouseButtonReleased):
-            wm.on_mouse_release(get_mouse_event(window, event));
+            em.on_mouse_release(get_mouse_event(window, event));
             return EVENT_RES::CONT;
 
         case (sf::Event::MouseMoved):
-            wm.on_mouse_move(get_mouse_event(window, event));
+            em.on_mouse_move(get_mouse_event(window, event));
             return EVENT_RES::CONT;
 
         default:
