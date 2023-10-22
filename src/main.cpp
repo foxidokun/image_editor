@@ -252,6 +252,9 @@ static void setup_color_window(WindowManager& wm, ToolManager *tools) {
     setup_color_button(*win, tools, Color{0,     0, 255, 255}, Point(0,  50));
     setup_color_button(*win, tools, Color{255, 255, 255, 255}, Point(50, 50));
     setup_color_button(*win, tools, Color{0,     0,   0, 255}, Point(0, 100));
+    setup_color_button(*win, tools, Color{0,   255, 255, 255}, Point(50, 100));
+    setup_color_button(*win, tools, Color{0xFF,0xD7,  0, 255}, Point(0,  150));
+    setup_color_button(*win, tools, Color{0x7B,0x68,0xEE,255}, Point(50, 150));
 
     auto color_picker = new TextureButton(Vector(25, 210), Vector(50, 50), ask_color, new ColorArgs(tools),
                                             global_resources::palette);

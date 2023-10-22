@@ -20,7 +20,7 @@ public:
         _permanent(RenderTarget(size)),
         _tmp(RenderTarget(size))
         {
-            _permanent.clear(sf::Color::Yellow);
+            _permanent.clear(sf::Color::White);
             _tmp.clear(sf::Color::Transparent);
         }
 
