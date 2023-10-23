@@ -3,6 +3,8 @@
 #include <chrono>
 #include "dynarray.h"
 
+#define LOG_EVENTS 0
+
 // ---------------------------------------------------------------------------------------------------------------------
 
 struct mouse_event_t {
@@ -69,6 +71,12 @@ public:
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+#if LOG_EVENTS
+    #define EVENTLOGGER_DEFINED_STUB ;
+#else
+    #define EVENTLOGGER_DEFINED_STUB {return EVENT_RES::CONT;}
+#endif
+
 class EventLogger: public EventSubscriber {
 private:
     std::ostream& stream;
@@ -76,12 +84,12 @@ private:
 public:
     EventLogger(std::ostream& stream): stream(stream) {}
 
-    virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key) override;
-    virtual EVENT_RES on_keyboard_release(const keyboard_event_t& key) override;
-    virtual EVENT_RES on_mouse_press     (const mouse_event_t& key)    override;
-    virtual EVENT_RES on_mouse_release   (const mouse_event_t& key)    override;
-    virtual EVENT_RES on_mouse_move      (const mouse_event_t& key)    override;
-    virtual EVENT_RES on_timer           (const time_point& time)      override;
+    virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key) override EVENTLOGGER_DEFINED_STUB;
+    virtual EVENT_RES on_keyboard_release(const keyboard_event_t& key) override EVENTLOGGER_DEFINED_STUB;
+    virtual EVENT_RES on_mouse_press     (const mouse_event_t& key)    override EVENTLOGGER_DEFINED_STUB;
+    virtual EVENT_RES on_mouse_release   (const mouse_event_t& key)    override EVENTLOGGER_DEFINED_STUB;
+    virtual EVENT_RES on_mouse_move      (const mouse_event_t& key)    override EVENTLOGGER_DEFINED_STUB;
+    virtual EVENT_RES on_timer           (const time_point& time)      override EVENTLOGGER_DEFINED_STUB;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------

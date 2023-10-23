@@ -13,6 +13,7 @@ EVENT_RES Canvas::on_mouse_press(const mouse_event_t& key) {
     bool hit_x = key.x >= _pos.x && key.x <= _pos.x + _size.x;
     if (hit_x && hit_y) {
         is_drawing = true;
+        filter_manager.set_rt(&_permanent);
         mouse_event_t key_copy = key;
         key_copy.x -= _pos.x;
         key_copy.y -= _pos.y;

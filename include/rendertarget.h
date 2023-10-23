@@ -40,6 +40,10 @@ public:
     void set_pixel(uint x, uint y, const Color& color) {
         pixels[_width * y + x] = color;
     }
+
+    Color* operator[](size_t y) {
+        return &pixels[_width * y];
+    }
 };
 
 class RenderTarget {

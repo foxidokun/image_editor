@@ -44,6 +44,7 @@ EVENT_RES EventManager::on_timer(const time_point& time) {
 }
 
 
+#if LOG_EVENTS
 EVENT_RES EventLogger::on_keyboard_press(const keyboard_event_t& key) {
     stream << "Keyboard Press <" << key << ">\n";
     return EVENT_RES::CONT;
@@ -73,3 +74,4 @@ EVENT_RES EventLogger::on_timer(const time_point& time) {
     stream << "Timer <" << time << ">\n";
     return EVENT_RES::CONT;
 }
+#endif

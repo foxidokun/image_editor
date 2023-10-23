@@ -4,24 +4,28 @@
 #include "widget.h"
 #include "tools.h"
 #include "button.h"
+#include "filter.h"
 
 class Canvas: public Widget {
 private:
     RenderTarget _permanent;
     RenderTarget _tmp;
     const ToolManager* tool_manager;
+    FilterManager &filter_manager;
     bool is_drawing;
 
 public:
-    Canvas(const Point& pos, const Vector& size, const ToolManager *tool_manager):
+    Canvas(const Point& pos, const Vector& size, const ToolManager *tool_manager, FilterManager &filter_manager):
         Widget(pos, size),
         tool_manager(tool_manager),
+        filter_manager(filter_manager),
         is_drawing(false),
         _permanent(RenderTarget(size)),
         _tmp(RenderTarget(size))
         {
             _permanent.clear(sf::Color::White);
             _tmp.clear(sf::Color::Transparent);
+            filter_manager.set_rt(&_permanent);
         }
 
     void render(RenderTarget& target) final;

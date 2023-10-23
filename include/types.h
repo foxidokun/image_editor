@@ -11,3 +11,4 @@
 #include "tools.h"
 #include "button.h"
 #include "canvas.h"
+#include "filter.h"
