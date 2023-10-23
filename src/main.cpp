@@ -99,15 +99,11 @@ static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& wind
             return EVENT_RES::CONT;
 
         case (sf::Event::KeyPressed):
-            if (event.key.code <= 25) {
-                em.on_keyboard_press(event.key.code + 'A');
-            }
+            em.on_keyboard_press(event.key);
             return EVENT_RES::CONT;
 
         case (sf::Event::KeyReleased):
-            if (event.key.code <= 25) {
-                em.on_keyboard_release(event.key.code + 'A');
-            }
+            em.on_keyboard_release(event.key);
             return EVENT_RES::CONT;
 
         default:

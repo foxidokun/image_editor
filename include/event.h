@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <SFML/Graphics.hpp>
 #include "dynarray.h"
 
 #define LOG_EVENTS 0
@@ -25,7 +26,7 @@ enum class EVENT_RES {
     STOP
 };
 
-typedef char keyboard_event_t;
+typedef sf::Event::KeyEvent keyboard_event_t;
 
 using time_point = std::chrono::time_point<std::chrono::system_clock>;
 
