@@ -98,6 +98,18 @@ static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& wind
             em.on_mouse_move(get_mouse_event(window, event));
             return EVENT_RES::CONT;
 
+        case (sf::Event::KeyPressed):
+            if (event.key.code <= 25) {
+                em.on_keyboard_press(event.key.code + 'A');
+            }
+            return EVENT_RES::CONT;
+
+        case (sf::Event::KeyReleased):
+            if (event.key.code <= 25) {
+                em.on_keyboard_release(event.key.code + 'A');
+            }
+            return EVENT_RES::CONT;
+
         default:
             return EVENT_RES::CONT;
     }
@@ -207,6 +219,9 @@ static void setup_objects(WindowManager& wm, ToolManager *tools, FilterManager& 
     setup_color_window(wm, tools);
     setup_tool_window(wm, tools);
     setup_filter_menu(wm, filter_mgr);
+
+    auto test_text = new TextBox(Point(300, 0), Vector(50, HEADER_HEIGHT));
+    wm.register_object_exact_pos(test_text);
 }
 
 static void setup_canvas_window(WindowManager& wm, const ToolManager *tools, FilterManager& filter_mgr) {

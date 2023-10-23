@@ -6,6 +6,7 @@
 #include <cassert>
 #include <iostream>
 #include "regions.h"
+#include "string.h"
 #include "event.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -123,6 +124,28 @@ public:
         {}
 
     void print(std::ostream& stream) const final { stream << "Color Indicator"; }
+
+    virtual void render(RenderTarget& target) override;
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+class TextBox: public Widget {
+private:
+    string content;
+    bool is_writing = false;
+public:
+    TextBox(const Point& pos, const Vector& size): 
+        Widget(pos, size)
+        {}
+
+    virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key) override;
+    virtual EVENT_RES on_keyboard_release(const keyboard_event_t& key) override {return EVENT_RES::CONT;}
+    virtual EVENT_RES on_mouse_press     (const mouse_event_t& key) override;
+    virtual EVENT_RES on_mouse_release   (const mouse_event_t& key) override;
+    virtual EVENT_RES on_mouse_move      (const mouse_event_t& key) override;
+
+    void print(std::ostream& stream) const final { stream << "Text Box with content <" << content << ">"; }
 
     virtual void render(RenderTarget& target) override;
 };

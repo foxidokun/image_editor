@@ -223,3 +223,44 @@ void ColorIndicator::render(RenderTarget& target) {
     target.drawLine(_reg, _pos + Vector(_size.x, 0), Vector(0, _size.y), sf::Color::White);
     target.drawRect(_reg, _pos, _size, *color_ptr);
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+
+EVENT_RES TextBox::on_keyboard_press(const keyboard_event_t& key) {
+    if (is_writing) {
+        content += key;
+        return EVENT_RES::STOP;
+    }
+
+    return EVENT_RES::CONT;
+}
+
+EVENT_RES TextBox::on_mouse_press(const mouse_event_t& key) {
+    bool hit_y = key.y >= _pos.y && key.y <= _pos.y + _size.y;
+    bool hit_x = key.x >= _pos.x && key.x <= _pos.x + _size.x;
+    is_writing = (hit_x && hit_y);
+
+    return is_writing ? EVENT_RES::STOP : EVENT_RES::CONT;
+}
+
+EVENT_RES TextBox::on_mouse_release(const mouse_event_t& key) {
+    bool hit_y = key.y >= _pos.y && key.y <= _pos.y + _size.y;
+    bool hit_x = key.x >= _pos.x && key.x <= _pos.x + _size.x;
+    is_writing = (hit_x && hit_y);
+
+    return is_writing ? EVENT_RES::STOP : EVENT_RES::CONT;
+}
+
+EVENT_RES TextBox::on_mouse_move(const mouse_event_t& key) {
+    bool hit_y = key.y >= _pos.y && key.y <= _pos.y + _size.y;
+    bool hit_x = key.x >= _pos.x && key.x <= _pos.x + _size.x;
+    is_writing = (is_writing && hit_x && hit_y);
+    
+    return (hit_x && hit_y) ? EVENT_RES::STOP : EVENT_RES::CONT;
+}
+
+void TextBox::render(RenderTarget& target) {
+    target.drawRect(_reg, _pos, _size, sf::Color::Cyan);
+    target.drawText(_reg, _pos, content.c_str(), TITLE_SIZE);
+}
