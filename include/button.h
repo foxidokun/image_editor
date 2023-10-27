@@ -9,15 +9,15 @@ public:
     virtual ~CallbackArgs() = default;
 };
 
-using on_click_f = void(*)(CallbackArgs*);
+using callback_f = void(*)(CallbackArgs*);
 
 class Button: public Widget {
 protected:
-    on_click_f _callback;
+    callback_f _callback;
     CallbackArgs *_allocated_args;
     bool _is_clicked;
 public:
-    Button(const Point& pos, const Vector& size, on_click_f callback, CallbackArgs *allocated_args):
+    Button(const Point& pos, const Vector& size, callback_f callback, CallbackArgs *allocated_args):
         Widget(pos, size),
         _callback(callback),
         _allocated_args(allocated_args),
@@ -36,7 +36,7 @@ class TextureButton: public Button {
 protected:
     Texture _texture;
 public:
-    TextureButton(const Point& pos, const Vector& size, on_click_f callback,
+    TextureButton(const Point& pos, const Vector& size, callback_f callback,
         CallbackArgs *allocated_args, const sf::Texture& texture):
         Button(pos, size, callback, allocated_args),
         _texture(texture) {}
@@ -52,7 +52,7 @@ class TextButton: public Button {
 private:
     string text;
 public:
-    TextButton(const Point& pos, const Vector& size, on_click_f callback,
+    TextButton(const Point& pos, const Vector& size, callback_f callback,
         CallbackArgs *allocated_args, const string& text):
         Button(pos, size, callback, allocated_args),
         text(text)
