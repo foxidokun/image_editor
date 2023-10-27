@@ -86,7 +86,7 @@ void Widget::register_object_exact_pos(Widget *child) {
     child->_parent = this;
     recursive_update(&child, set_root, _root);
     
-    _childs.push_back(child);
+    _childs.push_front(child);
     
     _root->recalc_regions();
 }
