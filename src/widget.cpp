@@ -262,7 +262,7 @@ EVENT_RES TextBox::on_mouse_move(const mouse_event_t& key) {
 }
 
 void TextBox::render(RenderTarget& target) {
-    target.drawRect(_reg, _pos, _size, sf::Color::Cyan);
+    target.drawRect(_reg, _pos, _size, TEXTBOX_BACKGROUND_COLOR);
     target.drawText(_reg, _pos, content.c_str(), TITLE_SIZE);
 }
 
@@ -280,5 +280,9 @@ static void add_symbol(const keyboard_event_t& key, string& string) {
     if (key.code >= sf::Keyboard::Num0 && key.code <= sf::Keyboard::Num9) {
         string += '0' + key.code - sf::Keyboard::Num0;
         return;
+    }
+
+    if (key.code == sf::Keyboard::Backspace) {
+        string.pop_back();
     }
 }
