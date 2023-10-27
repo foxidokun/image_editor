@@ -1,4 +1,5 @@
 #include "event.h"
+#include <csting>
 
 template<class T>
 EVENT_RES EventManager::default_event_handler(event_handler_func_t<T> handler_func, const T& event) {
@@ -43,6 +44,15 @@ EVENT_RES EventManager::on_timer(const time_point& time) {
     return default_event_handler<time_point>(&EventSubscriber::on_timer, time);
 }
 
+void EventManager::set_priority(dynarray<EVENT_TYPES> types, int new_priority) {
+    for (const auto type: types) {
+        priorities[type] = new_priority;
+    }
+}
+
+void EventManager::reset_priority() {
+    memset(priorities, 0, EVENT_TYPES_NUM * sizeof(int));
+}
 
 #if LOG_EVENTS
 EVENT_RES EventLogger::on_keyboard_press(const keyboard_event_t& key) {

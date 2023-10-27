@@ -26,6 +26,13 @@ enum class EVENT_RES {
     STOP
 };
 
+enum EVENT_TYPES {
+    MOUSE_EVENT    = 0,
+    KEYBOARD_EVENT,
+    TIMER_EVENT,
+    EVENT_TYPES_NUM
+};
+
 typedef sf::Event::KeyEvent keyboard_event_t;
 
 using time_point = std::chrono::time_point<std::chrono::system_clock>;
@@ -55,6 +62,7 @@ using event_handler_func_t = EVENT_RES (EventSubscriber::*)(const T& event);
 class EventManager: EventSubscriber {
 private:
     dynarray<EventSubscriber *> _childs;
+    int priorities[EVENT_TYPES_NUM];
 
     template<typename T>
     EVENT_RES default_event_handler(event_handler_func_t<T> handler_func, const T& event);
@@ -63,6 +71,14 @@ public:
         _childs.push_back(child);
     }
 
+    void unregister_object(EventSubscriber *child) {
+        _childs.erase(std::remove(_childs.begin(), _childs.end(), child), _childs.end());
+    }
+
+    void set_priority(dynarray<EVENT_TYPES> types, int new_priority);
+    void reset_priority();
+
+    // EventSubscriber API
     virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key) override;
     virtual EVENT_RES on_keyboard_release(const keyboard_event_t& key) override;
     virtual EVENT_RES on_mouse_press     (const mouse_event_t& key)    override;
@@ -70,6 +86,7 @@ public:
     virtual EVENT_RES on_mouse_move      (const mouse_event_t& key)    override;
     virtual EVENT_RES on_timer           (const time_point& time)      override;
 
+    // Timer interru^W ebent generator
     void timer_event() {
         on_timer(std::chrono::system_clock::now());
     }
