@@ -6,6 +6,9 @@
 #include <QApplication>
 #include <QColorDialog>
 
+
+static void set_color(CallbackArgs *_args);
+
 namespace chrono = std::chrono;
 static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, EventManager& wm);
 static void test_regions();
@@ -24,6 +27,9 @@ int main(int argc, char **argv) {
     EM.register_object(&WM);
     EM.register_object(&event_logger);
     setup_objects(WM, &TM, FM);
+
+    auto modal_window = new ParametersModalWindow(Vector(100, 100), Vector(200, 200), "MODAL as FUCK", EM, set_color, nullptr, dynarray<std::string>{"hi", "my", "name"});
+    WM.register_object(modal_window);
 
     RenderTarget target(Vector(WINDOW_WIDTH, WINDOW_HEIGHT));
 

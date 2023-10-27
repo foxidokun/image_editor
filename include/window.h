@@ -1,6 +1,7 @@
 #pragma once
 #include "widget.h"
 #include "string.h"
+#include "button.h"
 
 class Window: public Widget {
 private:
@@ -23,7 +24,7 @@ public:
             initialise();
         }
 
-    void render(RenderTarget& target) final;
+    void render(RenderTarget& target) override;
 
     EVENT_RES on_mouse_press   (const mouse_event_t& key) final;
     EVENT_RES on_mouse_release (const mouse_event_t& key) final;
@@ -50,5 +51,32 @@ public:
     ~ModalWindow() override {
         event_mgr.unregister_object(this);
         event_mgr.reset_priority();
+    }
+};
+
+class ParametersModalWindow: public ModalWindow {
+private:
+    callback_f on_delete;
+    CallbackArgs* on_delete_args;
+    dynarray<string> parameters;
+
+public:
+    ParametersModalWindow(const Point& pos, const Vector& size, const string& title, EventManager& event_mgr,
+        callback_f on_delete, CallbackArgs* on_delete_args, dynarray<string> parameters):
+        ModalWindow(pos, size, title, event_mgr),
+        on_delete(on_delete),
+        on_delete_args(on_delete_args),
+        parameters(parameters)
+        {
+            for (uint i = 0; i < parameters.size(); ++i) {
+                register_object_exact_pos(new TextBox(_pos + Vector(100, 10 + HEADER_HEIGHT + i*20), Vector(90, 18)));
+            }
+        }
+
+    void render(RenderTarget& rt) final;
+
+    ~ParametersModalWindow() override {
+        on_delete(on_delete_args);
+        delete on_delete_args;
     }
 };

@@ -97,3 +97,12 @@ EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
 
     return Widget::on_mouse_move(key);
 }
+
+
+void ParametersModalWindow::render(RenderTarget& rt) {
+    Window::render(rt);
+
+    for (uint i = 0; i < parameters.size(); ++i) {
+        rt.drawText(_reg, _pos + Vector(10, 10 + HEADER_HEIGHT + i*20), parameters[i].c_str(), TITLE_SIZE);
+    }
+}
