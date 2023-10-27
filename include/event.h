@@ -33,6 +33,12 @@ enum EVENT_TYPES {
     EVENT_TYPES_NUM
 };
 
+enum class EVENT_PRIORITIES {
+    DEFAULT = 0,
+    MODAL_WINDOW = 1,
+    EVENT_LOGGER = 228
+};
+
 typedef sf::Event::KeyEvent keyboard_event_t;
 
 using time_point = std::chrono::time_point<std::chrono::system_clock>;
@@ -41,7 +47,7 @@ using time_point = std::chrono::time_point<std::chrono::system_clock>;
 
 class EventSubscriber {
 protected:
-    uint _priority = 0;
+    EVENT_PRIORITIES _priority = EVENT_PRIORITIES::DEFAULT;
 
 public:
     virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key) = 0;
@@ -51,7 +57,7 @@ public:
     virtual EVENT_RES on_mouse_move      (const mouse_event_t& key)    = 0;
     virtual EVENT_RES on_timer           (const time_point& time)      = 0;
 
-    uint priority() const { return _priority; }
+    uint priority() const { return (uint)_priority; }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
