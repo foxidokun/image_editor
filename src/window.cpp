@@ -16,6 +16,13 @@ static void close_window_callback(CallbackArgs *_args) {
     args->window->kill();
 }
 
+static void apply_window_callback(CallbackArgs *_args) {
+    WindowButtonArgs *args = static_cast<WindowButtonArgs *>(_args);
+    ParametersModalWindow *window = static_cast<ParametersModalWindow *>(args->window);
+    window->apply();
+    window->kill();
+}
+
 void Window::render(RenderTarget& target) {
     target.drawRect(_reg, _pos, _size, WINDOW_BACKGROUND_COLOR);
 
@@ -35,7 +42,7 @@ void Window::render(RenderTarget& target) {
     target.drawRegions(_reg);
 }
 
-void Window::initialise() {
+void Window::initialize() {
     CallbackArgs *args = new WindowButtonArgs(this);
     Point pos = {_size.x - BUTTON_SIZE - LINE_THICKNESS, LINE_THICKNESS};
     Vector size = {BUTTON_SIZE, BUTTON_SIZE};
@@ -98,6 +105,15 @@ EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
     return Widget::on_mouse_move(key);
 }
 
+
+void ParametersModalWindow::initialize() {
+    for (uint i = 0; i < parameters.size(); ++i) {
+        register_object_exact_pos(new TextBox(_pos + Vector(100, 10 + HEADER_HEIGHT + i*20), Vector(90, 18)));
+    }
+
+    register_object_exact_pos(new TextButton(_pos + _size - Vector(70, 50), Vector(50, 30), apply_window_callback,
+        new WindowButtonArgs(this), "Apply"));
+}
 
 void ParametersModalWindow::render(RenderTarget& rt) {
     Window::render(rt);

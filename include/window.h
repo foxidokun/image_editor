@@ -9,19 +9,19 @@ private:
     bool is_moving = false;
     Point last_pos;
 
-    void initialise();
+    void initialize();
 
 public:
     Window(const Point& pos, const Vector& size, const string& title):
         Widget(pos, size),
         _title(title) {
-            initialise();
+            initialize();
         }
 
     Window(const Point& pos, const Vector& size, string&& title):
         Widget(pos, size),
         _title(title) {
-            initialise();
+            initialize();
         }
 
     void render(RenderTarget& target) override;
@@ -56,27 +56,32 @@ public:
 
 class ParametersModalWindow: public ModalWindow {
 private:
-    callback_f on_delete;
-    CallbackArgs* on_delete_args;
+    callback_f on_apply;
+    CallbackArgs* on_apply_args;
     dynarray<string> parameters;
+
+    void initialize();
 
 public:
     ParametersModalWindow(const Point& pos, const Vector& size, const string& title, EventManager& event_mgr,
-        callback_f on_delete, CallbackArgs* on_delete_args, dynarray<string> parameters):
+        callback_f on_apply, CallbackArgs* on_apply_args, dynarray<string> parameters):
         ModalWindow(pos, size, title, event_mgr),
-        on_delete(on_delete),
-        on_delete_args(on_delete_args),
+        on_apply(on_apply),
+        on_apply_args(on_apply_args),
         parameters(parameters)
         {
-            for (uint i = 0; i < parameters.size(); ++i) {
-                register_object_exact_pos(new TextBox(_pos + Vector(100, 10 + HEADER_HEIGHT + i*20), Vector(90, 18)));
-            }
+            initialize();
         }
 
     void render(RenderTarget& rt) final;
 
+    void apply() const {
+        if (on_apply) {
+            on_apply(on_apply_args);
+        }
+    }
+
     ~ParametersModalWindow() override {
-        on_delete(on_delete_args);
-        delete on_delete_args;
+        delete on_apply_args;
     }
 };
