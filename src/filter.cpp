@@ -15,21 +15,42 @@ void RaiseBrightness::apply(RenderTarget &rt) {
     }
 
     rt.set_image(img);
-}
+} 
 
-dynarray<const char *> RaiseBrightness::get_param_names() {
-    return dynarray<const char *>();
-}
 
-void RaiseBrightness::set_params(const std::vector<double>& params) {} 
-
-void apply_filter_callback(CallbackArgs *_args) {
+void parameters_get_and_apply(CallbackArgs *_args) {
     FilterApplyArgs* args = static_cast<FilterApplyArgs *> (_args);
-    
+
+    dynarray<string> str_params = args->param_window->get_params();
+    dynarray<double> params;
+    for (const auto& str_param: str_params) {
+        try {
+            params.push_back(std::stod(str_param));
+        } catch (std::invalid_argument) {
+            return;
+        }
+    }
+
     args->filter_mgr.set_filter(args->filter);
+    args->filter->set_params(params);
     RenderTarget *rt = args->filter_mgr.get_rt();
     if (rt) {
         args->filter->apply(*rt);
+    }
+}
+
+void apply_filter_callback(CallbackArgs *_args) {
+    FilterApplyArgs* args = static_cast<FilterApplyArgs *> (_args);
+    if (args->filter->get_param_names().size() > 0) {
+        auto params = new ParametersModalWindow(Vector(200, 200), Vector(300, 300), "Filter Params", args->event_mgr, parameters_get_and_apply, args, args->filter->get_param_names());
+        args->param_window = params;
+        args->root->register_object(params);
+    } else {
+        args->filter_mgr.set_filter(args->filter);
+        RenderTarget *rt = args->filter_mgr.get_rt();
+        if (rt) {
+            args->filter->apply(*rt);
+        }
     }
 }
 

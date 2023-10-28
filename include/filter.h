@@ -2,6 +2,7 @@
 
 #include "rendertarget.h"
 #include "button.h"
+#include "window.h"
 
 class Filter {
 public:
@@ -27,16 +28,23 @@ public:
 class RaiseBrightness: public Filter {
 public:
     void apply(RenderTarget &rt);
-    dynarray<const char *> get_param_names();
-    void set_params(const std::vector<double>& params);
+    dynarray<const char *> get_param_names() {return dynarray<const char *>();};
+    void set_params(const std::vector<double>& params) {};
 };
 
 
 struct FilterApplyArgs: public CallbackArgs {
     FilterManager &filter_mgr;
     Filter* filter;
+    WindowManager *root;
+    EventManager &event_mgr;
+    ParametersModalWindow* param_window = nullptr;
 
-    FilterApplyArgs(FilterManager &filter_mgr, Filter* filter = nullptr): filter_mgr(filter_mgr), filter(filter) {}
+    FilterApplyArgs(FilterManager &filter_mgr, EventManager& event_mgr, WindowManager* root, Filter* filter = nullptr):
+        filter_mgr(filter_mgr),
+        filter(filter),
+        root(root),
+        event_mgr(event_mgr) {}
 };
 
 void apply_filter_callback(CallbackArgs *_args);

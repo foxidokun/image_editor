@@ -147,6 +147,8 @@ public:
 
     void print(std::ostream& stream) const final { stream << "Text Box with content <" << content << ">"; }
 
+    const string& get_content() const { return content; }
+
     virtual void render(RenderTarget& target) override;
 };
 

@@ -68,7 +68,7 @@ using event_handler_func_t = EVENT_RES (EventSubscriber::*)(const T& event);
 class EventManager: EventSubscriber {
 private:
     dynarray<EventSubscriber *> _childs;
-    int priorities[EVENT_TYPES_NUM];
+    int priorities[EVENT_TYPES_NUM] = {};
 
     template<typename T, EVENT_TYPES type>
     EVENT_RES default_event_handler(event_handler_func_t<T> handler_func, const T& event);

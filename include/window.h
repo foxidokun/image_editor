@@ -58,13 +58,14 @@ class ParametersModalWindow: public ModalWindow {
 private:
     callback_f on_apply;
     CallbackArgs* on_apply_args;
-    dynarray<string> parameters;
+    dynarray<const char *> parameters;
+    dynarray<TextBox *> boxes;
 
     void initialize();
 
 public:
     ParametersModalWindow(const Point& pos, const Vector& size, const string& title, EventManager& event_mgr,
-        callback_f on_apply, CallbackArgs* on_apply_args, dynarray<string> parameters):
+        callback_f on_apply, CallbackArgs* on_apply_args, dynarray<const char *> parameters):
         ModalWindow(pos, size, title, event_mgr),
         on_apply(on_apply),
         on_apply_args(on_apply_args),
@@ -79,6 +80,14 @@ public:
         if (on_apply) {
             on_apply(on_apply_args);
         }
+    }
+
+    dynarray<string> get_params() {
+        dynarray<string> ans;
+        for (const auto box: boxes) {
+            ans.push_back(box->get_content());
+        }
+        return ans;
     }
 
     ~ParametersModalWindow() override {

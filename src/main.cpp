@@ -12,7 +12,7 @@ static void set_color(CallbackArgs *_args);
 namespace chrono = std::chrono;
 static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, EventManager& wm);
 static void test_regions();
-static void setup_objects(WindowManager& wm, ToolManager *tools, FilterManager &filter_mgr);
+static void setup_objects(WindowManager& wm, ToolManager *tools, FilterManager &filter_mgr, EventManager& event_mgr);
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv); // for color picker
@@ -26,10 +26,10 @@ int main(int argc, char **argv) {
     EventLogger event_logger(std::cout);
     EM.register_object(&WM);
     EM.register_object(&event_logger);
-    setup_objects(WM, &TM, FM);
+    setup_objects(WM, &TM, FM, EM);
 
-    auto modal_window = new ParametersModalWindow(Vector(100, 100), Vector(200, 200), "MODAL as FUCK", EM, set_color, nullptr, dynarray<std::string>{"hi", "my", "name"});
-    WM.register_object(modal_window);
+    // auto modal_window = new ParametersModalWindow(Vector(100, 100), Vector(200, 200), "MODAL as FUCK", EM, set_color, nullptr, dynarray<const char *>{"hi", "my", "name"});
+    // WM.register_object(modal_window);
 
     RenderTarget target(Vector(WINDOW_WIDTH, WINDOW_HEIGHT));
 
@@ -192,7 +192,7 @@ static void test_regions() {
 static void setup_canvas_window(WindowManager& wm, const ToolManager *tools, FilterManager &filter_mgr);
 static void setup_tool_window(WindowManager& wm, ToolManager *tools);
 static void setup_file_menu(WindowManager& wm, Canvas* canvas);
-static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr);
+static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr, EventManager& event_mgr);
 static void setup_color_window(WindowManager& wm, ToolManager *tools);
 static void setup_color_button(Window& win, ToolManager *tools, const Color& color, const Point& pos);
 
@@ -216,11 +216,11 @@ struct ColorArgs: public CallbackArgs {
     ColorArgs(ToolManager *tools, const Color &color_ = sf::Color::Black): tools(tools),  color(color_) {}
 };
 
-static void setup_objects(WindowManager& wm, ToolManager *tools, FilterManager& filter_mgr) {
+static void setup_objects(WindowManager& wm, ToolManager *tools, FilterManager& filter_mgr, EventManager& event_mgr) {
     setup_canvas_window(wm, tools, filter_mgr);
     setup_color_window(wm, tools);
     setup_tool_window(wm, tools);
-    setup_filter_menu(wm, filter_mgr);
+    setup_filter_menu(wm, filter_mgr, event_mgr);
 }
 
 static void setup_canvas_window(WindowManager& wm, const ToolManager *tools, FilterManager& filter_mgr) {
@@ -311,21 +311,24 @@ static void setup_file_menu(WindowManager& wm, Canvas* canvas) {
 }
 
 template<typename FilterT>
-static inline void add_filter_button(Menu& menu, FilterManager& filter_mgr, const char* button_name) {
+static inline void add_filter_button(WindowManager& wm, Menu& menu, FilterManager& filter_mgr, EventManager& event_mgr,
+    const char* button_name)
+{
     auto filter = new FilterT();
-    auto flt_btn = new TextButton(Point(), Vector(), apply_filter_callback,
-                                                                new FilterApplyArgs(filter_mgr, filter), button_name);
+    auto filter_args = new FilterApplyArgs(filter_mgr, event_mgr, &wm, filter);
+    auto flt_btn = new TextButton(Point(), Vector(), apply_filter_callback, filter_args, button_name);
     menu.register_object(flt_btn);
 }
 
-static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr) {
+static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr, EventManager& event_mgr) {
     auto filter_menu = new Menu(Point(51,0), Vector(99, HEADER_HEIGHT), "Filter");
 
+    auto filter_args = new FilterApplyArgs(filter_mgr, event_mgr, &wm);
     auto recent_button = new TextButton(Point(), Vector(), recent_filter_callback,
-                                                                new FilterApplyArgs(filter_mgr), "Recent");
+                                                                filter_args, "Recent");
     filter_menu->register_object(recent_button);
 
-    add_filter_button<RaiseBrightness>(*filter_menu, filter_mgr, "Brightness+");
+    add_filter_button<RaiseBrightness>(wm, *filter_menu, filter_mgr, event_mgr, "Brightness+");
     wm.register_object_exact_pos(filter_menu);
 }
 
