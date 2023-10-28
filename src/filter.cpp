@@ -17,6 +17,22 @@ void RaiseBrightness::apply(RenderTarget &rt) {
     rt.set_image(img);
 } 
 
+void FillFilter::apply(RenderTarget &rt) {
+    RawImage img = rt.get_image();
+
+    for (uint i = 0; i < img.height(); ++i) {
+        for (uint j = 0; j < img.width(); ++j) {
+            Color pixel_color = img[i][j];
+            pixel_color.r = colors[0];
+            pixel_color.g = colors[1];
+            pixel_color.b = colors[2];
+
+            img[i][j] = pixel_color;
+        }
+    }
+
+    rt.set_image(img);
+}
 
 void parameters_get_and_apply(CallbackArgs *_args) {
     FilterApplyArgs* args = static_cast<FilterApplyArgs *> (_args);

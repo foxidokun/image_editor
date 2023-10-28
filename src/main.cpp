@@ -329,6 +329,7 @@ static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr, Even
     filter_menu->register_object(recent_button);
 
     add_filter_button<RaiseBrightness>(wm, *filter_menu, filter_mgr, event_mgr, "Brightness+");
+    add_filter_button<FillFilter>(wm, *filter_menu, filter_mgr, event_mgr, "Fill");
     wm.register_object_exact_pos(filter_menu);
 }
 

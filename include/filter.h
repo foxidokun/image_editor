@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstring>
 #include "rendertarget.h"
 #include "button.h"
 #include "window.h"
@@ -32,6 +33,19 @@ public:
     void set_params(const std::vector<double>& params) {};
 };
 
+
+class FillFilter: public Filter {
+    double colors[3] = {};
+public:
+    void apply(RenderTarget &rt);
+    dynarray<const char *> get_param_names() {return {"Red", "Green", "Blue"};};
+    void set_params(const std::vector<double>& params) {
+        assert(params.size() == 3);
+        colors[0] = std::max(std::min(params[0], 255.0), 0.0);
+        colors[1] = std::max(std::min(params[1], 255.0), 0.0);
+        colors[2] = std::max(std::min(params[2], 255.0), 0.0);
+    };
+};
 
 struct FilterApplyArgs: public CallbackArgs {
     FilterManager &filter_mgr;
