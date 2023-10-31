@@ -316,7 +316,7 @@ static inline void add_filter_button(WindowManager& wm, Menu& menu, FilterManage
 {
     auto filter = new FilterT();
     auto filter_args = new FilterApplyArgs(filter_mgr, event_mgr, &wm, filter);
-    auto flt_btn = new TextButton(Point(), Vector(), apply_filter_callback, filter_args, button_name);
+    auto flt_btn = new TextButton(Point(), Vector(300, 0), apply_filter_callback, filter_args, button_name);
     menu.register_object(flt_btn);
 }
 

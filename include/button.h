@@ -77,7 +77,7 @@ private:
 public:
     Menu(const Point& pos, const Vector& size, const string& text): 
         TextButton(pos, size, nullptr, nullptr, text),
-        last_btn_pos(Vector(0, _size.y)),
+        last_btn_pos(Vector(_size.x, _size.y)),
         default_size(size)
         {
             initialize();

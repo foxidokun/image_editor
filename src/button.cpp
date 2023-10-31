@@ -44,11 +44,14 @@ void TextButton::render(RenderTarget& target) {
 void Menu::register_object(Widget *widget) {
     widget->set_pos(last_btn_pos);
     last_btn_pos.y += MENU_ITEM_HEIGHT;
-    Vector btn_size = Vector(_size.x, MENU_ITEM_HEIGHT);
+
+    Vector btn_size = widget->size();
+    btn_size.x = std::max(_size.x, btn_size.x);
+    btn_size.y = MENU_ITEM_HEIGHT;
     widget->set_size(btn_size);
     widget->recalc_regions();
 
-    _active_area = Rectangle(_pos.x, _pos.y, _pos.x + _size.x, _pos.y + last_btn_pos.y);
+    _active_area = Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     Widget::register_object(widget);
 }
@@ -69,6 +72,8 @@ Region Menu::get_default_region() const {
 
     if (is_open) {
         for (const auto& child: _childs) {
+            std::cout << "adding child region = " <<  child->get_default_region() << "  :::   ";
+            std::cout << "child size: " << child->size() << '\n';
             new_reg += child->get_default_region();
         }
     }
@@ -79,15 +84,13 @@ Region Menu::get_default_region() const {
 void Menu::open() {
     assert(!is_open);
 
-    _size = Vector(_size.x, last_btn_pos.y);
-    _root->recalc_regions();
     is_open = true;
+    _root->recalc_regions();
 }
 
 void Menu::close() {
-    _size = default_size;
-    _root->recalc_regions();
     is_open = false;
+    _root->recalc_regions();
 }
 
 EVENT_RES Menu::on_mouse_press(const mouse_event_t& key) {
@@ -102,14 +105,18 @@ EVENT_RES Menu::on_mouse_press(const mouse_event_t& key) {
 
     if (is_open) {
         hit_x = key.x > _pos.x && key.x < _pos.x + _size.x;
-        hit_y = key.y > _pos.y && key.y < _pos.y + _size.y;
+        hit_y = key.y > _pos.y && key.y < last_btn_pos.y;
 
         if (hit_x && hit_y) {
             close();
         }
 
-        Widget::on_mouse_press(key);
-        return EVENT_RES::STOP;
+        EVENT_RES res = Widget::on_mouse_press(key);
+        if (res == EVENT_RES::STOP) {
+            close();
+        }
+
+        return res;
     }
 
     return EVENT_RES::CONT;
