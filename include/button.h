@@ -86,6 +86,8 @@ public:
     void register_object(Widget *); // override non-virtual fuction
     void render(RenderTarget& target) final;
 
+    Region get_default_region() const override;
+
     void open();
     void close();
 

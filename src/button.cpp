@@ -64,6 +64,18 @@ void Menu::render(RenderTarget& target) {
     }
 }
 
+Region Menu::get_default_region() const {
+    Region new_reg = Widget::get_default_region();
+
+    if (is_open) {
+        for (const auto& child: _childs) {
+            new_reg += child->get_default_region();
+        }
+    }
+
+    return new_reg;
+}
+
 void Menu::open() {
     assert(!is_open);
 
