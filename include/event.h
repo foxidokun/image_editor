@@ -3,6 +3,7 @@
 #include <chrono>
 #include <SFML/Graphics.hpp>
 #include "dynarray.h"
+#include "list.h"
 
 #define LOG_EVENTS 0
 
@@ -67,7 +68,7 @@ using event_handler_func_t = EVENT_RES (EventSubscriber::*)(const T& event);
 
 class EventManager: EventSubscriber {
 private:
-    dynarray<EventSubscriber *> _childs;
+    linked_list<EventSubscriber *> _childs;
     int priorities[EVENT_TYPES_NUM] = {};
 
     template<typename T, EVENT_TYPES type>

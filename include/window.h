@@ -44,8 +44,8 @@ public:
         event_mgr(event_mgr)
     {
         _priority = EVENT_PRIORITIES::MODAL_WINDOW;
-        // event_mgr.set_priority({MOUSE_EVENT, KEYBOARD_EVENT}, (uint)EVENT_PRIORITIES::MODAL_WINDOW);
-        // event_mgr.register_object(this);
+        event_mgr.set_priority({MOUSE_EVENT, KEYBOARD_EVENT}, (uint)EVENT_PRIORITIES::MODAL_WINDOW);
+        event_mgr.register_object(this);
     }
 
     ~ModalWindow() override {
