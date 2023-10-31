@@ -14,10 +14,6 @@ EVENT_RES EventManager::default_event_handler(event_handler_func_t<T> handler_fu
             was_stop = true;
         }
     }
-// хотя эта задача считается маркерной, которую способен решить 
-// наличие регионов маркирует на мастера
-// мобильные устройства медлено рисуют -> 
-// 2d буфер требует мощного cpu для копирования
 
     if (was_stop) {
         return EVENT_RES::STOP;
