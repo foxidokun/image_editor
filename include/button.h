@@ -71,14 +71,16 @@ private:
     bool is_open = false;
     Point last_btn_pos;
     Vector default_size;
+    double max_width;
 
     void initialize();
 
 public:
     Menu(const Point& pos, const Vector& size, const string& text): 
         TextButton(pos, size, nullptr, nullptr, text),
-        last_btn_pos(Vector(_size.x, _size.y)),
-        default_size(size)
+        last_btn_pos(Vector(_pos.x, _size.y)),
+        default_size(size),
+        max_width(size.x)
         {
             initialize();
         }

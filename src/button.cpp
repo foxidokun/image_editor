@@ -46,9 +46,16 @@ void Menu::register_object(Widget *widget) {
     last_btn_pos.y += MENU_ITEM_HEIGHT;
 
     Vector btn_size = widget->size();
-    btn_size.x = std::max(_size.x, btn_size.x);
-    btn_size.y = MENU_ITEM_HEIGHT;
-    widget->set_size(btn_size);
+    if (btn_size.x > max_width) {
+        max_width = btn_size.x;
+        for (const auto& child: _childs) {
+            auto child_size = child->size();
+            child_size.x = max_width;
+            child->set_size(child_size);
+        }
+    }
+
+    widget->set_size(Vector(max_width, MENU_HEIGHT));
     widget->recalc_regions();
 
     _active_area = Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -72,8 +79,6 @@ Region Menu::get_default_region() const {
 
     if (is_open) {
         for (const auto& child: _childs) {
-            std::cout << "adding child region = " <<  child->get_default_region() << "  :::   ";
-            std::cout << "child size: " << child->size() << '\n';
             new_reg += child->get_default_region();
         }
     }
