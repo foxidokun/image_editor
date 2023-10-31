@@ -147,14 +147,14 @@ Widget* set_root(Widget *const widget, void *args) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 void Widget::recalc_regions() {
-    Region new_reg(get_hit_rectangle());
+    Region new_reg = get_default_region();
 
     if (_parent) {
         new_reg *= _parent->_reg;
 
         for (const auto& subling: _parent->_childs) {
             if (subling == this) { break; }
-            new_reg -= Region(subling->get_hit_rectangle());
+            new_reg -= subling->get_default_region();
         }
     }
 
@@ -165,7 +165,7 @@ void Widget::recalc_regions() {
     }
 
     for (const auto& child: _childs) {
-        _reg -= child->get_hit_rectangle();
+        _reg -= child->get_default_region();
     }
 }
 

@@ -56,6 +56,10 @@ public:
 
     virtual void render(RenderTarget& target) override;
 
+    virtual Region get_default_region() const {
+        return Region(Rectangle{_pos.x, _pos.y, _pos.x + _size.x, _pos.y + _size.y});
+    }
+
     void register_object(Widget *child);
     void register_object_exact_pos(Widget *child);
 
