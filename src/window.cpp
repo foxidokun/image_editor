@@ -105,7 +105,6 @@ EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
     return Widget::on_mouse_move(key);
 }
 
-
 void ParametersModalWindow::initialize() {
     for (uint i = 0; i < parameters.size(); ++i) {
         auto box = new TextBox(_pos + Vector(_size.x - 100, 10 + HEADER_HEIGHT + i*20), Vector(90, 18));

@@ -12,3 +12,4 @@
 #include "button.h"
 #include "canvas.h"
 #include "filter.h"
+#include "scrollbar.h"

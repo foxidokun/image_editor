@@ -28,9 +28,6 @@ int main(int argc, char **argv) {
     EM.register_object(&event_logger);
     setup_objects(WM, &TM, FM, EM);
 
-    // auto modal_window = new ParametersModalWindow(Vector(100, 100), Vector(200, 200), "MODAL as FUCK", EM, set_color, nullptr, dynarray<const char *>{"hi", "my", "name"});
-    // WM.register_object(modal_window);
-
     RenderTarget target(Vector(WINDOW_WIDTH, WINDOW_HEIGHT));
 
     window.clear(sf::Color::Cyan);
@@ -224,13 +221,21 @@ static void setup_objects(WindowManager& wm, ToolManager *tools, FilterManager& 
 }
 
 static void setup_canvas_window(WindowManager& wm, const ToolManager *tools, FilterManager& filter_mgr) {
-    auto win      = new Window(Point(110,0), Vector(970, 690), "Canvas");
-    double width  = win->active_area().high_x - win->active_area().low_x;
-    double height = win->active_area().high_y - win->active_area().low_y;
+    auto win      = new Window(Point(110,0), Vector(600, 400), "Canvas");
+    double width  = win->active_area().high_x - win->active_area().low_x - 12;
+    double height = win->active_area().high_y - win->active_area().low_y - 10;
 
-    auto canvas = new Canvas(Point(0,0), Vector(width, height), tools, filter_mgr);
+    auto canvas = new Canvas(Point(0,0), Vector(width, height), tools, filter_mgr, Point(0,0), Vector(2 * width, 2 * height));
+    auto h_scrollbar = new Scrollbar<Orientation::Horizontal>(Vector(0, 365), Vector(600, 10));
+    auto v_scrollbar = new Scrollbar<Orientation::Vertical>  (Vector(588, 0), Vector(12, 400));
+
     win->register_object(canvas);
+    win->register_object(h_scrollbar);
+    win->register_object(v_scrollbar);
+
     wm.register_object(win);
+    auto h_controller = new ScrollController(*h_scrollbar, *canvas);
+    auto v_controller = new ScrollController(*v_scrollbar, *canvas);
 
     setup_file_menu(wm, canvas);
 }

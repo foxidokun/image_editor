@@ -34,6 +34,8 @@ const Color TEXT_COLOR(255,255,255);
 const Color BUTTON_INACTIVE_COLOR(49,54,59);
 const Color BUTTON_ACTIVE_COLOR(61,174,233);
 const Color TEXTBOX_BACKGROUND_COLOR(77,77,77);
+const Color SCROLLBAR_RULER_COLOR(77,77,77);
+const Color SCROLLBAR_BACKGROUND_COLOR(35,38,41);
 
 #else
 #error "Unknown color scheme"

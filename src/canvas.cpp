@@ -4,8 +4,8 @@
 void Canvas::render(RenderTarget& target) {
     _permanent.display();
     _tmp.display();
-    target.drawRenderTarget(_reg, _pos, _permanent);
-    target.drawRenderTarget(_reg, _pos, _tmp);
+    target.drawRenderTarget(_reg, real_pos_, _permanent);
+    target.drawRenderTarget(_reg, real_pos_, _tmp);
 }
 
 EVENT_RES Canvas::on_mouse_press(const mouse_event_t& key) {
@@ -15,8 +15,8 @@ EVENT_RES Canvas::on_mouse_press(const mouse_event_t& key) {
         is_drawing = true;
         filter_manager.set_rt(&_permanent);
         mouse_event_t key_copy = key;
-        key_copy.x -= _pos.x;
-        key_copy.y -= _pos.y;
+        key_copy.x -= real_pos_.x;
+        key_copy.y -= real_pos_.y;
         tool_manager->paint_on_press(_permanent, _tmp, key_copy);
         return EVENT_RES::STOP;
     }
@@ -25,8 +25,8 @@ EVENT_RES Canvas::on_mouse_press(const mouse_event_t& key) {
 
 EVENT_RES Canvas::on_mouse_release(const mouse_event_t& key) {
     mouse_event_t key_copy = key;
-    key_copy.x -= _pos.x;
-    key_copy.y -= _pos.y;
+    key_copy.x -= real_pos_.x;
+    key_copy.y -= real_pos_.y;
     tool_manager->paint_on_release(_permanent, _tmp, key_copy);
     is_drawing = false;
     return EVENT_RES::CONT;
@@ -38,8 +38,8 @@ EVENT_RES Canvas::on_mouse_move(const mouse_event_t& key) {
     if (hit_x && hit_y) {
         if (is_drawing) {
             mouse_event_t key_copy = key;
-            key_copy.x -= _pos.x;
-            key_copy.y -= _pos.y;
+            key_copy.x -= real_pos_.x;
+            key_copy.y -= real_pos_.y;
             tool_manager->paint_on_move(_permanent, _tmp, key_copy);
         }
         return EVENT_RES::STOP;
@@ -47,8 +47,8 @@ EVENT_RES Canvas::on_mouse_move(const mouse_event_t& key) {
 
     mouse_event_t key_copy = key;
     key_copy.button = mouse_event_t::button_type::UNKNOWN;
-    key_copy.x -= _pos.x;
-    key_copy.y -= _pos.y;
+    key_copy.x -= real_pos_.x;
+    key_copy.y -= real_pos_.y;
     key_copy.x = std::max(key_copy.x, _pos.x);
     key_copy.y = std::max(key_copy.y, _pos.y);
     key_copy.x = std::min(key_copy.x, _pos.x + _size.x);
@@ -56,6 +56,11 @@ EVENT_RES Canvas::on_mouse_move(const mouse_event_t& key) {
     tool_manager->paint_on_release(_permanent, _tmp, key_copy);
 
     return EVENT_RES::CONT;
+}
+
+void Canvas::move(const Vector& shift) {
+    real_pos_ += shift;
+    Widget::move(shift);
 }
 
 void load_canvas_callback(CallbackArgs *args_) {

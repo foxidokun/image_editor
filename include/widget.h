@@ -60,6 +60,8 @@ public:
         return Region(Rectangle{_pos.x, _pos.y, _pos.x + _size.x, _pos.y + _size.y});
     }
 
+    virtual void move(const Vector& shift);
+
     void register_object(Widget *child);
     void register_object_exact_pos(Widget *child);
 

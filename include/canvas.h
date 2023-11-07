@@ -14,14 +14,24 @@ private:
     FilterManager &filter_manager;
     bool is_drawing;
 
+    Vector real_pos_;
+    Vector real_size_;
+
+    template<Orientation orientation>
+    friend class ScrollController;
+
 public:
-    Canvas(const Point& pos, const Vector& size, const ToolManager *tool_manager, FilterManager &filter_manager):
+    Canvas(const Point& pos, const Vector& size, const ToolManager *tool_manager, FilterManager &filter_manager,
+                std::optional<Point>  real_pos  = std::optional<Point>(),
+                std::optional<Vector> real_size = std::optional<Vector>()):
         Widget(pos, size),
         tool_manager(tool_manager),
         filter_manager(filter_manager),
         is_drawing(false),
-        _permanent(RenderTarget(size)),
-        _tmp(RenderTarget(size))
+        _permanent(RenderTarget(real_size.has_value() ? real_size.value() : size)),
+        _tmp(RenderTarget(real_size.has_value() ? real_size.value() : size)),
+        real_pos_(real_pos.has_value() ? real_pos.value() : pos),
+        real_size_(real_size.has_value() ? real_size.value() : size)
         {
             _permanent.clear(sf::Color::White);
             _tmp.clear(sf::Color::Transparent);
@@ -37,6 +47,8 @@ public:
         _permanent.loadFromFile(filename);
         _tmp.clear(sf::Color::Transparent);
     };
+
+    void move(const Vector& shift) override;
 
     void save_to_file(const char* filename) {
         _permanent.saveToFile(filename);

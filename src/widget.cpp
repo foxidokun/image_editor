@@ -124,16 +124,20 @@ static inline bool no_hit(const Point& pos, const Vector& size, const mouse_even
 
 Widget* update_coords(Widget *const widget, void *args) {
     Vector base_point = *static_cast<Vector *>(args);
-    widget->_pos += base_point;
-    widget->_reg.shift(Vector(base_point.x, base_point.y));
-    
-    // update active area
-    widget->_active_area.low_x  += base_point.x;
-    widget->_active_area.high_x += base_point.x;
-    widget->_active_area.low_y  += base_point.y;
-    widget->_active_area.high_y += base_point.y;
+    widget->move(base_point);
     
     return widget;
+}
+
+void Widget::move(const Vector& shift) {
+    _pos += shift;
+    _reg.shift(Vector(shift.x, shift.y));
+    
+    // update active area
+    _active_area.low_x  += shift.x;
+    _active_area.high_x += shift.x;
+    _active_area.low_y  += shift.y;
+    _active_area.high_y += shift.y;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

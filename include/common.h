@@ -10,6 +10,10 @@
 
 const double infinity = std::numeric_limits<double>::infinity();
 
+enum class Orientation: uint8_t {
+    Horizontal,
+    Vertical
+};
 
 namespace global_resources {
     extern const sf::Font    font;

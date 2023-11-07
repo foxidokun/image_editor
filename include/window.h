@@ -14,13 +14,15 @@ private:
 public:
     Window(const Point& pos, const Vector& size, const string& title):
         Widget(pos, size),
-        _title(title) {
+        _title(title)
+        {
             initialize();
         }
 
     Window(const Point& pos, const Vector& size, string&& title):
         Widget(pos, size),
-        _title(title) {
+        _title(title)
+        {
             initialize();
         }
 
