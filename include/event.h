@@ -21,7 +21,6 @@ struct mouse_event_t {
     } button;
 };
 
-
 enum class EVENT_RES {
     CONT,
     STOP
