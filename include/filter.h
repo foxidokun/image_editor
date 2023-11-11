@@ -9,7 +9,7 @@ class Filter {
 public:
     virtual void apply(RenderTarget &rt) = 0;
     virtual dynarray<const char *> get_param_names() = 0; 
-    virtual void set_params(const std::vector<double>& params) = 0;
+    virtual void set_params(const dynarray<double>& params) = 0;
 };
 
 class FilterManager {
@@ -30,7 +30,7 @@ class RaiseBrightness: public Filter {
 public:
     void apply(RenderTarget &rt);
     dynarray<const char *> get_param_names() {return dynarray<const char *>();};
-    void set_params(const std::vector<double>& params) {};
+    void set_params(const dynarray<double>& params) {};
 };
 
 
@@ -39,7 +39,7 @@ class FillFilter: public Filter {
 public:
     void apply(RenderTarget &rt);
     dynarray<const char *> get_param_names() {return {"Red", "Green", "Blue"};};
-    void set_params(const std::vector<double>& params) {
+    void set_params(const dynarray<double>& params) {
         assert(params.size() == 3);
         colors[0] = std::max(std::min(params[0], 255.0), 0.0);
         colors[1] = std::max(std::min(params[1], 255.0), 0.0);

@@ -108,6 +108,12 @@ public:
         }
     }
 
+    dynarray(std::initializer_list<T> list) {
+        for (const auto& x: list) {
+            push_back(x);
+        }
+    }
+
     dynarray& operator=(const dynarray& other) {
         free(_data);
 
