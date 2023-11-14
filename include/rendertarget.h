@@ -6,45 +6,13 @@
 #include "point.h"
 #include "regions.h"
 #include "colors.h"
+#include "plugin.h"
 
 typedef sf::Texture Texture;
 
 #define DRAW_REGIONS 0
 
-class RawImage {
-private:
-    uint _width;
-    uint _height;
-    Color* pixels;
-    
-public:
-    RawImage(uint width, uint height, const uint8_t* pixel_array):
-        _width(width), _height(height), pixels(new Color[width*height])
-    {
-        memcpy(pixels, pixel_array, width*height*sizeof(Color));
-    }
-
-    ~RawImage() {
-        delete[] pixels;
-    }
-
-    const uint8_t *get_bytes() const { return (const uint8_t *) pixels; }
-    uint width() const  { return _width; };
-    uint height() const { return _height; };
-
-
-    Color get_pixel(uint x, uint y) {
-        return pixels[_width * y + x];
-    }
-
-    void set_pixel(uint x, uint y, const Color& color) {
-        pixels[_width * y + x] = color;
-    }
-
-    Color* operator[](size_t y) {
-        return &pixels[_width * y];
-    }
-};
+using RawImage = plugin::Texture;
 
 class RenderTarget {
 private:

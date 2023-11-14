@@ -1,26 +1,10 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "plugin.h"
 typedef unsigned int uint;
 
-struct Color {
-    uint8_t r = 0;
-    uint8_t g = 0;
-    uint8_t b = 0;
-    uint8_t a = 0;
-
-    Color(const sf::Color &sfc): r(sfc.r), g(sfc.g), b(sfc.b), a(sfc.a) {}
-    Color(uint r, uint g, uint b, uint a=255): r(r), g(g), b(b), a(a) {}
-    Color() = default;
-
-    operator sf::Color() const {
-        return sf::Color(r, g, b, a);
-    }
-
-    bool operator==(const Color& other) const {
-        return ((sf::Color)(*this) == (sf::Color)(other));
-    } 
-};
+using plugin::Color;
 
 #define BREEZE_DARK 1
 

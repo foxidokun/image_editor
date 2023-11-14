@@ -1,4 +1,10 @@
+#pragma once
+
 #include <cinttypes>
+#include <SFML/Graphics.hpp>
+#include <cstring>
+#include "dynarray.h"
+#include "vector.h"
 
 namespace plugin {
     enum class InterfaceType {
@@ -10,6 +16,10 @@ namespace plugin {
     struct Array {
         uint64_t size;
         T* data;
+
+        Array(const dynarray<T>& array);
+        operator dynarray<T>() const;
+        ~Array();
     };
 
     struct Color {
@@ -17,18 +27,58 @@ namespace plugin {
         uint8_t g;
         uint8_t b;
         uint8_t a;
+
+        Color(const sf::Color &sfc): r(sfc.r), g(sfc.g), b(sfc.b), a(sfc.a) {}
+        Color(uint r, uint g, uint b, uint a=255): r(r), g(g), b(b), a(a) {}
+        Color() = default;
+
+        operator sf::Color() const {
+            return sf::Color(r, g, b, a);
+        }
+
+        bool operator==(const Color& other) const = default;
     };
 
     struct Texture {
-        uint64_t height;
-        uint64_t width;
+        uint64_t _height;
+        uint64_t _width;
 
-        Color *pixels;
+        Color *_pixels;
+
+        Texture(uint width, uint height, const uint8_t* pixel_array):
+        _width(width), _height(height), _pixels(new Color[width*height])
+        {
+            memcpy(_pixels, pixel_array, width*height*sizeof(Color));
+        }
+
+        ~Texture() {
+            delete[] _pixels;
+        }
+
+        const uint8_t *get_bytes() const { return (const uint8_t *) _pixels; }
+        uint width() const  { return _width; };
+        uint height() const { return _height; };
+
+
+        Color get_pixel(uint x, uint y) {
+            return _pixels[_width * y + x];
+        }
+
+        void set_pixel(uint x, uint y, const Color& color) {
+            _pixels[_width * y + x] = color;
+        }
+
+        Color* operator[](size_t y) {
+            return &_pixels[_width * y];
+        }
     };
 
     struct Vec2 {
         double x;
         double y;
+
+        Vec2(Vector self): x(self.x), y(self.y) {}
+        operator Vector() const { return Vector(x, y); }
     };
 
     enum class MouseButton {
@@ -38,8 +88,8 @@ namespace plugin {
 
     /// @note см про относительность координат
     struct MouseContext {
-        Vec2 position = 0;
-        MouseButton button = 0;
+        Vec2 position;
+        MouseButton button;
     };
 
     enum class Key {
@@ -329,3 +379,20 @@ namespace plugin {
 }
 
 extern "C" plugin::Plugin* getInstance(plugin::App *app);
+
+template<typename T>
+plugin::Array<T>::Array(const dynarray<T>& array): size(array.size()) {
+    data = new T[size];
+    std::copy(array.begin(), array.end(), data);
+}
+
+template<typename T>
+plugin::Array<T>::operator dynarray<T>() const {
+    dynarray arr(size);
+    arr.assign(data, data + size);
+}
+
+template<typename T>
+plugin::Array<T>::~Array() {
+    delete[] data;
+}
