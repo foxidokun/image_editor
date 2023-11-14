@@ -47,12 +47,12 @@ public:
             _active_area = whole;
         }
 
-    virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key) override;
-    virtual EVENT_RES on_keyboard_release(const keyboard_event_t& key) override;
-    virtual EVENT_RES on_mouse_press     (const mouse_event_t& key) override;
-    virtual EVENT_RES on_mouse_release   (const mouse_event_t& key) override;
-    virtual EVENT_RES on_mouse_move      (const mouse_event_t& key) override;
-    virtual EVENT_RES on_timer           (const time_point& time) override;
+    virtual bool onKeyboardPress  (keyboard_event_t key) override;
+    virtual bool onKeyboardRelease(keyboard_event_t key) override;
+    virtual bool onMousePress     (mouse_event_t key) override;
+    virtual bool onMouseRelease   (mouse_event_t key) override;
+    virtual bool onMouseMove      (mouse_event_t key) override;
+    virtual bool onClock          (uint64_t delta) override;
 
     virtual void render(RenderTarget& target) override;
 
@@ -145,11 +145,11 @@ public:
         Widget(pos, size)
         {}
 
-    virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key) override;
-    virtual EVENT_RES on_keyboard_release(const keyboard_event_t& key) override {return EVENT_RES::CONT;}
-    virtual EVENT_RES on_mouse_press     (const mouse_event_t& key) override;
-    virtual EVENT_RES on_mouse_release   (const mouse_event_t& key) override;
-    virtual EVENT_RES on_mouse_move      (const mouse_event_t& key) override;
+    virtual bool onKeyboardPress  (keyboard_event_t key) override;
+    virtual bool onKeyboardRelease(keyboard_event_t key) override {return EVENT_RES::CONT;}
+    virtual bool onMousePress     (mouse_event_t key) override;
+    virtual bool onMouseRelease   (mouse_event_t key) override;
+    virtual bool onMouseMove      (mouse_event_t key) override;
 
     void print(std::ostream& stream) const final { stream << "Text Box with content <" << content << ">"; }
 

@@ -28,9 +28,9 @@ public:
 
     void render(RenderTarget& target) override;
 
-    EVENT_RES on_mouse_press   (const mouse_event_t& key) final;
-    EVENT_RES on_mouse_release (const mouse_event_t& key) final;
-    EVENT_RES on_mouse_move    (const mouse_event_t& key) final;
+    bool onMousePress   (mouse_event_t key) final;
+    bool onMouseRelease (mouse_event_t key) final;
+    bool onMouseMove    (mouse_event_t key) final;
 
     void print(std::ostream& stream) const final {
         stream << "Window " << _title;

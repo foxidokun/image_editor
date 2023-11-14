@@ -1,31 +1,31 @@
 #include "button.h"
 
-EVENT_RES Button::on_mouse_press(const mouse_event_t& key) {
-    bool hit_x = key.x > _pos.x && key.x < _pos.x + _size.x;
-    bool hit_y = key.y > _pos.y && key.y < _pos.y + _size.y;
+bool Button::onMousePress(mouse_event_t key) {
+    bool hit_x = key.position.x > _pos.x && key.position.x < _pos.x + _size.x;
+    bool hit_y = key.position.y > _pos.y && key.position.y < _pos.y + _size.y;
     
     if (hit_x && hit_y) { 
         _is_clicked = true;
         _callback(_allocated_args);
         return EVENT_RES::STOP;
     } else {
-        return Widget::on_mouse_press(key);
+        return Widget::onMousePress(key);
     }
 }
 
-EVENT_RES Button::on_mouse_release(const mouse_event_t& key) {
+bool Button::onMouseRelease(mouse_event_t key) {
     _is_clicked = false;
-    return Widget::on_mouse_release(key);
+    return Widget::onMouseRelease(key);
 }
 
-EVENT_RES Button::on_mouse_move(const mouse_event_t& key) {
-    bool hit_x = key.x > _pos.x && key.x < _pos.x + _size.x;
-    bool hit_y = key.y > _pos.y && key.y < _pos.y + _size.y;
+bool Button::onMouseMove(mouse_event_t key) {
+    bool hit_x = key.position.x > _pos.x && key.position.x < _pos.x + _size.x;
+    bool hit_y = key.position.y > _pos.y && key.position.y < _pos.y + _size.y;
     if (!(hit_x && hit_y)) {
         _is_clicked = false;
         return EVENT_RES::CONT;
     } else {
-        return Widget::on_mouse_move(key);
+        return Widget::onMouseMove(key);
     }
 }
 
@@ -98,9 +98,9 @@ void Menu::close() {
     _root->recalc_regions();
 }
 
-EVENT_RES Menu::on_mouse_press(const mouse_event_t& key) {
-    bool hit_x = key.x > _pos.x && key.x < _pos.x + default_size.x;
-    bool hit_y = key.y > _pos.y && key.y < _pos.y + default_size.y;
+bool Menu::onMousePress(mouse_event_t key) {
+    bool hit_x = key.position.x > _pos.x && key.position.x < _pos.x + default_size.x;
+    bool hit_y = key.position.y > _pos.y && key.position.y < _pos.y + default_size.y;
     
     if (hit_x && hit_y) { 
         _is_clicked = true;
@@ -109,14 +109,14 @@ EVENT_RES Menu::on_mouse_press(const mouse_event_t& key) {
     }
 
     if (is_open) {
-        hit_x = key.x > _pos.x && key.x < _pos.x + _size.x;
-        hit_y = key.y > _pos.y && key.y < last_btn_pos.y;
+        hit_x = key.position.x > _pos.x && key.position.x < _pos.x + _size.x;
+        hit_y = key.position.y > _pos.y && key.position.y < last_btn_pos.y;
 
         if (hit_x && hit_y) {
             close();
         }
 
-        EVENT_RES res = Widget::on_mouse_press(key);
+        bool res = Widget::onMousePress(key);
         if (res == EVENT_RES::STOP) {
             close();
         }
@@ -127,20 +127,20 @@ EVENT_RES Menu::on_mouse_press(const mouse_event_t& key) {
     return EVENT_RES::CONT;
 }
 
-EVENT_RES Menu::on_mouse_move(const mouse_event_t& key) {
-    bool hit_x = key.x > _pos.x && key.x < _pos.x + default_size.x;
-    bool hit_y = key.y > _pos.y && key.y < _pos.y + default_size.y;
+bool Menu::onMouseMove(mouse_event_t key) {
+    bool hit_x = key.position.x > _pos.x && key.position.x < _pos.x + default_size.x;
+    bool hit_y = key.position.y > _pos.y && key.position.y < _pos.y + default_size.y;
     if (!(hit_x && hit_y)) {
         _is_clicked = false;
         return EVENT_RES::CONT;
     } else {
-        return Widget::on_mouse_move(key);
+        return Widget::onMouseMove(key);
     }
 }
 
-EVENT_RES Menu::on_mouse_release(const mouse_event_t& key) {
+bool Menu::onMouseRelease(mouse_event_t key) {
     _is_clicked = false;
-    return Widget::on_mouse_release(key);
+    return Widget::onMouseRelease(key);
 }
 
 

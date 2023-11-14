@@ -4,26 +4,15 @@
 #include <SFML/Graphics.hpp>
 #include "dynarray.h"
 #include "list.h"
+#include "plugin.h"
 
 #define LOG_EVENTS 0
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-struct mouse_event_t {
-    double x;
-    double y;
-
-    enum class button_type {
-        NONE = 0,
-        LEFT,
-        RIGHT,
-        UNKNOWN
-    } button;
-};
-
-enum class EVENT_RES {
-    CONT,
-    STOP
+enum EVENT_RES {
+    CONT = true,
+    STOP = false
 };
 
 enum EVENT_TYPES {
@@ -39,31 +28,24 @@ enum class EVENT_PRIORITIES {
     EVENT_LOGGER = 228
 };
 
-typedef sf::Event::KeyEvent keyboard_event_t;
-
 using time_point = std::chrono::time_point<std::chrono::system_clock>;
+using keyboard_event_t = plugin::KeyboardContext;
+using mouse_event_t = plugin::MouseContext;
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-class EventSubscriber {
+class EventSubscriber: public plugin::EventProcessableI {
 protected:
     EVENT_PRIORITIES _priority = EVENT_PRIORITIES::DEFAULT;
 
 public:
-    virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key) = 0;
-    virtual EVENT_RES on_keyboard_release(const keyboard_event_t& key) = 0;
-    virtual EVENT_RES on_mouse_press     (const mouse_event_t& key)    = 0;
-    virtual EVENT_RES on_mouse_release   (const mouse_event_t& key)    = 0;
-    virtual EVENT_RES on_mouse_move      (const mouse_event_t& key)    = 0;
-    virtual EVENT_RES on_timer           (const time_point& time)      = 0;
-
     uint priority() const { return (uint)_priority; }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 template<typename T>
-using event_handler_func_t = EVENT_RES (EventSubscriber::*)(const T& event);
+using event_handler_func_t = bool (plugin::EventProcessableI::*)(T event);
 
 class EventManager: EventSubscriber {
 private:
@@ -71,7 +53,7 @@ private:
     int priorities[EVENT_TYPES_NUM] = {};
 
     template<typename T, EVENT_TYPES type>
-    EVENT_RES default_event_handler(event_handler_func_t<T> handler_func, const T& event);
+    bool default_event_handler(event_handler_func_t<T> handler_func, T event);
 public:
     void register_object(EventSubscriber *child) {
         _childs.push_back(child);
@@ -85,16 +67,16 @@ public:
     void reset_priority();
 
     // EventSubscriber API
-    virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key) override;
-    virtual EVENT_RES on_keyboard_release(const keyboard_event_t& key) override;
-    virtual EVENT_RES on_mouse_press     (const mouse_event_t& key)    override;
-    virtual EVENT_RES on_mouse_release   (const mouse_event_t& key)    override;
-    virtual EVENT_RES on_mouse_move      (const mouse_event_t& key)    override;
-    virtual EVENT_RES on_timer           (const time_point& time)      override;
+    virtual bool onKeyboardPress  (keyboard_event_t key) override;
+    virtual bool onKeyboardRelease(keyboard_event_t key) override;
+    virtual bool onMousePress     (mouse_event_t key)    override;
+    virtual bool onMouseRelease   (mouse_event_t key)    override;
+    virtual bool onMouseMove      (mouse_event_t key)    override;
+    virtual bool onClock          (uint64_t delta)       override;
 
     // Timer interru^W ebent generator
     void timer_event() {
-        on_timer(std::chrono::system_clock::now());
+        onClock(33333); // 30 fps
     }
 };
 
@@ -113,12 +95,12 @@ private:
 public:
     EventLogger(std::ostream& stream): stream(stream) {}
 
-    virtual EVENT_RES on_keyboard_press  (const keyboard_event_t& key) override EVENTLOGGER_DEFINED_STUB;
-    virtual EVENT_RES on_keyboard_release(const keyboard_event_t& key) override EVENTLOGGER_DEFINED_STUB;
-    virtual EVENT_RES on_mouse_press     (const mouse_event_t& key)    override EVENTLOGGER_DEFINED_STUB;
-    virtual EVENT_RES on_mouse_release   (const mouse_event_t& key)    override EVENTLOGGER_DEFINED_STUB;
-    virtual EVENT_RES on_mouse_move      (const mouse_event_t& key)    override EVENTLOGGER_DEFINED_STUB;
-    virtual EVENT_RES on_timer           (const time_point& time)      override EVENTLOGGER_DEFINED_STUB;
+    virtual bool onKeyboardPress  (keyboard_event_t key) override EVENTLOGGER_DEFINED_STUB;
+    virtual bool onKeyboardRelease(keyboard_event_t key) override EVENTLOGGER_DEFINED_STUB;
+    virtual bool onMousePress     (mouse_event_t key)    override EVENTLOGGER_DEFINED_STUB;
+    virtual bool onMouseRelease   (mouse_event_t key)    override EVENTLOGGER_DEFINED_STUB;
+    virtual bool onMouseMove      (mouse_event_t key)    override EVENTLOGGER_DEFINED_STUB;
+    virtual bool onClock          (uint64_t delta)       override EVENTLOGGER_DEFINED_STUB;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -128,6 +110,6 @@ static std::ostream& operator<<(std::ostream& stream, const mouse_event_t& event
 
     const char *button_name = BUTTON_NAMES[(int) event.button];
 
-    stream << "{ pos: (" << event.x << ", " << event.y << ") KEY: " << button_name << "}";
+    stream << "{ pos: (" << event.position.x << ", " << event.position.y << ") KEY: " << button_name << "}";
     return stream;
 }

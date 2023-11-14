@@ -9,12 +9,12 @@ static inline bool no_hit(const Point& pos, const Vector& size, const mouse_even
 Widget* set_root(Widget *const widget, void *args);
 
 template<typename T>
-using handler_func_t = EVENT_RES (Widget::*)(const T& event);
+using handler_func_t = bool (Widget::*)(T event);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 template<typename T, bool reorder = false>
-static EVENT_RES default_event_handler(Widget &root, linked_list<Widget *>& childs, handler_func_t<T> handler_func,
+static bool default_event_handler(Widget &root, linked_list<Widget *>& childs, handler_func_t<T> handler_func,
     const T& event)
 {
     for (auto child_iter = childs.begin(); child_iter != childs.end();) {
@@ -35,32 +35,32 @@ static EVENT_RES default_event_handler(Widget &root, linked_list<Widget *>& chil
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-EVENT_RES Widget::on_keyboard_press(const keyboard_event_t& key) {
-    return default_event_handler<keyboard_event_t>(*_root, _childs, &Widget::on_keyboard_press, key);
+bool Widget::onKeyboardPress(keyboard_event_t key) {
+    return default_event_handler<keyboard_event_t>(*_root, _childs, &Widget::onKeyboardPress, key);
 }
 
 
-EVENT_RES Widget::on_keyboard_release(const keyboard_event_t& key) {
-    return default_event_handler<keyboard_event_t>(*_root, _childs, &Widget::on_keyboard_release, key);
+bool Widget::onKeyboardRelease(keyboard_event_t key) {
+    return default_event_handler<keyboard_event_t>(*_root, _childs, &Widget::onKeyboardRelease, key);
 }
 
 
-EVENT_RES Widget::on_mouse_press(const mouse_event_t& key) {
-    return default_event_handler<mouse_event_t, true>(*_root, _childs, &Widget::on_mouse_press, key);
+bool Widget::onMousePress(mouse_event_t key) {
+    return default_event_handler<mouse_event_t, true>(*_root, _childs, &Widget::onMousePress, key);
 }
 
 
-EVENT_RES Widget::on_mouse_release(const mouse_event_t& key) {
-    return default_event_handler<mouse_event_t, true>(*_root, _childs, &Widget::on_mouse_release, key);
+bool Widget::onMouseRelease(mouse_event_t key) {
+    return default_event_handler<mouse_event_t, true>(*_root, _childs, &Widget::onMouseRelease, key);
 }
 
-EVENT_RES Widget::on_mouse_move(const mouse_event_t& key) {
-    return default_event_handler<mouse_event_t>(*_root, _childs, &Widget::on_mouse_move, key);
+bool Widget::onMouseMove(mouse_event_t key) {
+    return default_event_handler<mouse_event_t>(*_root, _childs, &Widget::onMouseMove, key);
 }
 
 
-EVENT_RES Widget::on_timer(const time_point& time) {
-    return default_event_handler<time_point>(*_root, _childs, &Widget::on_timer, time);
+bool Widget::onClock(uint64_t delta) {
+    return default_event_handler<uint64_t>(*_root, _childs, &Widget::onClock, delta);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -114,8 +114,8 @@ void recursive_update(Widget **widget_ptr, transform_f func, void* args,
 // ---------------------------------------------------------------------------------------------------------------------
 
 static inline bool no_hit(const Point& pos, const Vector& size, const mouse_event_t& event) {
-    double rel_x = event.x - pos.x;
-    double rel_y = event.y - pos.y;
+    double rel_x = event.position.x - pos.x;
+    double rel_y = event.position.y - pos.y;
 
     return !((0 < rel_x && rel_x < size.x) && (0 < rel_y && rel_y < size.y));
 }
@@ -232,7 +232,7 @@ void ColorIndicator::render(RenderTarget& target) {
 
 static void add_symbol(const keyboard_event_t& key, string& string);
 
-EVENT_RES TextBox::on_keyboard_press(const keyboard_event_t& key) {
+bool TextBox::onKeyboardPress(keyboard_event_t key) {
     if (is_writing) {
         add_symbol(key, content);
         return EVENT_RES::STOP;
@@ -241,25 +241,25 @@ EVENT_RES TextBox::on_keyboard_press(const keyboard_event_t& key) {
     return EVENT_RES::CONT;
 }
 
-EVENT_RES TextBox::on_mouse_press(const mouse_event_t& key) {
-    bool hit_y = key.y >= _pos.y && key.y <= _pos.y + _size.y;
-    bool hit_x = key.x >= _pos.x && key.x <= _pos.x + _size.x;
+bool TextBox::onMousePress(mouse_event_t key) {
+    bool hit_y = key.position.y >= _pos.y && key.position.y <= _pos.y + _size.y;
+    bool hit_x = key.position.x >= _pos.x && key.position.x <= _pos.x + _size.x;
     is_writing = (hit_x && hit_y);
 
     return is_writing ? EVENT_RES::STOP : EVENT_RES::CONT;
 }
 
-EVENT_RES TextBox::on_mouse_release(const mouse_event_t& key) {
-    bool hit_y = key.y >= _pos.y && key.y <= _pos.y + _size.y;
-    bool hit_x = key.x >= _pos.x && key.x <= _pos.x + _size.x;
+bool TextBox::onMouseRelease(mouse_event_t key) {
+    bool hit_y = key.position.y >= _pos.y && key.position.y <= _pos.y + _size.y;
+    bool hit_x = key.position.x >= _pos.x && key.position.x <= _pos.x + _size.x;
     is_writing = (hit_x && hit_y);
 
     return is_writing ? EVENT_RES::STOP : EVENT_RES::CONT;
 }
 
-EVENT_RES TextBox::on_mouse_move(const mouse_event_t& key) {
-    bool hit_y = key.y >= _pos.y && key.y <= _pos.y + _size.y;
-    bool hit_x = key.x >= _pos.x && key.x <= _pos.x + _size.x;
+bool TextBox::onMouseMove(mouse_event_t key) {
+    bool hit_y = key.position.y >= _pos.y && key.position.y <= _pos.y + _size.y;
+    bool hit_x = key.position.x >= _pos.x && key.position.x <= _pos.x + _size.x;
     is_writing = (is_writing && hit_x && hit_y);
     
     return (hit_x && hit_y) ? EVENT_RES::STOP : EVENT_RES::CONT;
@@ -271,22 +271,24 @@ void TextBox::render(RenderTarget& target) {
 }
 
 static void add_symbol(const keyboard_event_t& key, string& string) {
-    if (key.code <= sf::Keyboard::Z) {
+    int key_code = (int)key.key;
+
+    if (key_code <= sf::Keyboard::Z) {
         if (key.shift) {
-            string += 'A' + key.code;
+            string += 'A' + key_code;
         } else {
-            string += 'a' + key.code;
+            string += 'a' + key_code;
         }
 
         return; 
     }
 
-    if (key.code >= sf::Keyboard::Num0 && key.code <= sf::Keyboard::Num9) {
-        string += '0' + key.code - sf::Keyboard::Num0;
+    if (key_code >= sf::Keyboard::Num0 && key_code <= sf::Keyboard::Num9) {
+        string += '0' + key_code- sf::Keyboard::Num0;
         return;
     }
 
-    if (key.code == sf::Keyboard::Backspace) {
+    if (key_code == sf::Keyboard::Backspace) {
         string.pop_back();
     }
 }

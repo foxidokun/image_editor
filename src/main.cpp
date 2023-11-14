@@ -67,17 +67,16 @@ static inline mouse_event_t get_mouse_event(const sf::RenderWindow& window, cons
     }
 
     mouse_event_t mouse_event;
-    mouse_event.x = point.x;
-    mouse_event.y = point.y;
+    mouse_event.position = (Vector)point;
 
     if (event.type == sf::Event::MouseMoved) {
-        mouse_event.button = mouse_event_t::button_type::UNKNOWN;
+        mouse_event.button = plugin::MouseButton::Right;
     } else if (event.mouseButton.button == sf::Mouse::Button::Left) {
-        mouse_event.button = mouse_event_t::button_type::LEFT;
+        mouse_event.button = plugin::MouseButton::Left;
     } else if (event.mouseButton.button == sf::Mouse::Button::Right) {
-        mouse_event.button = mouse_event_t::button_type::RIGHT;
+        mouse_event.button = plugin::MouseButton::Right;
     } else {
-        mouse_event.button = mouse_event_t::button_type::UNKNOWN;
+        mouse_event.button = plugin::MouseButton::Right;
     }
 
     return mouse_event;
@@ -90,23 +89,23 @@ static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& wind
             return EVENT_RES::STOP;
         
         case (sf::Event::MouseButtonPressed):
-            em.on_mouse_press(get_mouse_event(window, event));
+            em.onMousePress(get_mouse_event(window, event));
             return EVENT_RES::CONT;
 
         case (sf::Event::MouseButtonReleased):
-            em.on_mouse_release(get_mouse_event(window, event));
+            em.onMouseRelease(get_mouse_event(window, event));
             return EVENT_RES::CONT;
 
         case (sf::Event::MouseMoved):
-            em.on_mouse_move(get_mouse_event(window, event));
+            em.onMouseMove(get_mouse_event(window, event));
             return EVENT_RES::CONT;
 
         case (sf::Event::KeyPressed):
-            em.on_keyboard_press(event.key);
+            em.onKeyboardPress(event.key);
             return EVENT_RES::CONT;
 
         case (sf::Event::KeyReleased):
-            em.on_keyboard_release(event.key);
+            em.onKeyboardRelease(event.key);
             return EVENT_RES::CONT;
 
         default:

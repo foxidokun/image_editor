@@ -56,14 +56,14 @@ void Window::initialize() {
     _active_area.high_y -= LINE_THICKNESS;
 }
 
-EVENT_RES Window::on_mouse_press(const mouse_event_t& key) {
-    EVENT_RES res = Widget::on_mouse_press(key);
+bool Window::onMousePress(mouse_event_t key) {
+    bool res = Widget::onMousePress(key);
     if (res == EVENT_RES::CONT) {
-        bool hit_y = key.y > _pos.y && key.y < _pos.y + HEADER_HEIGHT;
-        bool hit_x = key.x > _pos.x && key.x < _pos.x + _size.x;
+        bool hit_y = key.position.y > _pos.y && key.position.y < _pos.y + HEADER_HEIGHT;
+        bool hit_x = key.position.x > _pos.x && key.position.x < _pos.x + _size.x;
         if (hit_x && hit_y) {
             is_moving = true;
-            last_pos = Point( key.x, key.y);
+            last_pos = Point(key.position.x, key.position.y);
             return EVENT_RES::STOP;
         }
     }
@@ -71,9 +71,9 @@ EVENT_RES Window::on_mouse_press(const mouse_event_t& key) {
     return res;
 }
 
-EVENT_RES Window::on_mouse_release(const mouse_event_t& key) {
+bool Window::onMouseRelease(mouse_event_t key) {
     is_moving = false;
-    return Widget::on_mouse_release(key);
+    return Widget::onMouseRelease(key);
 }
 
 bool check_self(Widget* widget, void* args) {
@@ -82,9 +82,9 @@ bool check_self(Widget* widget, void* args) {
     return true;
 }
 
-EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
+bool Window::onMouseMove(mouse_event_t key) {
     if (is_moving) {
-        Point new_pos = {key.x, key.y};
+        Point new_pos = {key.position.x, key.position.y};
         const Rectangle& area = _parent->active_area();
         new_pos.x = std::max(area.low_x, new_pos.x);
         new_pos.x = std::min(new_pos.x, area.high_x - _size.x);
@@ -102,7 +102,7 @@ EVENT_RES Window::on_mouse_move(const mouse_event_t& key) {
         last_pos = new_pos;
     }
 
-    return Widget::on_mouse_move(key);
+    return Widget::onMouseMove(key);
 }
 
 void ParametersModalWindow::initialize() {

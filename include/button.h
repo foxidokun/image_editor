@@ -23,9 +23,9 @@ public:
         _allocated_args(allocated_args),
         _is_clicked(false) {}
 
-    EVENT_RES on_mouse_press  (const mouse_event_t& key) override;
-    EVENT_RES on_mouse_move   (const mouse_event_t& key) override;
-    EVENT_RES on_mouse_release(const mouse_event_t& key) override;
+    bool onMousePress  (mouse_event_t key) override;
+    bool onMouseMove   (mouse_event_t key) override;
+    bool onMouseRelease(mouse_event_t key) override;
 
     ~Button() {
         delete _allocated_args;
@@ -93,9 +93,9 @@ public:
     void open();
     void close();
 
-    EVENT_RES on_mouse_press  (const mouse_event_t& key) final;
-    EVENT_RES on_mouse_move   (const mouse_event_t& key) final;
-    EVENT_RES on_mouse_release(const mouse_event_t& key) final;
+    bool onMousePress  (mouse_event_t key) final;
+    bool onMouseMove   (mouse_event_t key) final;
+    bool onMouseRelease(mouse_event_t key) final;
 
     void print(std::ostream& stream) const override {
         stream << "Menu";

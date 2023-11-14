@@ -77,6 +77,7 @@ namespace plugin {
         double x;
         double y;
 
+        Vec2() = default;
         Vec2(Vector self): x(self.x), y(self.y) {}
         operator Vector() const { return Vector(x, y); }
     };
@@ -89,7 +90,9 @@ namespace plugin {
     /// @note см про относительность координат
     struct MouseContext {
         Vec2 position;
-        MouseButton button;
+        MouseButton button = MouseButton::Right;
+
+        MouseContext() = default;
     };
 
     enum class Key {
@@ -205,6 +208,13 @@ namespace plugin {
         bool ctrl;
 
         Key key;
+
+        KeyboardContext() = default;
+        KeyboardContext(const sf::Event::KeyEvent& event): 
+            alt(event.alt),
+            shift(event.shift),
+            ctrl(event.control),
+            key((Key)event.code) {}
     };
 
     struct RenderTargetI {

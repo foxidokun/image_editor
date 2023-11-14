@@ -1,7 +1,7 @@
 #include "tools.h"
 
 static inline Point extract_point(const mouse_event_t& key) {
-    return Point(key.x, key.y);
+    return Point(key.position.x, key.position.y);
 }
 
 static Point bezier_curve(Point points[4], double t);
@@ -85,17 +85,17 @@ void Polyline::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, cons
         tmp.clear(sf::Color::Transparent);
     }
 
-    if (point_pos.button == mouse_event_t::button_type::UNKNOWN) {
-        has_drawn = false;
-        return;
-    }
+    // if (point_pos.button == mouse_event_t::button_type::UNKNOWN) {
+    //     has_drawn = false;
+    //     return;
+    // }
 
     if (has_drawn) {
         Point new_point = extract_point(point_pos);
         permanent.drawLine(last_point, new_point - last_point, color);
         last_point = new_point;
 
-        if (point_pos.button == mouse_event_t::button_type::RIGHT)
+        if (point_pos.button == plugin::MouseButton::Right)
         {
             has_drawn = false;
         }
@@ -222,7 +222,7 @@ void SplineTool::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, cons
 
 void SplineTool::paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) {
     if (cnt <= 0) { return; }
-    if (point_pos.button == mouse_event_t::button_type::UNKNOWN) { return; }
+    // if (point_pos.button == mouse_event_t::button_type::UNKNOWN) { return; }
 
     points[cnt - 1] = extract_point(point_pos);
     if (cnt < 4) {

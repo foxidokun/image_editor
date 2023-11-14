@@ -7,16 +7,7 @@
 template<Orientation orientation>
 class ScrollController;
 
-template<class T>
-concept IsVec2 = requires(T val) {
-    val.x;
-    val.y;
-    requires std::integral<typeof(val.x)> || std::floating_point<typeof(val.x)>;
-    requires std::integral<typeof(val.y)> || std::floating_point<typeof(val.y)>;
-    requires std::same_as<typeof(val.x), typeof(val.y)>;
-};
-
-template<Orientation orientation, IsVec2 T>
+template<Orientation orientation, typename T>
 auto _coord(T &vec) -> std::conditional_t<std::is_const_v<T>, const decltype(vec.x)&, decltype(vec.x)&> {
     if constexpr (orientation == Orientation::Horizontal) {
         return vec.x;
@@ -38,17 +29,17 @@ private:
     bool _pressed = false;
     ScrollController<orientation>* _controller = nullptr;
 
-    void set_percentage(const mouse_event_t& key);
+    void set_percentage(const Vector& key);
 
-    template<IsVec2 T>
+    template<typename T>
     auto& coord(T& vec) { return _coord<orientation, T>(vec); }
 
 public:
     Scrollbar(const Point& pos, const Vector& size): Widget(pos, size) {}
 
-    virtual EVENT_RES on_mouse_press(const mouse_event_t& key) override;
-    virtual EVENT_RES on_mouse_move(const mouse_event_t& key) override;
-    virtual EVENT_RES on_mouse_release(const mouse_event_t& key) override;
+    virtual bool onMousePress(mouse_event_t key) override;
+    virtual bool onMouseMove(mouse_event_t key) override;
+    virtual bool onMouseRelease(mouse_event_t key) override;
     virtual void render(RenderTarget& target) override;
 
     double percentage() const noexcept { return _percentage; }
@@ -70,7 +61,7 @@ private:
     Scrollbar<orientation>& scrollbar_;
     Canvas& canvas_;
 
-    template<IsVec2 T>
+    template<typename T>
     static auto& coord(T& vec) { return _coord<orientation, T>(vec); }
 
 public:
@@ -88,7 +79,7 @@ public:
 // ---------------------------------------------------------------------------------------------------------------------
 
 template<Orientation orientation>
-void Scrollbar<orientation>::set_percentage(const mouse_event_t& key) {
+void Scrollbar<orientation>::set_percentage(const Vector& key) {
     _percentage = (coord(key) - coord(_pos)) / coord(_size);
     _percentage = std::max(_percentage, _vis_percentage / 2);
     _percentage = std::min(_percentage, 1 - _vis_percentage / 2);
@@ -101,12 +92,12 @@ void Scrollbar<orientation>::set_percentage(const mouse_event_t& key) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 template<Orientation orientation>
-inline EVENT_RES Scrollbar<orientation>::on_mouse_press(const mouse_event_t& key) {
-    bool hit_x = key.x > _pos.x && key.x < _pos.x + _size.x;
-    bool hit_y = key.y > _pos.y && key.y < _pos.y + _size.y;
+inline bool Scrollbar<orientation>::onMousePress(mouse_event_t key) {
+    bool hit_x = key.position.x > _pos.x && key.position.x < _pos.x + _size.x;
+    bool hit_y = key.position.y > _pos.y && key.position.y < _pos.y + _size.y;
 
     if (hit_x && hit_y) {
-        set_percentage(key);
+        set_percentage(key.position);
         _pressed = true;
         return EVENT_RES::STOP;
     } else {
@@ -118,14 +109,14 @@ inline EVENT_RES Scrollbar<orientation>::on_mouse_press(const mouse_event_t& key
 // ---------------------------------------------------------------------------------------------------------------------
 
 template<Orientation orientation>
-inline EVENT_RES Scrollbar<orientation>::on_mouse_release(const mouse_event_t& key) {
-    bool hit_x = key.x > _pos.x && key.x < _pos.x + _size.x;
-    bool hit_y = key.y > _pos.y && key.y < _pos.y + _size.y;
+inline bool Scrollbar<orientation>::onMouseRelease(mouse_event_t key) {
+    bool hit_x = key.position.x > _pos.x && key.position.x < _pos.x + _size.x;
+    bool hit_y = key.position.y > _pos.y && key.position.y < _pos.y + _size.y;
 
     _pressed = false;
 
     if (hit_x && hit_y) {
-        set_percentage(key);
+        set_percentage(key.position);
 
         return EVENT_RES::STOP;
     } else {
@@ -136,13 +127,13 @@ inline EVENT_RES Scrollbar<orientation>::on_mouse_release(const mouse_event_t& k
 // ---------------------------------------------------------------------------------------------------------------------
 
 template<Orientation orientation>
-inline EVENT_RES Scrollbar<orientation>::on_mouse_move(const mouse_event_t& key) {
-    bool hit_x = key.x > _pos.x && key.x < _pos.x + _size.x;
-    bool hit_y = key.y > _pos.y && key.y < _pos.y + _size.y;
+inline bool Scrollbar<orientation>::onMouseMove(mouse_event_t key) {
+    bool hit_x = key.position.x > _pos.x && key.position.x < _pos.x + _size.x;
+    bool hit_y = key.position.y > _pos.y && key.position.y < _pos.y + _size.y;
 
     if (hit_x && hit_y) {
         if (_pressed) {
-            set_percentage(key);
+            set_percentage(key.position);
         }
         return EVENT_RES::STOP;
     } else {
