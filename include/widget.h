@@ -23,6 +23,28 @@ using checker_f   = bool(*)(Widget *, void *);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+struct WidgetPtr {
+    const union {
+        Widget* internal_ptr;
+        plugin::WidgetI* external_ptr;
+    };
+
+    const bool is_internal;
+
+    WidgetPtr(Widget *widget): internal_ptr(widget), is_internal(true) {}
+    WidgetPtr(plugin::WidgetI *widget): external_ptr(widget), is_internal(!(widget->isExtern())) {}
+
+    void free() {
+        if (is_internal) {
+            delete internal_ptr;
+        } else {
+            delete external_ptr;
+        }
+    }
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 class Widget: public Renderable, public EventSubscriber {
 protected:
     Widget* _parent = nullptr;
