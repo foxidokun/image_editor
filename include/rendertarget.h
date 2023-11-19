@@ -81,7 +81,3 @@ public:
         void drawRegions(const Region& reg) {}
     #endif
 };
-
-static inline sf::Color convert_color(const Color& color) {
-    return sf::Color(color.r, color.g, color.b, color.a);
-}

@@ -6,7 +6,7 @@ void RenderTarget::drawRect(const Region& reg, const Point& point, const Vector&
     wanted *= reg;
 
     sf::RectangleShape rect;
-    rect.setFillColor(convert_color(fillcolor));
+    rect.setFillColor(fillcolor);
 
     for (const auto &disp_rect: wanted.rects()) {
         double width  = disp_rect.high_x - disp_rect.low_x;
@@ -20,7 +20,7 @@ void RenderTarget::drawRect(const Region& reg, const Point& point, const Vector&
 
 void RenderTarget::drawRect(const Point& point, const Vector& size, const Color& fillcolor) {
     sf::RectangleShape rect;
-    rect.setFillColor(convert_color(fillcolor));
+    rect.setFillColor(fillcolor);
     rect.setPosition(point.x, point.y);
     rect.setSize(sf::Vector2f(size.x, size.y));
     _data.draw(rect);
@@ -56,7 +56,7 @@ void RenderTarget::drawLine(const Point& start_point, const Vector& size, const 
     line[3].position = (sf::Vector2f) (  end_point + ortho);
 
     for (int i = 0; i < 4; ++i) {
-        line[i].color = convert_color(fillcolor);
+        line[i].color = fillcolor;
     }
 
     _data.draw(line);
@@ -182,7 +182,7 @@ void RenderTarget::drawCircle(const Region& reg, const Point& point, double radi
 
     sf::CircleShape circle;
     circle.setRadius(radius);
-    circle.setFillColor(convert_color(fillcolor));
+    circle.setFillColor(fillcolor);
     circle.setPosition(point.x, point.y);
 
     ghost.draw(circle);
@@ -202,7 +202,7 @@ void RenderTarget::drawCircle(const Region& reg, const Point& point, double radi
 void RenderTarget::drawCircle(const Point& point, double radius, const Color& fillcolor) {
     sf::CircleShape circle;
     circle.setRadius(radius);
-    circle.setFillColor(convert_color(fillcolor));
+    circle.setFillColor(fillcolor);
     circle.setPosition(point.x, point.y);
 
     _data.draw(circle);
@@ -214,7 +214,7 @@ void RenderTarget::drawEllipse(const Point& point, const Vector& size, const Col
     double max_size = std::max(fabs(size.x), fabs(size.y));
 
     circle.setPosition((sf::Vector2f)point);
-    circle.setFillColor(convert_color(fillcolor));
+    circle.setFillColor(fillcolor);
     circle.setRadius(max_size / 2);
     circle.setScale(size.x / max_size, size.y / max_size);
 

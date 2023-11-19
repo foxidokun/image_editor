@@ -290,7 +290,7 @@ static void setup_color_button(Window& win, ToolManager *tools, const Color& col
 
     auto color_texture = new sf::RenderTexture();
     color_texture->create(30, 30);
-    color_texture->clear(convert_color(color));
+    color_texture->clear(color);
     sf::RectangleShape borders;
     borders.setOutlineColor(sf::Color(100,100,100,255));
     borders.setFillColor(sf::Color::Transparent);
