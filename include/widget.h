@@ -34,13 +34,7 @@ struct WidgetPtr {
     WidgetPtr(Widget *widget): internal_ptr(widget), is_internal(true) {}
     WidgetPtr(plugin::WidgetI *widget): external_ptr(widget), is_internal(!(widget->isExtern())) {}
 
-    void free() {
-        if (is_internal) {
-            delete internal_ptr;
-        } else {
-            delete external_ptr;
-        }
-    }
+    void free();
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -182,6 +176,15 @@ public:
 
 // ---------------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------------
+
+inline void WidgetPtr::free() {
+    if (is_internal) {
+        delete internal_ptr;
+    } else {
+        delete external_ptr;
+    }
+}
+
 // ---------------------------------------------------------------------------------------------------------------------
 
 void recursive_update(Widget **widget, transform_f func, void* args, 

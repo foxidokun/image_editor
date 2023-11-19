@@ -12,9 +12,10 @@ typedef sf::Texture Texture;
 
 #define DRAW_REGIONS 0
 
+using plugin::Vec2;
 using RawImage = plugin::Texture;
 
-class RenderTarget {
+class RenderTarget: public plugin::RenderTargetI {
 private:
     sf::RenderTexture _data;
     sf::Shader invert_shader;
@@ -60,6 +61,19 @@ public:
 
     RawImage get_image() const;
     void set_image(const RawImage& img);
+
+    // RenderTargetI Interface
+
+    void setPixel(Vec2 pos, Color color) final;
+    void drawLine(Vec2 point1, Vec2 point2, Color color) final { drawLine((Point)point1, point2 - point1, color); };
+    void drawRect(Vec2 pos, Vec2 size, Color color) final { drawRect((Point)pos, (Vector)size, color); };
+    void drawEllipse(Vec2 pos, Vec2 size, Color color) final { drawEllipse((Point)pos, (Vector)size, color); };
+    void drawTexture(Vec2 pos, Vec2 size, const plugin::Texture *texture) final;
+    void drawText(Vec2 pos, const char *content, uint16_t char_size, Color color) final;
+
+    plugin::Texture *getTexture() final { /* TODO */ return nullptr; };
+
+    void clear() final {clear(sf::Color::White); };
 
     #if DRAW_REGIONS
         void drawRegions(const Region& reg);

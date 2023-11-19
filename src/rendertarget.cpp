@@ -266,3 +266,36 @@ void RenderTarget::set_image(const RawImage& img) {
     texture.update(img.get_bytes());
     _data.draw(sf::Sprite(texture));
 }
+
+void RenderTarget::setPixel(Vec2 pos, Color color) {
+    sf::Vertex vertex;
+    vertex.position = pos;
+    vertex.color = color;
+    _data.draw(&vertex, 1, sf::Points);
+}
+
+void RenderTarget::drawTexture(Vec2 pos, Vec2 size, const plugin::Texture *img) {
+    sf::Texture texture;
+    texture.create(img->width(), img->height());
+    texture.update(img->get_bytes());
+    
+    sf::Sprite sprite(texture);
+    sprite.setPosition(pos.x, pos.y);
+
+    double x_scale = size.x / texture.getSize().x;
+    double y_scale = size.y / texture.getSize().y;
+
+    sprite.setScale(x_scale, y_scale);
+    _data.draw(sprite);
+}
+
+void RenderTarget::drawText(Vec2 pos, const char *content, uint16_t char_size, Color color) {
+    sf::Text textobj;
+    textobj.setFont(global_resources::font);
+    textobj.setString(content);
+    textobj.setPosition(pos.x, pos.y);
+    textobj.setCharacterSize(char_size);
+    textobj.setFillColor(TEXT_COLOR);
+
+    _data.draw(textobj);
+}

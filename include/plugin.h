@@ -19,7 +19,6 @@ namespace plugin {
 
         Array(const dynarray<T>& array);
         operator dynarray<T>() const;
-        ~Array();
     };
 
     struct Color {
@@ -80,6 +79,7 @@ namespace plugin {
         Vec2() = default;
         Vec2(Vector self): x(self.x), y(self.y) {}
         operator Vector() const { return Vector(x, y); }
+        operator sf::Vector2f() const { return sf::Vector2f(x, y); }
     };
 
     enum class MouseButton {
@@ -400,9 +400,4 @@ template<typename T>
 plugin::Array<T>::operator dynarray<T>() const {
     dynarray arr(size);
     arr.assign(data, data + size);
-}
-
-template<typename T>
-plugin::Array<T>::~Array() {
-    delete[] data;
 }
