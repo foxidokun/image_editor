@@ -44,20 +44,28 @@ public:
     Color  getColor() final { return color; };
 };
 
-/*
-class Brush: public Tool {
+
+class Brush: public plugin::ToolI {
 private:
     Point last_pos;
 
-    void paint(RenderTarget& permanent, const Point& point_pos, const Color& color) const;
+    void paint(plugin::RenderTargetI *permanent, Vector point_pos, Color color) const;
 
 public:
-    void paint_on_press  (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final;
-    void paint_on_move   (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final;
-    void paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final
-    {}
+    void paintOnPress  (plugin::RenderTargetI *permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos, Color color) final;
+    void paintOnMove   (plugin::RenderTargetI *permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos, Color color) final;
+    void paintOnRelease(plugin::RenderTargetI *permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos, Color color) final{}
+
+    void disable(plugin::RenderTargetI *permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos, Color color) final {};
+
+    const plugin::Texture *getIcon() final { return nullptr; /* it is internal tool */ };
+
+    plugin::Array<const char *> getParamNames() final { return plugin::Array<const char *>(0, nullptr); };
+    plugin::Array<double> getParams() final { return plugin::Array<double>(0, nullptr); };
+    void setParams(plugin::Array<double> params) final {};
 };
 
+/*
 class AlienBrush: public Tool {
 private:
     Point start_pos;

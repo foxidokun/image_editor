@@ -73,7 +73,7 @@ public:
 
     plugin::Texture *getTexture() final { /* TODO */ return nullptr; };
 
-    void clear() final {clear(sf::Color::White); };
+    void clear() final {clear(sf::Color::Transparent); };
 
     #if DRAW_REGIONS
         void drawRegions(const Region& reg);

@@ -186,25 +186,23 @@ static void test_regions() {
 // ---------------------------------------------------------------------------------------------------------------------
 
 static void setup_canvas_window(WindowManager& wm, ToolManager *tools, FilterManager &filter_mgr);
-// static void setup_tool_window(WindowManager& wm, ToolManager *tools);
+static void setup_tool_window(WindowManager& wm, ToolManager *tools);
 static void setup_file_menu(WindowManager& wm, Canvas* canvas);
 static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr, EventManager& event_mgr);
 static void setup_color_window(WindowManager& wm, ToolManager *tools);
 static void setup_color_button(Window& win, ToolManager *tools, const Color& color, const Point& pos);
 
-/*
-template<typename BrushType>
+
 static void set_brush(CallbackArgs *_args);
-template<>
-void set_brush<ColorPicker>(CallbackArgs *_args);
-*/
+
 static void set_color(CallbackArgs *_args);
 static void ask_color(CallbackArgs *_args);
 
 struct ToolArgs: public CallbackArgs {
     ToolManager *tools;
+    plugin::ToolI *tool;
 
-    ToolArgs(ToolManager *tools): tools(tools) {}
+    ToolArgs(ToolManager *tools, plugin::ToolI *tool): tools(tools), tool(tool) {}
 };
 
 struct ColorArgs: public CallbackArgs {
@@ -217,7 +215,7 @@ struct ColorArgs: public CallbackArgs {
 static void setup_objects(WindowManager& wm, ToolManager *tools, FilterManager& filter_mgr, EventManager& event_mgr) {
     setup_canvas_window(wm, tools, filter_mgr);
     setup_color_window(wm, tools);
-    // setup_tool_window(wm, tools);
+    setup_tool_window(wm, tools);
     setup_filter_menu(wm, filter_mgr, event_mgr);
 }
 
@@ -241,31 +239,32 @@ static void setup_canvas_window(WindowManager& wm, ToolManager *tools, FilterMan
     setup_file_menu(wm, canvas);
 }
 
-/*
+
 static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
-    tools->set_tool(new Brush());
+    plugin::ToolI *brush = new Brush();
+
+    tools->setTool(brush);
 
     auto win     = new Window(Point(0,0), Vector(100,345), "Tools");
-    auto br_btn  = new TextureButton(Point(10, 10) , Vector(30, 30), set_brush<Brush>,      new ToolArgs(tools), global_resources::brush);
-    auto al_btn  = new TextureButton(Point(60, 10) , Vector(30, 30), set_brush<AlienBrush>, new ToolArgs(tools), global_resources::alien);
-    auto pol_btn = new TextureButton(Point(10, 60) , Vector(30, 30), set_brush<Polyline>,   new ToolArgs(tools), global_resources::polyline);
-    auto rec_btn = new TextureButton(Point(60, 60) , Vector(30, 30), set_brush<RectTool>,   new ToolArgs(tools), global_resources::rectangle);
-    auto ell_btn = new TextureButton(Point(10, 110), Vector(30, 30), set_brush<EllipseTool>,new ToolArgs(tools), global_resources::ellipse);
-    auto spl_btn = new TextureButton(Point(60, 110), Vector(30, 30), set_brush<SplineTool>, new ToolArgs(tools), global_resources::spline);
-    auto pic_btn = new TextureButton(Point(10, 160), Vector(30, 30), set_brush<ColorPicker>,new ToolArgs(tools), global_resources::pick);
-    auto fil_btn = new TextureButton(Point(60, 160), Vector(30, 30), set_brush<FillTool>,   new ToolArgs(tools), global_resources::fill);
+    auto br_btn  = new TextureButton(Point(10, 10) , Vector(30, 30), set_brush, new ToolArgs(tools, brush), global_resources::brush);
+    // auto al_btn  = new TextureButton(Point(60, 10) , Vector(30, 30), set_brush<AlienBrush>, new ToolArgs(tools), global_resources::alien);
+    // auto pol_btn = new TextureButton(Point(10, 60) , Vector(30, 30), set_brush<Polyline>,   new ToolArgs(tools), global_resources::polyline);
+    // auto rec_btn = new TextureButton(Point(60, 60) , Vector(30, 30), set_brush<RectTool>,   new ToolArgs(tools), global_resources::rectangle);
+    // auto ell_btn = new TextureButton(Point(10, 110), Vector(30, 30), set_brush<EllipseTool>,new ToolArgs(tools), global_resources::ellipse);
+    // auto spl_btn = new TextureButton(Point(60, 110), Vector(30, 30), set_brush<SplineTool>, new ToolArgs(tools), global_resources::spline);
+    // auto pic_btn = new TextureButton(Point(10, 160), Vector(30, 30), set_brush<ColorPicker>,new ToolArgs(tools), global_resources::pick);
+    // auto fil_btn = new TextureButton(Point(60, 160), Vector(30, 30), set_brush<FillTool>,   new ToolArgs(tools), global_resources::fill);
 
     win->register_object(br_btn);
-    win->register_object(al_btn);
-    win->register_object(pol_btn);
-    win->register_object(rec_btn);
-    win->register_object(ell_btn);
-    win->register_object(spl_btn);
-    win->register_object(pic_btn);
-    win->register_object(fil_btn);
+    // win->register_object(al_btn);
+    // win->register_object(pol_btn);
+    // win->register_object(rec_btn);
+    // win->register_object(ell_btn);
+    // win->register_object(spl_btn);
+    // win->register_object(pic_btn);
+    // win->register_object(fil_btn);
     wm.register_object(win);
 }
-*/
 
 static void setup_color_window(WindowManager& wm, ToolManager *tools) {
     tools->set_color({0,0,0,255});
@@ -341,22 +340,13 @@ static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr, Even
     wm.register_object_exact_pos(filter_menu);
 }
 
-/*
-template<typename BrushType>
+
 static void set_brush(CallbackArgs *_args) {
     ToolArgs *args = static_cast<ToolArgs *>(_args);
 
-    args->tools->set_tool(new BrushType());
+    args->tools->setTool(args->tool);
 }
 
-
-template<>
-void set_brush<ColorPicker>(CallbackArgs *_args) {
-    ToolArgs *args = static_cast<ToolArgs *>(_args);
-
-    args->tools->set_tool(new ColorPicker(args->tools));
-}
-*/
 
 static void set_color(CallbackArgs *_args) {
     ColorArgs *args = static_cast<ColorArgs *>(_args);

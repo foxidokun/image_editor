@@ -1,23 +1,23 @@
 #include "tools.h"
 
-/*
+
 static inline Point extract_point(const mouse_event_t& key) {
     return Point(key.position.x, key.position.y);
 }
 
 static Point bezier_curve(Point points[4], double t);
 
-void Brush::paint(RenderTarget& permanent, const Point& point_pos, const Color& color) const {
-    permanent.drawCircle(point_pos, BRUSH_RADIUS, color);
+void Brush::paint(plugin::RenderTargetI *permanent, Vector point_pos, Color color) const {
+    permanent->drawEllipse(point_pos - Vector(BRUSH_RADIUS, BRUSH_RADIUS), Vector(2*BRUSH_RADIUS, 2*BRUSH_RADIUS), color);
 }
 
-void Brush::paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& key, const Color& color) {
-    tmp.clear(sf::Color::Transparent);
-    last_pos = extract_point(key);
+void Brush::paintOnPress(plugin::RenderTargetI *permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos, Color color) {
+    tmp->clear();
+    last_pos = extract_point(point_pos);
     paint(permanent, last_pos, color);
 }
 
-void Brush::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& key, const Color& color) {
+void Brush::paintOnMove(plugin::RenderTargetI *permanent, plugin::RenderTargetI* tmp, mouse_event_t key, Color color) {
     Point point_pos = extract_point(key);
 
     Vector step = (point_pos - last_pos);
@@ -34,6 +34,7 @@ void Brush::paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const mous
     last_pos = point_pos;
 }
 
+/*
 void AlienBrush::paint(RenderTarget& permanent, const Point& point_pos, const Color& color) const {
     permanent.drawCircle(point_pos, BRUSH_RADIUS, color);
 }

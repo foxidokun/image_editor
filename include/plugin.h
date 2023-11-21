@@ -17,6 +17,7 @@ namespace plugin {
         uint64_t size;
         T* data;
 
+        Array(uint64_t size, T* data): size(size), data(data) {}
         Array(const dynarray<T>& array);
         operator dynarray<T>() const;
     };
