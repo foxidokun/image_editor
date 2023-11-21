@@ -1,5 +1,5 @@
 #include "filter.h"
-
+/*
 void RaiseBrightness::apply(RenderTarget &rt) {
     RawImage img = rt.get_image();
 
@@ -55,6 +55,7 @@ void parameters_get_and_apply(CallbackArgs *_args) {
     }
 }
 
+
 void apply_filter_callback(CallbackArgs *_args) {
     FilterApplyArgs* args = new FilterApplyArgs(*static_cast<FilterApplyArgs *> (_args));
     if (args->filter->get_param_names().size() > 0) {
@@ -80,3 +81,4 @@ void recent_filter_callback(CallbackArgs *_args) {
         filter->apply(*rt);
     }
 }
+*/

@@ -5,27 +5,32 @@
 #include "button.h"
 #include "window.h"
 
+/*
 class Filter {
 public:
     virtual void apply(RenderTarget &rt) = 0;
     virtual dynarray<const char *> get_param_names() = 0; 
     virtual void set_params(const dynarray<double>& params) = 0;
 };
+*/
 
-class FilterManager {
+class FilterManager: public plugin::FilterManagerI {
 private:
-    Filter *last_filter = nullptr;
-    RenderTarget *active_rt = nullptr;
+    plugin::FilterI *last_filter = nullptr;
+    plugin::RenderTargetI *active_rt = nullptr;
 
 public:
-    void set_filter(Filter* filter) { last_filter = filter; };
+    void setFilter(plugin::FilterI* filter) final { last_filter = filter; };
 
-    Filter* get_filter() { return last_filter; };
+    plugin::FilterI* get_filter() { return last_filter; };
 
-    void set_rt(RenderTarget* rt) { active_rt = rt; };
-    RenderTarget* get_rt() { return active_rt; };
+    void setRenderTarget(plugin::RenderTargetI* rt) final { active_rt = rt; };
+    plugin::RenderTargetI* get_rt() { return active_rt; };
+
+    void applyFilter() final { last_filter->apply(active_rt); }
 };
 
+/*
 class RaiseBrightness: public Filter {
 public:
     void apply(RenderTarget &rt);
@@ -63,3 +68,4 @@ struct FilterApplyArgs: public CallbackArgs {
 
 void apply_filter_callback(CallbackArgs *_args);
 void recent_filter_callback(CallbackArgs *_args);
+*/

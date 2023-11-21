@@ -35,7 +35,7 @@ public:
         {
             _permanent.clear(sf::Color::White);
             _tmp.clear(sf::Color::Transparent);
-            filter_manager.set_rt(&_permanent);
+            filter_manager.setRenderTarget(&_permanent);
         }
 
     void render(RenderTarget& target) final;

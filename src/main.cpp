@@ -188,7 +188,7 @@ static void test_regions() {
 static void setup_canvas_window(WindowManager& wm, ToolManager *tools, FilterManager &filter_mgr);
 static void setup_tool_window(WindowManager& wm, ToolManager *tools);
 static void setup_file_menu(WindowManager& wm, Canvas* canvas);
-static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr, EventManager& event_mgr);
+// static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr, EventManager& event_mgr);
 static void setup_color_window(WindowManager& wm, ToolManager *tools);
 static void setup_color_button(Window& win, ToolManager *tools, const Color& color, const Point& pos);
 
@@ -216,7 +216,8 @@ static void setup_objects(WindowManager& wm, ToolManager *tools, FilterManager& 
     setup_canvas_window(wm, tools, filter_mgr);
     setup_color_window(wm, tools);
     setup_tool_window(wm, tools);
-    setup_filter_menu(wm, filter_mgr, event_mgr);
+
+    //setup_filter_menu(wm, filter_mgr, event_mgr);
 }
 
 static void setup_canvas_window(WindowManager& wm, ToolManager *tools, FilterManager& filter_mgr) {
@@ -317,6 +318,7 @@ static void setup_file_menu(WindowManager& wm, Canvas* canvas) {
     wm.register_object_exact_pos(file_menu);
 }
 
+/*
 template<typename FilterT>
 static inline void add_filter_button(WindowManager& wm, Menu& menu, FilterManager& filter_mgr, EventManager& event_mgr,
     const char* button_name)
@@ -339,7 +341,7 @@ static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr, Even
     add_filter_button<FillFilter>(wm, *filter_menu, filter_mgr, event_mgr, "Fill");
     wm.register_object_exact_pos(filter_menu);
 }
-
+*/
 
 static void set_brush(CallbackArgs *_args) {
     ToolArgs *args = static_cast<ToolArgs *>(_args);
