@@ -85,19 +85,17 @@ bool check_self(Widget* widget, void* args) {
 bool Window::onMouseMove(mouse_event_t key) {
     if (is_moving) {
         Point new_pos = {key.position.x, key.position.y};
-        const Rectangle& area = _parent->active_area();
+        const Rectangle& area = _parent.active_area();
         new_pos.x = std::max(area.low_x, new_pos.x);
         new_pos.x = std::min(new_pos.x, area.high_x - _size.x);
         new_pos.y = std::max(area.low_y, new_pos.y);
         new_pos.y = std::min(new_pos.y, area.high_y - _size.y);
 
         Vector delta = new_pos - last_pos;
-        Widget* tmp_ptr = this;
 
-        recursive_update(&tmp_ptr, update_coords, &delta);
-        assert(tmp_ptr == this);
+        recursive_update(this, update_coords, &delta);
 
-        _root->recalc_regions();
+        _root.recalc_regions();
 
         last_pos = new_pos;
     }

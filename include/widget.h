@@ -18,37 +18,71 @@ class Renderable {
 // ---------------------------------------------------------------------------------------------------------------------
 
 class Widget;
-using transform_f = Widget*(*)(Widget *, void *);
-using checker_f   = bool(*)(Widget *, void *); 
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-struct WidgetPtr {
-    const union {
-        Widget* internal_ptr;
-        plugin::WidgetI* external_ptr;
+class WidgetPtr: public EventSubscriber {
+private:
+    union {
+        Widget* internal_ptr_;
+        plugin::WidgetI* external_ptr_;
     };
+    plugin::EventProcessableI* event_ptr;
 
-    const bool is_internal;
+    bool is_internal_;
 
-    WidgetPtr(Widget *widget): internal_ptr(widget), is_internal(true) {}
-    WidgetPtr(plugin::WidgetI *widget): external_ptr(widget), is_internal(!(widget->isExtern())) {}
+public:
+    WidgetPtr(Widget *widget);
+    WidgetPtr(plugin::WidgetI *widget);
+    WidgetPtr(): internal_ptr_(nullptr), event_ptr(nullptr), is_internal_(true) {}
 
+    bool is_internal() const { return is_internal_; }
+    Widget* internal_ptr() const { return internal_ptr_; }
+    plugin::WidgetI* external_ptr() const { return external_ptr_; }
+
+    Region get_default_region() const;
     void free();
+    bool is_alive() const;
+
+    Vector size() const;
+    void set_size(Vector val) const;
+
+    bool onKeyboardPress  (keyboard_event_t key) final { return event_ptr->onKeyboardPress(key); };
+    bool onKeyboardRelease(keyboard_event_t key) final { return event_ptr->onKeyboardRelease(key); };
+    bool onMousePress     (mouse_event_t key)    final { return event_ptr->onMousePress(key); };
+    bool onMouseRelease   (mouse_event_t key)    final { return event_ptr->onMouseRelease(key); };
+    bool onMouseMove      (mouse_event_t key)    final { return event_ptr->onMouseMove(key); };
+    bool onClock          (uint64_t delta)       final { return event_ptr->onClock(delta); };
+
+    Rectangle active_area() const;
+
+    void recalc_regions();
+
+    operator bool() const { return static_cast<bool>(internal_ptr_); }
+
+    bool operator==(Widget* widget_ptr) const { return is_internal_ && (internal_ptr_ == widget_ptr); }
+
+    void set_root(WidgetPtr root);
+    void move(Vector delta);
 };
+
+using transform_f = void(*)(WidgetPtr, void *);
+using checker_f   = bool(*)(WidgetPtr, void *); 
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 class Widget: public Renderable, public EventSubscriber {
 protected:
-    Widget* _parent = nullptr;
-    Widget* _root   = this;
-    linked_list<Widget *> _childs;
+    WidgetPtr _parent;
+    WidgetPtr _root   = this;
+    linked_list<WidgetPtr> _childs;
     Point _pos;
     Vector _size;
     Region _reg;
     Rectangle _active_area;
     bool _is_alive = true;
+
+    friend WidgetPtr;
 
 protected:
     bool recursive_cleanup();
@@ -87,7 +121,7 @@ public:
     const Point&     pos()         const { return _pos;         }
     const Vector&    size()        const { return _size;        }
     const Rectangle& active_area() const { return _active_area; }
-    Widget*          parent()      const { return _parent;      }
+    WidgetPtr        parent()      const { return _parent;      }
     
     void             set_pos   (const Point&   pos) { _pos  = pos;  }
     void             set_size  (const Vector& size) { _size = size; }
@@ -95,15 +129,15 @@ public:
     Region& reg() { return _reg; }
 
     virtual ~Widget() {
-        for (const auto &x: _childs) {
-            delete x;
+        for (auto &x: _childs) {
+            x.free();
         }
     }
 
-    friend void recursive_update(Widget **widget, transform_f func, void* args, 
+    friend void recursive_update(WidgetPtr widget, transform_f func, void* args, 
                      checker_f check, void* check_args);
-    friend Widget* update_coords(Widget *widget, void *args);
-    friend Widget* set_root(Widget *const widget, void *args);
+    friend void update_coords(WidgetPtr widget, void *args);
+    friend void set_root(WidgetPtr widget, void *args);
 
     void recalc_regions();
 
@@ -177,16 +211,102 @@ public:
 // ---------------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------------
 
+inline WidgetPtr::WidgetPtr(Widget *widget):
+    internal_ptr_(widget),
+    event_ptr(static_cast<plugin::EventProcessableI*>(widget)),
+    is_internal_(true) {}
+
+inline WidgetPtr::WidgetPtr(plugin::WidgetI *widget):
+    external_ptr_(widget),
+    event_ptr(static_cast<plugin::EventProcessableI*>(widget)),
+    is_internal_(!(widget->isExtern())) {}
+
 inline void WidgetPtr::free() {
-    if (is_internal) {
-        delete internal_ptr;
+    if (is_internal_) {
+        delete internal_ptr_;
     } else {
-        delete external_ptr;
+        delete external_ptr_;
+    }
+}
+
+inline bool WidgetPtr::is_alive() const {
+    return (is_internal_) ? internal_ptr_->is_alive(): external_ptr_->getAvailable();
+}
+
+inline Region WidgetPtr::get_default_region() const {
+    if (is_internal_) {
+        return internal_ptr_->get_default_region();
+    } else {
+        Vec2 pos = external_ptr_->getPos();
+        Vec2 size = external_ptr_->getSize();
+
+        double min_x = std::min(pos.x, pos.x + size.x);
+        double max_x = std::max(pos.x, pos.x + size.x);
+        double min_y = std::min(pos.y, pos.y + size.y);
+        double max_y = std::max(pos.y, pos.y + size.y);
+
+        return Region(Rectangle(min_x, min_y, max_x, max_y));
+    }
+}
+
+inline Rectangle WidgetPtr::active_area() const {
+    if (is_internal_) {
+        return internal_ptr_->active_area();
+    } else {
+        Vec2 pos = external_ptr_->getPos();
+        Vec2 size = external_ptr_->getSize();
+
+        double min_x = std::min(pos.x, pos.x + size.x);
+        double max_x = std::max(pos.x, pos.x + size.x);
+        double min_y = std::min(pos.y, pos.y + size.y);
+        double max_y = std::max(pos.y, pos.y + size.y);
+
+        return Rectangle(min_x, min_y, max_x, max_y);
+    }
+}
+
+inline Vector WidgetPtr::size() const {
+    return (is_internal_) ? internal_ptr_->size() : (Vector)external_ptr_->getSize();
+}
+
+inline void WidgetPtr::set_size(Vector val) const {
+    if (is_internal_) {
+        internal_ptr_->set_size(val);
+    } else {
+        external_ptr_->setSize(val);
+    }
+}
+
+inline void WidgetPtr::recalc_regions() {
+    if (is_internal_) {
+        internal_ptr_->recalc_regions();
+    } else {
+        external_ptr_->recalcRegion();
+    }
+}
+
+inline void WidgetPtr::set_root(WidgetPtr root) {
+    if (is_internal_) {
+        internal_ptr_->_root = root;
+    } else {
+        static bool warning = true;
+        if (warning) {
+            std::cerr << "Set root for external ... impossible. Lets just hope that set setParent is enough for him\n";
+            warning = false;
+        }
+    }
+}
+
+inline void WidgetPtr::move(Vector delta) {
+    if (is_internal_) {
+        internal_ptr_->move(delta);
+    } else {
+        external_ptr_->move(delta);
     }
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void recursive_update(Widget **widget, transform_f func, void* args, 
+void recursive_update(WidgetPtr widget, transform_f func, void* args, 
                      checker_f check = nullptr, void* check_args = nullptr);
-Widget* update_coords(Widget *widget, void *args);
+void update_coords(WidgetPtr widget, void *args);
