@@ -1,5 +1,6 @@
 #include "tools.h"
 
+/*
 static inline Point extract_point(const mouse_event_t& key) {
     return Point(key.position.x, key.position.y);
 }
@@ -265,3 +266,5 @@ static Point bezier_curve(Point points[4], double t) {
     
     return p;
 }
+
+*/

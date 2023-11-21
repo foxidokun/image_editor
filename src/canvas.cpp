@@ -17,7 +17,7 @@ bool Canvas::onMousePress(mouse_event_t key) {
         mouse_event_t key_copy = key;
         key_copy.position.x -= real_pos_.x;
         key_copy.position.y -= real_pos_.y;
-        tool_manager->paint_on_press(_permanent, _tmp, key_copy);
+        tool_manager->paintOnPress(&_permanent, &_tmp, key_copy);
         return EVENT_RES::STOP;
     }
     return EVENT_RES::CONT;
@@ -27,7 +27,7 @@ bool Canvas::onMouseRelease(mouse_event_t key) {
     mouse_event_t key_copy = key;
     key_copy.position.x -= real_pos_.x;
     key_copy.position.y -= real_pos_.y;
-    tool_manager->paint_on_release(_permanent, _tmp, key_copy);
+    tool_manager->paintOnRelease(&_permanent, &_tmp, key_copy);
     is_drawing = false;
     return EVENT_RES::CONT;
 }
@@ -40,7 +40,7 @@ bool Canvas::onMouseMove(mouse_event_t key) {
             mouse_event_t key_copy = key;
             key_copy.position.x -= real_pos_.x;
             key_copy.position.y -= real_pos_.y;
-            tool_manager->paint_on_move(_permanent, _tmp, key_copy);
+            tool_manager->paintOnMove(&_permanent, &_tmp, key_copy);
         }
         return EVENT_RES::STOP;
     } 
@@ -52,7 +52,7 @@ bool Canvas::onMouseMove(mouse_event_t key) {
     key_copy.position.y = std::max(key_copy.position.y, _pos.y);
     key_copy.position.x = std::min(key_copy.position.x, _pos.x + _size.x);
     key_copy.position.y = std::min(key_copy.position.y, _pos.y + _size.y);
-    tool_manager->paint_on_release(_permanent, _tmp, key_copy);
+    tool_manager->paintOnRelease(&_permanent, &_tmp, key_copy);
 
     return EVENT_RES::CONT;
 }

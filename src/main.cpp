@@ -185,17 +185,19 @@ static void test_regions() {
 // Setup
 // ---------------------------------------------------------------------------------------------------------------------
 
-static void setup_canvas_window(WindowManager& wm, const ToolManager *tools, FilterManager &filter_mgr);
-static void setup_tool_window(WindowManager& wm, ToolManager *tools);
+static void setup_canvas_window(WindowManager& wm, ToolManager *tools, FilterManager &filter_mgr);
+// static void setup_tool_window(WindowManager& wm, ToolManager *tools);
 static void setup_file_menu(WindowManager& wm, Canvas* canvas);
 static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr, EventManager& event_mgr);
 static void setup_color_window(WindowManager& wm, ToolManager *tools);
 static void setup_color_button(Window& win, ToolManager *tools, const Color& color, const Point& pos);
 
+/*
 template<typename BrushType>
 static void set_brush(CallbackArgs *_args);
 template<>
 void set_brush<ColorPicker>(CallbackArgs *_args);
+*/
 static void set_color(CallbackArgs *_args);
 static void ask_color(CallbackArgs *_args);
 
@@ -215,11 +217,11 @@ struct ColorArgs: public CallbackArgs {
 static void setup_objects(WindowManager& wm, ToolManager *tools, FilterManager& filter_mgr, EventManager& event_mgr) {
     setup_canvas_window(wm, tools, filter_mgr);
     setup_color_window(wm, tools);
-    setup_tool_window(wm, tools);
+    // setup_tool_window(wm, tools);
     setup_filter_menu(wm, filter_mgr, event_mgr);
 }
 
-static void setup_canvas_window(WindowManager& wm, const ToolManager *tools, FilterManager& filter_mgr) {
+static void setup_canvas_window(WindowManager& wm, ToolManager *tools, FilterManager& filter_mgr) {
     auto win      = new Window(Point(110,0), Vector(600, 400), "Canvas");
     double width  = win->active_area().high_x - win->active_area().low_x - 12;
     double height = win->active_area().high_y - win->active_area().low_y - 10;
@@ -239,6 +241,7 @@ static void setup_canvas_window(WindowManager& wm, const ToolManager *tools, Fil
     setup_file_menu(wm, canvas);
 }
 
+/*
 static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
     tools->set_tool(new Brush());
 
@@ -262,6 +265,7 @@ static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
     win->register_object(fil_btn);
     wm.register_object(win);
 }
+*/
 
 static void setup_color_window(WindowManager& wm, ToolManager *tools) {
     tools->set_color({0,0,0,255});
@@ -337,6 +341,7 @@ static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr, Even
     wm.register_object_exact_pos(filter_menu);
 }
 
+/*
 template<typename BrushType>
 static void set_brush(CallbackArgs *_args) {
     ToolArgs *args = static_cast<ToolArgs *>(_args);
@@ -344,12 +349,14 @@ static void set_brush(CallbackArgs *_args) {
     args->tools->set_tool(new BrushType());
 }
 
+
 template<>
 void set_brush<ColorPicker>(CallbackArgs *_args) {
     ToolArgs *args = static_cast<ToolArgs *>(_args);
 
     args->tools->set_tool(new ColorPicker(args->tools));
 }
+*/
 
 static void set_color(CallbackArgs *_args) {
     ColorArgs *args = static_cast<ColorArgs *>(_args);

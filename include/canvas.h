@@ -10,7 +10,7 @@ class Canvas: public Widget {
 private:
     RenderTarget _permanent;
     RenderTarget _tmp;
-    const ToolManager* tool_manager;
+    ToolManager* tool_manager;
     FilterManager &filter_manager;
     bool is_drawing;
 
@@ -21,7 +21,7 @@ private:
     friend class ScrollController;
 
 public:
-    Canvas(const Point& pos, const Vector& size, const ToolManager *tool_manager, FilterManager &filter_manager,
+    Canvas(const Point& pos, const Vector& size, ToolManager *tool_manager, FilterManager &filter_manager,
                 std::optional<Point>  real_pos  = std::optional<Point>(),
                 std::optional<Vector> real_size = std::optional<Vector>()):
         Widget(pos, size),

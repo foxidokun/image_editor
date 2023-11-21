@@ -5,37 +5,28 @@
 #include "rendertarget.h"
 #include "widget.h"
 
-class Tool {
-public:
-    virtual void paint_on_press  (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) = 0;
-    virtual void paint_on_move   (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) = 0;
-    virtual void paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) = 0;
-    virtual ~Tool() = default;
-};
-
-class ToolManager {
+class ToolManager: public plugin::ToolManagerI {
 private:
-    Tool *active_tool; // owned
+    plugin::ToolI *active_tool; // owned
     Color color;
 
 public:
-    ToolManager(Tool *tool = nullptr, const Color& color = Color{0,0,0,255}): active_tool(tool), color(color) {}
+    ToolManager(plugin::ToolI *tool = nullptr, const Color& color = Color{0,0,0,255}): active_tool(tool), color(color) {}
 
-    void paint_on_press(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos) const {
-        active_tool->paint_on_press(permanent, tmp, point_pos, color);
+    void paintOnPress(plugin::RenderTargetI* permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos) final {
+        active_tool->paintOnPress(permanent, tmp, point_pos, color);
     }
 
-    void paint_on_move(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos) const {
-        active_tool->paint_on_move(permanent, tmp, point_pos, color);
+    void paintOnMove(plugin::RenderTargetI* permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos) final {
+        active_tool->paintOnMove(permanent, tmp, point_pos, color);
     }
 
-    void paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos) const {
-        active_tool->paint_on_release(permanent, tmp, point_pos, color);
+    void paintOnRelease(plugin::RenderTargetI* permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos) final {
+        active_tool->paintOnRelease(permanent, tmp, point_pos, color);
     }
 
-    void set_tool(Tool *new_tool) {
-        delete active_tool;
-        active_tool = new_tool;
+    void disableTool(plugin::RenderTargetI* permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos) final {
+        active_tool->disable(permanent, tmp, point_pos, color);
     }
 
     void set_color(const Color& new_color) {
@@ -44,11 +35,16 @@ public:
 
     const Color* get_color_ptr() const { return &color; }
 
-    ~ToolManager() {
-        delete active_tool;
-    }
+    ~ToolManager() = default;
+
+    void setColor(Color color) final { set_color(color); }
+    void setTool(plugin::ToolI *tool) final { active_tool = tool; };
+
+    plugin::ToolI *getTool() final { return active_tool; };
+    Color  getColor() final { return color; };
 };
 
+/*
 class Brush: public Tool {
 private:
     Point last_pos;
@@ -144,3 +140,5 @@ public:
     void paint_on_move   (RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final {};
     void paint_on_release(RenderTarget& permanent, RenderTarget& tmp, const mouse_event_t& point_pos, const Color& color) final;
 };
+
+*/
