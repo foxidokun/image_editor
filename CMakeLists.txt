@@ -22,7 +22,7 @@ file(GLOB SRCS
 )
 
 add_executable(image_editor ${SRCS})
-target_link_libraries(image_editor PRIVATE Qt6::Widgets sfml-graphics sfml-system sfml-window glib-2.0 gtk-3 ${CMAKE_SOURCE_DIR}/lib/nativefiledialog/build/lib/Release/x64/libnfd.a)
+target_link_libraries(image_editor PRIVATE Qt6::Widgets sfml-graphics sfml-system sfml-window)
 # target_link_libraries(vector PUBLIC OpenMP::OpenMP_CXX)
 
 list(REMOVE_ITEM SRCS "${PROJECT_SOURCE_DIR}/src/main.cpp")
@@ -30,11 +30,11 @@ list(REMOVE_ITEM SRCS "${PROJECT_SOURCE_DIR}/src/main.cpp")
 add_library(const_fill_plugin SHARED
         ${SRCS}
         "${PROJECT_SOURCE_DIR}/src/plugins/const_fill_plugin.cpp"
-        ${CMAKE_SOURCE_DIR}/lib/nativefiledialog/build/lib/Release/x64/libnfd.a
 )
 
-target_link_libraries(const_fill_plugin PRIVATE Qt6::Widgets sfml-graphics sfml-system sfml-window glib-2.0 gtk-3)
+target_link_libraries(const_fill_plugin PRIVATE Qt6::Widgets sfml-graphics sfml-system sfml-window)
 set_property(TARGET const_fill_plugin PROPERTY POSITION_INDEPENDENT_CODE ON)
+set_property(TARGET const_fill_plugin PROPERTY CMAKE_EXE_LINKER_FLAGS "-Wl,-export-dynamic")
 
 add_custom_command(TARGET const_fill_plugin POST_BUILD 
   COMMAND "${CMAKE_COMMAND}" -E copy 

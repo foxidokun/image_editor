@@ -51,15 +51,16 @@ public:
         colors[2] = std::max(std::min(params[2], 255.0), 0.0);
     };
 };
+*/
 
 struct FilterApplyArgs: public CallbackArgs {
     FilterManager &filter_mgr;
-    Filter* filter;
+    plugin::FilterI* filter;
     WindowManager *root;
     EventManager &event_mgr;
     ParametersModalWindow* param_window = nullptr;
 
-    FilterApplyArgs(FilterManager &filter_mgr, EventManager& event_mgr, WindowManager* root, Filter* filter = nullptr):
+    FilterApplyArgs(FilterManager &filter_mgr, EventManager& event_mgr, WindowManager* root, plugin::FilterI* filter = nullptr):
         filter_mgr(filter_mgr),
         filter(filter),
         root(root),
@@ -68,4 +69,3 @@ struct FilterApplyArgs: public CallbackArgs {
 
 void apply_filter_callback(CallbackArgs *_args);
 void recent_filter_callback(CallbackArgs *_args);
-*/

@@ -5,9 +5,12 @@
 #include <unistd.h> 
 #include <QApplication>
 #include <QColorDialog>
-
+#include <dlfcn.h>
+#include <filesystem>
 
 static void set_color(CallbackArgs *_args);
+static void load_plugin(const char * path, WindowManager& wm, EventManager& em, ToolManager& tm, FilterManager& fm, Menu& filter_menu);
+static void load_plugins( WindowManager& wm, EventManager& em, ToolManager& tm, FilterManager& fm);
 
 namespace chrono = std::chrono;
 static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, EventManager& wm);
@@ -217,6 +220,8 @@ static void setup_objects(WindowManager& wm, ToolManager *tools, FilterManager& 
     setup_color_window(wm, tools);
     setup_tool_window(wm, tools);
 
+    load_plugins(wm, event_mgr, *tools, filter_mgr);
+
     //setup_filter_menu(wm, filter_mgr, event_mgr);
 }
 
@@ -318,37 +323,20 @@ static void setup_file_menu(WindowManager& wm, Canvas* canvas) {
     wm.register_object_exact_pos(file_menu);
 }
 
-/*
-template<typename FilterT>
+
 static inline void add_filter_button(WindowManager& wm, Menu& menu, FilterManager& filter_mgr, EventManager& event_mgr,
-    const char* button_name)
+    const char* button_name, plugin::FilterI *filter)
 {
-    auto filter = new FilterT();
     auto filter_args = new FilterApplyArgs(filter_mgr, event_mgr, &wm, filter);
     auto flt_btn = new TextButton(Point(), Vector(300, 0), apply_filter_callback, filter_args, button_name);
     menu.register_object(flt_btn);
 }
-
-static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr, EventManager& event_mgr) {
-    auto filter_menu = new Menu(Point(51,0), Vector(99, HEADER_HEIGHT), "Filter");
-
-    auto filter_args = new FilterApplyArgs(filter_mgr, event_mgr, &wm);
-    auto recent_button = new TextButton(Point(), Vector(), recent_filter_callback,
-                                                                filter_args, "Recent");
-    filter_menu->register_object(recent_button);
-
-    add_filter_button<RaiseBrightness>(wm, *filter_menu, filter_mgr, event_mgr, "Brightness+");
-    add_filter_button<FillFilter>(wm, *filter_menu, filter_mgr, event_mgr, "Fill");
-    wm.register_object_exact_pos(filter_menu);
-}
-*/
 
 static void set_brush(CallbackArgs *_args) {
     ToolArgs *args = static_cast<ToolArgs *>(_args);
 
     args->tools->setTool(args->tool);
 }
-
 
 static void set_color(CallbackArgs *_args) {
     ColorArgs *args = static_cast<ColorArgs *>(_args);
@@ -362,5 +350,45 @@ static void ask_color(CallbackArgs *_args) {
     QColor color = QColorDialog::getColor();
     if (color.isValid()) {
         args->tools->set_color(Color(color.red(), color.green(), color.blue(), color.alpha()));
+    }
+}
+
+static void load_plugins(WindowManager& wm, EventManager& em, ToolManager& tm, FilterManager& fm) {
+    auto filter_menu = new Menu(Point(51,0), Vector(99, HEADER_HEIGHT), "Filter");
+
+    auto filter_args = new FilterApplyArgs(fm, em, &wm);
+    auto recent_button = new TextButton(Point(), Vector(), recent_filter_callback,
+                                                                filter_args, "Recent");
+    filter_menu->register_object(recent_button);
+
+    for (const auto& x: std::filesystem::directory_iterator("./compiled_plugins")) {
+        load_plugin(x.path().c_str(), wm, em, tm, fm, *filter_menu);
+    }
+
+    wm.register_object_exact_pos(filter_menu);
+}
+
+static void load_plugin(const char * path, WindowManager& wm, EventManager& em, ToolManager& tm, FilterManager& fm, Menu& filter_menu) {
+    void* handle = dlopen(path, RTLD_NOW | RTLD_LOCAL);
+    if (handle) {
+        void *func = dlsym(handle, "getInstance");
+        if (!func) {
+            std::cerr << "init func for plugin <" << path << "> is null, load aborted!\n";
+            return;
+        }
+
+        auto init_func = (decltype(getInstance)*)(func);
+        auto app = plugin::App{&wm, &em, &tm, &fm};
+        auto plugin = init_func(&app);
+        std::cerr << "Got plugin " << plugin->name << " (" << plugin->id << ")\n";
+
+        if (plugin->type == plugin::InterfaceType::Filter) {
+            auto filter = static_cast<plugin::FilterI *>(plugin->getInterface());
+            add_filter_button(wm, filter_menu, fm, em, plugin->name, filter);
+        }
+
+        dlclose(handle);
+    } else {
+        std::cerr << "failed to load plugin <" << path << "> with error: " << dlerror() << "\n";
     }
 }

@@ -51,6 +51,27 @@ namespace plugin {
             memcpy(_pixels, pixel_array, width*height*sizeof(Color));
         }
 
+        Texture(const Texture& other):
+            _width(other._width),
+            _height(other._height),
+            _pixels(new Color[_width*_height])
+        {
+            memcpy(_pixels, other._pixels, _width*_height*sizeof(Color));
+        }
+
+        Texture(Texture&& other):
+            _width(other._width),
+            _height(other._height),
+            _pixels(other._pixels)
+        {
+            other._width  = 0;
+            other._height = 0;
+            other._pixels = nullptr;
+        }
+
+        Texture& operator=(const Texture& other) = delete;
+        Texture& operator=(Texture&& other)      = delete;
+
         ~Texture() {
             delete[] _pixels;
         }
@@ -59,6 +80,7 @@ namespace plugin {
         uint width() const  { return _width; };
         uint height() const { return _height; };
 
+        Vector size() const { return Vector(_width, _height); }
 
         Color get_pixel(uint x, uint y) {
             return _pixels[_width * y + x];
@@ -255,7 +277,7 @@ namespace plugin {
         InterfaceType type;
 
         virtual Interface *getInterface() = 0;
-        virtual ~Plugin() = 0;
+        virtual ~Plugin() = default;
     };
 
     enum class EventType {
@@ -283,6 +305,7 @@ namespace plugin {
         /// @brief clock event
         /// @param context microseconds
         virtual bool onClock(uint64_t delta) = 0;
+	    virtual uint8_t getPriority() = 0;
     };
 
     struct EventManagerI {
@@ -399,6 +422,7 @@ plugin::Array<T>::Array(const dynarray<T>& array): size(array.size()) {
 
 template<typename T>
 plugin::Array<T>::operator dynarray<T>() const {
-    dynarray arr(size);
+    dynarray<T> arr(size);
     arr.assign(data, data + size);
+    return arr;
 }

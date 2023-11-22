@@ -1,5 +1,6 @@
 #include "canvas.h"
 #include <nfd.h>
+#include <QFileDialog>
 
 void Canvas::render(RenderTarget& target) {
     _permanent.display();
@@ -65,31 +66,22 @@ void Canvas::move(const Vector& shift) {
 void load_canvas_callback(CallbackArgs *args_) {
     SaveLoadCanvasArgs *args = static_cast<SaveLoadCanvasArgs *>(args_);
 
-    nfdchar_t *path = NULL;
-    nfdresult_t result = NFD_OpenDialog("png;jpg;bmp", NULL, &path);
-    
-    if (result == NFD_OKAY) {
-        args->self->load_from_file(path);
-        free(path);
-    } else if (result == NFD_CANCEL) {
-        return;
-    } else {
-        std::cerr << "Error: " << NFD_GetError() << '\n';
+    auto result = QFileDialog::getOpenFileName();
+    auto path = result.toStdString();
+
+
+    if (!result.isEmpty() && !result.isNull()) {
+        args->self->load_from_file(path.c_str());
     }
 }
 
 void save_canvas_callback(CallbackArgs *args_) {
     SaveLoadCanvasArgs *args = static_cast<SaveLoadCanvasArgs *>(args_);
 
-    nfdchar_t *path = NULL;
-    nfdresult_t result = NFD_SaveDialog("png;jpg;bmp", NULL, &path);
-    
-    if (result == NFD_OKAY) {
-        args->self->save_to_file(path);
-        free(path);
-    } else if (result == NFD_CANCEL) {
-        return;
-    } else {
-        std::cerr << "Error: " << NFD_GetError() << '\n';
+    auto result = QFileDialog::getSaveFileName();
+    auto path = result.toStdString();
+
+    if (!result.isEmpty() && !result.isNull()) {
+        args->self->save_to_file(path.c_str());
     }
 }

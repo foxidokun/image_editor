@@ -40,6 +40,8 @@ protected:
 
 public:
     uint priority() const { return (uint)_priority; }
+
+    uint8_t getPriority() override { return (uint8_t)_priority; }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -47,19 +49,19 @@ public:
 template<typename T>
 using event_handler_func_t = bool (plugin::EventProcessableI::*)(T event);
 
-class EventManager: EventSubscriber {
+class EventManager: EventSubscriber, public plugin::EventManagerI {
 private:
-    linked_list<EventSubscriber *> _childs;
+    linked_list<plugin::EventProcessableI *> _childs;
     int priorities[EVENT_TYPES_NUM] = {};
 
     template<typename T, EVENT_TYPES type>
     bool default_event_handler(event_handler_func_t<T> handler_func, T event);
 public:
-    void register_object(EventSubscriber *child) {
+    void register_object(plugin::EventProcessableI *child) {
         _childs.push_back(child);
     }
 
-    void unregister_object(EventSubscriber *child) {
+    void unregister_object(plugin::EventProcessableI *child) {
         _childs.erase(std::remove(_childs.begin(), _childs.end(), child), _childs.end());
     }
 
@@ -78,6 +80,11 @@ public:
     void timer_event() {
         onClock(33333); // 30 fps
     }
+
+    void registerObject(plugin::EventProcessableI *object) final {register_object(object);};
+
+    void setPriority(plugin::EventType, uint8_t priority) { assert(0); };
+    void unregisterObject(plugin::EventProcessableI *object) final {unregister_object(object);};
 };
 
 // ---------------------------------------------------------------------------------------------------------------------

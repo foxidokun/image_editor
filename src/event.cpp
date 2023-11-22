@@ -6,7 +6,7 @@ bool EventManager::default_event_handler(event_handler_func_t<T> handler_func, T
     bool was_stop = false;
 
     for (const auto& child: _childs) {
-        if (child->priority() < priorities[type]) { continue; }
+        if (child->getPriority() < priorities[type]) { continue; }
 
         bool res = (child->*handler_func)(event);
 

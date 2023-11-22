@@ -53,6 +53,7 @@ public:
     bool onMouseRelease   (mouse_event_t key)    final { return event_ptr->onMouseRelease(key); };
     bool onMouseMove      (mouse_event_t key)    final { return event_ptr->onMouseMove(key); };
     bool onClock          (uint64_t delta)       final { return event_ptr->onClock(delta); };
+    uint8_t getPriority() final { return event_ptr->getPriority(); };
 
     Rectangle active_area() const;
 

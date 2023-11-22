@@ -33,7 +33,7 @@ void FillFilter::apply(RenderTarget &rt) {
 
     rt.set_image(img);
 }
-
+*/
 void parameters_get_and_apply(CallbackArgs *_args) {
     FilterApplyArgs* args = static_cast<FilterApplyArgs *> (_args);
 
@@ -47,26 +47,27 @@ void parameters_get_and_apply(CallbackArgs *_args) {
         }
     }
 
-    args->filter_mgr.set_filter(args->filter);
-    args->filter->set_params(params);
-    RenderTarget *rt = args->filter_mgr.get_rt();
+    args->filter_mgr.setFilter(args->filter);
+    args->filter->setParams(params);
+    auto rt = args->filter_mgr.get_rt();
     if (rt) {
-        args->filter->apply(*rt);
+        args->filter->apply(rt);
     }
 }
 
 
 void apply_filter_callback(CallbackArgs *_args) {
-    FilterApplyArgs* args = new FilterApplyArgs(*static_cast<FilterApplyArgs *> (_args));
-    if (args->filter->get_param_names().size() > 0) {
-        auto params = new ParametersModalWindow(Vector(200, 200), Vector(300, 300), "Filter Params", args->event_mgr, parameters_get_and_apply, args, args->filter->get_param_names());
+    FilterApplyArgs* args = static_cast<FilterApplyArgs *>(_args);
+    
+    if (args->filter->getParamNames().size > 0) {
+        auto params = new ParametersModalWindow(Vector(200, 200), Vector(300, 300), "Filter Params", args->event_mgr, parameters_get_and_apply, args, args->filter->getParamNames());
         args->param_window = params;
         args->root->register_object(params);
     } else {
-        args->filter_mgr.set_filter(args->filter);
-        RenderTarget *rt = args->filter_mgr.get_rt();
+        args->filter_mgr.setFilter(args->filter);
+        plugin::RenderTargetI *rt = args->filter_mgr.get_rt();
         if (rt) {
-            args->filter->apply(*rt);
+            args->filter->apply(rt);
         }
     }
 }
@@ -74,11 +75,10 @@ void apply_filter_callback(CallbackArgs *_args) {
 void recent_filter_callback(CallbackArgs *_args) {
     FilterApplyArgs* args = static_cast<FilterApplyArgs *> (_args);
 
-    Filter *filter = args->filter_mgr.get_filter();
-    RenderTarget *rt = args->filter_mgr.get_rt();
+    plugin::FilterI *filter = args->filter_mgr.get_filter();
+    plugin::RenderTargetI *rt = args->filter_mgr.get_rt();
 
     if (filter && rt) {
-        filter->apply(*rt);
+        filter->apply(rt);
     }
 }
-*/
