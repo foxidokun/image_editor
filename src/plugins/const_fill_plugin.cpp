@@ -1,9 +1,11 @@
 #include "plugin.h"
 #include <iostream>
 
-static const plugin::Color choosen_color{133, 133, 0};
+static const char *param_names[3] = {"R", "G", "B"};
 
 struct ConstFillFilter: public plugin::Plugin, public plugin::FilterI {
+    double color[3] = {133, 133, 0};
+
     ConstFillFilter(uint64_t id_, const char *name_, plugin::InterfaceType type_) {
         id = id_;
         name = name_;
@@ -13,11 +15,13 @@ struct ConstFillFilter: public plugin::Plugin, public plugin::FilterI {
     plugin::Interface *getInterface() final { return this; };
     ~ConstFillFilter() final = default;
 
-
-    plugin::Array<const char *> getParamNames() final { return {0, nullptr}; }
+    plugin::Array<const char *> getParamNames() final { return {3, param_names}; }
         
-    plugin::Array<double> getParams() final { return {0, nullptr}; }
-    void setParams(plugin::Array<double> params) final { }
+    plugin::Array<double> getParams() final { return plugin::Array<double>(3, color); }
+    void setParams(plugin::Array<double> params) final {
+        assert(params.size == 3);
+        memcpy(color, params.data, 3*sizeof(double));
+    }
 
     void apply(plugin::RenderTargetI *data) final;
 };
@@ -33,7 +37,7 @@ void ConstFillFilter::apply(plugin::RenderTargetI *data) {
 
     for (int i = 0; i < texture->height(); ++i) {
         for (int j = 0; j < texture->width(); ++j) {
-            (*texture)[i][j] = choosen_color;
+            (*texture)[i][j] = plugin::Color(color);
         }
     }
 

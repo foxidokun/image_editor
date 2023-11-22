@@ -31,6 +31,7 @@ namespace plugin {
         Color(const sf::Color &sfc): r(sfc.r), g(sfc.g), b(sfc.b), a(sfc.a) {}
         Color(uint r, uint g, uint b, uint a=255): r(r), g(g), b(b), a(a) {}
         Color() = default;
+        Color(double color[3]): r(color[0]), g(color[1]), b(color[2]), a(255) {}
 
         operator sf::Color() const {
             return sf::Color(r, g, b, a);

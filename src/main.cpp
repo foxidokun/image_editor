@@ -386,8 +386,6 @@ static void load_plugin(const char * path, WindowManager& wm, EventManager& em, 
             auto filter = static_cast<plugin::FilterI *>(plugin->getInterface());
             add_filter_button(wm, filter_menu, fm, em, plugin->name, filter);
         }
-
-        dlclose(handle);
     } else {
         std::cerr << "failed to load plugin <" << path << "> with error: " << dlerror() << "\n";
     }
