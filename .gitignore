@@ -2,3 +2,4 @@ build
 .vscode
 *.kra
 *.png~
+compiled_plugins
