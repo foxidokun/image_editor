@@ -378,7 +378,7 @@ namespace plugin {
          * 
          * @return WidgetI* root
          */
-        virtual WidgetI* getRoot();
+        virtual WidgetI* getRoot() = 0;
     };
 
     struct App {

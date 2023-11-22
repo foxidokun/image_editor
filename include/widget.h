@@ -152,7 +152,7 @@ public:
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-class WindowManager: public Widget {
+class WindowManager: public Widget, public plugin::GuiI {
 public:
     WindowManager(double width, double height):
         Widget(Point(0,0), Vector(width, height))
@@ -166,6 +166,12 @@ public:
     void cleanup();
 
     virtual void render(RenderTarget& target) override;
+
+    virtual Vec2 getSize() { assert(0); };
+
+    plugin::RenderTargetI* getRenderTarget(Vec2 size, Vec2 pos, plugin::Plugin *self) final { assert(0); };
+    void createParamWindow(plugin::Array<const char *> param_names, plugin::Interface * self) final { assert(0); };
+    plugin::WidgetI* getRoot() final { assert(0); };
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
