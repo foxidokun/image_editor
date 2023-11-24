@@ -1,5 +1,4 @@
 #include "canvas.h"
-#include <nfd.h>
 #include <QFileDialog>
 
 void Canvas::render(RenderTarget& target) {
