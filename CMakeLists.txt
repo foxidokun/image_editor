@@ -16,26 +16,26 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1 -march=native -fconcepts-diagnostics
 find_package(SFML REQUIRED COMPONENTS graphics window system)
 find_package(Qt6 REQUIRED COMPONENTS Widgets) 
 
-file(GLOB SRCS
+file(GLOB CORE_SRCS
         "${PROJECT_SOURCE_DIR}/include/*.h"
         "${PROJECT_SOURCE_DIR}/include/*.hpp"
         "${PROJECT_SOURCE_DIR}/src/*.cpp"
         "${PROJECT_SOURCE_DIR}/src/*.c"
 )
 
-add_executable(image_editor ${SRCS})
-set_property(TARGET image_editor PROPERTY CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--export-dynamic -ldl")
-target_link_libraries(image_editor PRIVATE Qt6::Widgets sfml-graphics sfml-system sfml-window)
+list(REMOVE_ITEM CORE_SRCS "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
-list(REMOVE_ITEM SRCS "${PROJECT_SOURCE_DIR}/src/main.cpp")
+add_library(core_lib STATIC ${CORE_SRCS})
+target_include_directories(core_lib SYSTEM PRIVATE ${Qt6Widgets_INCLUDE_DIRS})
+
+add_executable(image_editor "${PROJECT_SOURCE_DIR}/src/main.cpp")
+target_link_libraries(image_editor PRIVATE core_lib Qt6::Widgets sfml-graphics sfml-system sfml-window)
 
 add_library(const_fill_plugin SHARED
-        ${SRCS}
         "${PROJECT_SOURCE_DIR}/src/plugins/const_fill_plugin.cpp"
 )
 
-# target_link_libraries(const_fill_plugin PRIVATE Qt6::Widgets sfml-graphics sfml-system sfml-window)
-target_include_directories(const_fill_plugin SYSTEM PRIVATE ${Qt6Widgets_INCLUDE_DIRS})
+target_link_libraries(const_fill_plugin PRIVATE core_lib)
 set_property(TARGET const_fill_plugin PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 add_custom_command(TARGET const_fill_plugin POST_BUILD 
