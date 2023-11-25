@@ -226,21 +226,21 @@ static void setup_objects(WindowManager& wm, ToolManager *tools, FilterManager& 
 }
 
 static void setup_canvas_window(WindowManager& wm, ToolManager *tools, FilterManager& filter_mgr) {
-    auto win      = new Window(Point(110,0), Vector(600, 400), "Canvas");
-    double width  = win->active_area().high_x - win->active_area().low_x - 12;
-    double height = win->active_area().high_y - win->active_area().low_y - 10;
+    auto win      = new Window(Point(110,0), Vector(800, 600), "Canvas");
+    double width  = win->active_area().high_x - win->active_area().low_x; // - 12;
+    double height = win->active_area().high_y - win->active_area().low_y; // - 10;
 
-    auto canvas = new Canvas(Point(0,0), Vector(width, height), tools, filter_mgr, Point(0,0), Vector(2 * width, 2 * height));
-    auto h_scrollbar = new Scrollbar<Orientation::Horizontal>(Vector(0, 365), Vector(600, 10));
-    auto v_scrollbar = new Scrollbar<Orientation::Vertical>  (Vector(588, 0), Vector(12, 400));
+    auto canvas = new Canvas(Point(0,0), Vector(width, height), tools, filter_mgr, Point(0,0), Vector(width, height));
+    // auto h_scrollbar = new Scrollbar<Orientation::Horizontal>(Vector(0, 365), Vector(600, 10));
+    // auto v_scrollbar = new Scrollbar<Orientation::Vertical>  (Vector(588, 0), Vector(12, 400));
 
     win->register_object(canvas);
-    win->register_object(h_scrollbar);
-    win->register_object(v_scrollbar);
+    // win->register_object(h_scrollbar);
+    // win->register_object(v_scrollbar);
 
     wm.register_object(win);
-    auto h_controller = new ScrollController(*h_scrollbar, *canvas);
-    auto v_controller = new ScrollController(*v_scrollbar, *canvas);
+    // auto h_controller = new ScrollController(*h_scrollbar, *canvas);
+    // auto v_controller = new ScrollController(*v_scrollbar, *canvas);
 
     setup_file_menu(wm, canvas);
 }
@@ -253,22 +253,8 @@ static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
 
     auto win     = new Window(Point(0,0), Vector(100,345), "Tools");
     auto br_btn  = new TextureButton(Point(10, 10) , Vector(30, 30), set_brush, new ToolArgs(tools, brush), global_resources::brush);
-    // auto al_btn  = new TextureButton(Point(60, 10) , Vector(30, 30), set_brush<AlienBrush>, new ToolArgs(tools), global_resources::alien);
-    // auto pol_btn = new TextureButton(Point(10, 60) , Vector(30, 30), set_brush<Polyline>,   new ToolArgs(tools), global_resources::polyline);
-    // auto rec_btn = new TextureButton(Point(60, 60) , Vector(30, 30), set_brush<RectTool>,   new ToolArgs(tools), global_resources::rectangle);
-    // auto ell_btn = new TextureButton(Point(10, 110), Vector(30, 30), set_brush<EllipseTool>,new ToolArgs(tools), global_resources::ellipse);
-    // auto spl_btn = new TextureButton(Point(60, 110), Vector(30, 30), set_brush<SplineTool>, new ToolArgs(tools), global_resources::spline);
-    // auto pic_btn = new TextureButton(Point(10, 160), Vector(30, 30), set_brush<ColorPicker>,new ToolArgs(tools), global_resources::pick);
-    // auto fil_btn = new TextureButton(Point(60, 160), Vector(30, 30), set_brush<FillTool>,   new ToolArgs(tools), global_resources::fill);
 
     win->register_object(br_btn);
-    // win->register_object(al_btn);
-    // win->register_object(pol_btn);
-    // win->register_object(rec_btn);
-    // win->register_object(ell_btn);
-    // win->register_object(spl_btn);
-    // win->register_object(pic_btn);
-    // win->register_object(fil_btn);
     wm.register_object(win);
 }
 
