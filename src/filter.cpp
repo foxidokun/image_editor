@@ -57,10 +57,10 @@ void parameters_get_and_apply(CallbackArgs *_args) {
 
 
 void apply_filter_callback(CallbackArgs *_args) {
-    FilterApplyArgs* args = new FilterApplyArgs(*static_cast<FilterApplyArgs *>(_args));
+    FilterApplyArgs* args = static_cast<FilterApplyArgs *>(_args);
     
     if (args->filter->getParamNames().size > 0) {
-        auto params = new ParametersModalWindow(Vector(200, 200), Vector(300, 300), "Filter Params", args->event_mgr, parameters_get_and_apply, args, args->filter->getParamNames());
+        auto params = new ParametersModalWindow(Vector(200, 200), Vector(300, 300), "Filter Params", args->event_mgr, parameters_get_and_apply, new FilterApplyArgs(*args), args->filter->getParamNames());
         args->param_window = params;
         args->root->register_object(params);
     } else {
