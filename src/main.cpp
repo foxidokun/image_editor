@@ -9,13 +9,13 @@
 #include <filesystem>
 
 static void set_color(CallbackArgs *_args);
-static void load_plugin(const char * path, WindowManager& wm, EventManager& em, ToolManager& tm, FilterManager& fm, Menu& filter_menu);
-static void load_plugins( WindowManager& wm, EventManager& em, ToolManager& tm, FilterManager& fm);
+static void load_plugin(const char * path, WindowManager& win_mgr, EventManager& event_mgr, ToolManager& tool_mgr, FilterManager& flt_mgr, Menu& filter_menu);
+static void load_plugins( WindowManager& win_mgr, EventManager& event_mgr, ToolManager& tool_mgr, FilterManager& flt_mgr);
 
 namespace chrono = std::chrono;
-static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, EventManager& wm);
+static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, EventManager& win_mgr);
 static void test_regions();
-static void setup_objects(WindowManager& wm, ToolManager *tools, FilterManager &filter_mgr, EventManager& event_mgr);
+static void setup_objects(WindowManager& win_mgr, ToolManager *tools, FilterManager &filter_mgr, EventManager& event_mgr);
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv); // for color picker
@@ -85,30 +85,30 @@ static inline mouse_event_t get_mouse_event(const sf::RenderWindow& window, cons
     return mouse_event;
 } 
 
-static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, EventManager& em) {
+static EVENT_RES event_dispatcher(const sf::Event& event, sf::RenderWindow& window, EventManager& event_mgr) {
     switch (event.type) {
         case (sf::Event::Closed):
             window.close();
             return EVENT_RES::STOP;
         
         case (sf::Event::MouseButtonPressed):
-            em.onMousePress(get_mouse_event(window, event));
+            event_mgr.onMousePress(get_mouse_event(window, event));
             return EVENT_RES::CONT;
 
         case (sf::Event::MouseButtonReleased):
-            em.onMouseRelease(get_mouse_event(window, event));
+            event_mgr.onMouseRelease(get_mouse_event(window, event));
             return EVENT_RES::CONT;
 
         case (sf::Event::MouseMoved):
-            em.onMouseMove(get_mouse_event(window, event));
+            event_mgr.onMouseMove(get_mouse_event(window, event));
             return EVENT_RES::CONT;
 
         case (sf::Event::KeyPressed):
-            em.onKeyboardPress(event.key);
+            event_mgr.onKeyboardPress(event.key);
             return EVENT_RES::CONT;
 
         case (sf::Event::KeyReleased):
-            em.onKeyboardRelease(event.key);
+            event_mgr.onKeyboardRelease(event.key);
             return EVENT_RES::CONT;
 
         default:
@@ -188,11 +188,11 @@ static void test_regions() {
 // Setup
 // ---------------------------------------------------------------------------------------------------------------------
 
-static void setup_canvas_window(WindowManager& wm, ToolManager *tools, FilterManager &filter_mgr);
-static void setup_tool_window(WindowManager& wm, ToolManager *tools);
-static void setup_file_menu(WindowManager& wm, Canvas* canvas);
-// static void setup_filter_menu(WindowManager& wm, FilterManager& filter_mgr, EventManager& event_mgr);
-static void setup_color_window(WindowManager& wm, ToolManager *tools);
+static void setup_canvas_window(WindowManager& win_mgr, ToolManager *tools, FilterManager &filter_mgr);
+static void setup_tool_window(WindowManager& win_mgr, ToolManager *tools);
+static void setup_file_menu(WindowManager& win_mgr, Canvas* canvas);
+// static void setup_filter_menu(WindowManager& win_mgr, FilterManager& filter_mgr, EventManager& event_mgr);
+static void setup_color_window(WindowManager& win_mgr, ToolManager *tools);
 static void setup_color_button(Window& win, ToolManager *tools, const Color& color, const Point& pos);
 
 
@@ -215,17 +215,17 @@ struct ColorArgs: public CallbackArgs {
     ColorArgs(ToolManager *tools, const Color &color_ = sf::Color::Black): tools(tools),  color(color_) {}
 };
 
-static void setup_objects(WindowManager& wm, ToolManager *tools, FilterManager& filter_mgr, EventManager& event_mgr) {
-    setup_canvas_window(wm, tools, filter_mgr);
-    setup_color_window(wm, tools);
-    setup_tool_window(wm, tools);
+static void setup_objects(WindowManager& win_mgr, ToolManager *tools, FilterManager& filter_mgr, EventManager& event_mgr) {
+    setup_canvas_window(win_mgr, tools, filter_mgr);
+    setup_color_window(win_mgr, tools);
+    setup_tool_window(win_mgr, tools);
 
-    load_plugins(wm, event_mgr, *tools, filter_mgr);
+    load_plugins(win_mgr, event_mgr, *tools, filter_mgr);
 
-    //setup_filter_menu(wm, filter_mgr, event_mgr);
+    //setup_filter_menu(win_mgr, filter_mgr, event_mgr);
 }
 
-static void setup_canvas_window(WindowManager& wm, ToolManager *tools, FilterManager& filter_mgr) {
+static void setup_canvas_window(WindowManager& win_mgr, ToolManager *tools, FilterManager& filter_mgr) {
     auto win      = new Window(Point(110,0), Vector(800, 600), "Canvas");
     double width  = win->active_area().high_x - win->active_area().low_x; // - 12;
     double height = win->active_area().high_y - win->active_area().low_y; // - 10;
@@ -238,15 +238,15 @@ static void setup_canvas_window(WindowManager& wm, ToolManager *tools, FilterMan
     // win->register_object(h_scrollbar);
     // win->register_object(v_scrollbar);
 
-    wm.register_object(win);
+    win_mgr.register_object(win);
     // auto h_controller = new ScrollController(*h_scrollbar, *canvas);
     // auto v_controller = new ScrollController(*v_scrollbar, *canvas);
 
-    setup_file_menu(wm, canvas);
+    setup_file_menu(win_mgr, canvas);
 }
 
 
-static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
+static void setup_tool_window(WindowManager& win_mgr, ToolManager *tools) {
     plugin::ToolI *brush = new Brush();
 
     tools->setTool(brush);
@@ -255,10 +255,10 @@ static void setup_tool_window(WindowManager& wm, ToolManager *tools) {
     auto br_btn  = new TextureButton(Point(10, 10) , Vector(30, 30), set_brush, new ToolArgs(tools, brush), global_resources::brush);
 
     win->register_object(br_btn);
-    wm.register_object(win);
+    win_mgr.register_object(win);
 }
 
-static void setup_color_window(WindowManager& wm, ToolManager *tools) {
+static void setup_color_window(WindowManager& win_mgr, ToolManager *tools) {
     tools->set_color({0,0,0,255});
 
     auto win    = new Window(Point(0,345), Vector(100, 345), "Colors");
@@ -277,7 +277,7 @@ static void setup_color_window(WindowManager& wm, ToolManager *tools) {
     win->register_object(color_picker);
     win->register_object(indicator);
 
-    wm.register_object(win);
+    win_mgr.register_object(win);
 }
 
 static void setup_color_button(Window& win, ToolManager *tools, const Color& color, const Point& pos) {
@@ -298,7 +298,7 @@ static void setup_color_button(Window& win, ToolManager *tools, const Color& col
     win.register_object(button);
 }
 
-static void setup_file_menu(WindowManager& wm, Canvas* canvas) {
+static void setup_file_menu(WindowManager& win_mgr, Canvas* canvas) {
     auto file_menu = new Menu(Point(1,0), Vector(49, HEADER_HEIGHT), "File");
 
     auto load_button = new TextButton(Point(), Vector(), load_canvas_callback, new SaveLoadCanvasArgs(canvas), "Open");
@@ -306,14 +306,13 @@ static void setup_file_menu(WindowManager& wm, Canvas* canvas) {
 
     file_menu->register_object(load_button);
     file_menu->register_object(save_button);
-    wm.register_object_exact_pos(file_menu);
+    win_mgr.register_object_exact_pos(file_menu);
 }
 
-
-static inline void add_filter_button(WindowManager& wm, Menu& menu, FilterManager& filter_mgr, EventManager& event_mgr,
+static inline void add_filter_button(WindowManager& win_mgr, Menu& menu, FilterManager& filter_mgr, EventManager& event_mgr,
     const char* button_name, plugin::FilterI *filter)
 {
-    auto filter_args = new FilterApplyArgs(filter_mgr, event_mgr, &wm, filter);
+    auto filter_args = new FilterApplyArgs(filter_mgr, event_mgr, &win_mgr, filter);
     auto flt_btn = new TextButton(Point(), Vector(300, 0), apply_filter_callback, filter_args, button_name);
     menu.register_object(flt_btn);
 }
@@ -339,22 +338,22 @@ static void ask_color(CallbackArgs *_args) {
     }
 }
 
-static void load_plugins(WindowManager& wm, EventManager& em, ToolManager& tm, FilterManager& fm) {
+static void load_plugins(WindowManager& win_mgr, EventManager& event_mgr, ToolManager& tool_mgr, FilterManager& flt_mgr) {
     auto filter_menu = new Menu(Point(51,0), Vector(99, HEADER_HEIGHT), "Filter");
 
-    auto filter_args = new FilterApplyArgs(fm, em, &wm);
+    auto filter_args = new FilterApplyArgs(flt_mgr, event_mgr, &win_mgr);
     auto recent_button = new TextButton(Point(), Vector(), recent_filter_callback,
                                                                 filter_args, "Recent");
     filter_menu->register_object(recent_button);
 
     for (const auto& x: std::filesystem::directory_iterator("./compiled_plugins")) {
-        load_plugin(x.path().c_str(), wm, em, tm, fm, *filter_menu);
+        load_plugin(x.path().c_str(), win_mgr, event_mgr, tool_mgr, flt_mgr, *filter_menu);
     }
 
-    wm.register_object_exact_pos(filter_menu);
+    win_mgr.register_object_exact_pos(filter_menu);
 }
 
-static void load_plugin(const char * path, WindowManager& wm, EventManager& em, ToolManager& tm, FilterManager& fm, Menu& filter_menu) {
+static void load_plugin(const char * path, WindowManager& win_mgr, EventManager& event_mgr, ToolManager& tool_mgr, FilterManager& flt_mgr, Menu& filter_menu) {
     void* handle = dlopen(path, RTLD_NOW | RTLD_LOCAL);
     if (handle) {
         void *func = dlsym(handle, "getInstance");
@@ -364,13 +363,13 @@ static void load_plugin(const char * path, WindowManager& wm, EventManager& em, 
         }
 
         auto init_func = (decltype(getInstance)*)(func);
-        auto app = plugin::App{&wm, &em, &tm, &fm};
+        auto app = plugin::App{&win_mgr, &event_mgr, &tool_mgr, &flt_mgr};
         auto plugin = init_func(&app);
         std::cerr << "Got plugin " << plugin->name << " (" << plugin->id << ")\n";
 
         if (plugin->type == plugin::InterfaceType::Filter) {
             auto filter = static_cast<plugin::FilterI *>(plugin->getInterface());
-            add_filter_button(wm, filter_menu, fm, em, plugin->name, filter);
+            add_filter_button(win_mgr, filter_menu, flt_mgr, event_mgr, plugin->name, filter);
         }
     } else {
         std::cerr << "failed to load plugin <" << path << "> with error: " << dlerror() << "\n";

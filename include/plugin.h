@@ -395,7 +395,7 @@ namespace plugin {
         ///     значения параметров и потом возвращает их интерфейсу через Interface::set_params
         /// @note окно не обязательно модальное, да и вообще implementation defined. Мем в том, что плагин находится в 
         ///     неопределенном/дефолтном состоянии между createParamWindow и Interface::set_params и взаимодействие с ним UB
-        virtual void createParamWindow(Array<const char *> param_names, Interface * self) = 0;
+        virtual void createParamWindow(Array<const char *> param_names, Interface *self) = 0;
 
         /**
          * @brief Get the root widget of widget tree

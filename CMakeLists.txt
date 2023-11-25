@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.15)
 project(image_editor)
 # set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
@@ -34,7 +34,8 @@ add_library(const_fill_plugin SHARED
         "${PROJECT_SOURCE_DIR}/src/plugins/const_fill_plugin.cpp"
 )
 
-target_link_libraries(const_fill_plugin PRIVATE Qt6::Widgets sfml-graphics sfml-system sfml-window)
+# target_link_libraries(const_fill_plugin PRIVATE Qt6::Widgets sfml-graphics sfml-system sfml-window)
+target_include_directories(const_fill_plugin SYSTEM PRIVATE ${Qt6Widgets_INCLUDE_DIRS})
 set_property(TARGET const_fill_plugin PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 add_custom_command(TARGET const_fill_plugin POST_BUILD 
