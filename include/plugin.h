@@ -29,12 +29,20 @@ namespace plugin {
         uint8_t a;
 
         Color(const sf::Color &sfc): r(sfc.r), g(sfc.g), b(sfc.b), a(sfc.a) {}
-        Color(uint r, uint g, uint b, uint a=255): r(r), g(g), b(b), a(a) {}
+        Color(uint r_, uint g_, uint b_, uint a_=255): r(r_), g(g_), b(b_), a(a_) {}
         Color() = default;
         Color(double color[3]): r(color[0]), g(color[1]), b(color[2]), a(255) {}
 
         operator sf::Color() const {
             return sf::Color(r, g, b, a);
+        }
+
+        Color& operator+=(const Color& other) {
+            r += other.r;
+            g += other.g;
+            b += other.b;
+            a += other.a;
+            return *this;
         }
 
         bool operator==(const Color& other) const = default;
@@ -92,6 +100,10 @@ namespace plugin {
         }
 
         Color* operator[](size_t y) {
+            return &_pixels[_width * y];
+        }
+
+        const Color* operator[](size_t y) const {
             return &_pixels[_width * y];
         }
     };

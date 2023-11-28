@@ -57,7 +57,6 @@ add_custom_command(TARGET sphere_filter POST_BUILD
      "${PROJECT_SOURCE_DIR}/compiled_plugins/$<TARGET_FILE_NAME:sphere_filter>" 
   COMMENT "Copying to output directory")
 
-
 ######################
 ## Fill tool plugin ##
 ######################
