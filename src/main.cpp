@@ -369,7 +369,7 @@ static void load_plugin(const char * path, WindowManager& win_mgr, EventManager&
         } else if (plugin->type == plugin::InterfaceType::Tool) {
             auto tool = static_cast<plugin::ToolI *>(plugin->getInterface());
             auto texture = tool->getIcon();
-            auto tool_btn = new PluginTextureButton(tool_pos, Vector(30, 30), set_brush, new ToolArgs(&tool_mgr, tool), texture);
+            auto tool_btn = new PluginTextureButton(tool_pos, Vector(30, 30), set_brush, new ToolArgs(&tool_mgr, tool), new plugin::Texture(*texture));
             tool_window.register_object(tool_btn);
             
             if (fabs(tool_pos.x - 60) < 1) {

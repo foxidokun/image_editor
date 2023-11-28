@@ -46,19 +46,19 @@ namespace plugin {
 
         Color *_pixels;
 
-        Texture(uint width, uint height, const uint8_t* pixel_array):
+        constexpr Texture(uint width, uint height):
         _width(width), _height(height), _pixels(new Color[width*height])
+        {}
+
+        constexpr Texture(uint width, uint height, const uint8_t* pixel_array):
+        Texture(width, height)
         {
             memcpy(_pixels, pixel_array, width*height*sizeof(Color));
         }
 
         Texture(const Texture& other):
-            _width(other._width),
-            _height(other._height),
-            _pixels(new Color[_width*_height])
-        {
-            memcpy(_pixels, other._pixels, _width*_height*sizeof(Color));
-        }
+            Texture(other._width, other._height, (const uint8_t *) other._pixels)
+        {}
 
         Texture(Texture&& other):
             _width(other._width),

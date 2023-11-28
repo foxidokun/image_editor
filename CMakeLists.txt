@@ -25,21 +25,53 @@ file(GLOB CORE_SRCS
 
 list(REMOVE_ITEM CORE_SRCS "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
+##################
+## Core library ##
+##################
+
 add_library(core_lib STATIC ${CORE_SRCS})
+set_property(TARGET core_lib PROPERTY POSITION_INDEPENDENT_CODE ON)
 target_include_directories(core_lib SYSTEM PRIVATE ${Qt6Widgets_INCLUDE_DIRS})
+
+############################
+## MAIN (HOST) executable ##
+############################
 
 add_executable(image_editor "${PROJECT_SOURCE_DIR}/src/main.cpp")
 target_link_libraries(image_editor PRIVATE core_lib Qt6::Widgets sfml-graphics sfml-system sfml-window)
 
-add_library(const_fill_plugin SHARED
-        "${PROJECT_SOURCE_DIR}/src/plugins/const_fill_plugin.cpp"
+##############################
+## Const fill filter plugin ##
+##############################
+
+add_library(sphere_filter SHARED
+        "${PROJECT_SOURCE_DIR}/src/plugins/sphere_filter.cpp"
 )
 
-target_link_libraries(const_fill_plugin PRIVATE core_lib)
-set_property(TARGET const_fill_plugin PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(sphere_filter PRIVATE core_lib)
+set_property(TARGET sphere_filter PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-add_custom_command(TARGET const_fill_plugin POST_BUILD 
+add_custom_command(TARGET sphere_filter POST_BUILD 
   COMMAND "${CMAKE_COMMAND}" -E copy 
-     "$<TARGET_FILE:const_fill_plugin>"
-     "${PROJECT_SOURCE_DIR}/compiled_plugins/$<TARGET_FILE_NAME:const_fill_plugin>" 
+     "$<TARGET_FILE:sphere_filter>"
+     "${PROJECT_SOURCE_DIR}/compiled_plugins/$<TARGET_FILE_NAME:sphere_filter>" 
+  COMMENT "Copying to output directory")
+
+
+######################
+## Fill tool plugin ##
+######################
+
+add_library(fill_tool_plugin SHARED
+        "${PROJECT_SOURCE_DIR}/src/plugins/fill_tool.cpp"
+        "${PROJECT_SOURCE_DIR}/assets/fill.png.cpp"
+)
+
+target_link_libraries(fill_tool_plugin PRIVATE core_lib)
+set_property(TARGET fill_tool_plugin PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+add_custom_command(TARGET fill_tool_plugin POST_BUILD 
+  COMMAND "${CMAKE_COMMAND}" -E copy 
+     "$<TARGET_FILE:fill_tool_plugin>"
+     "${PROJECT_SOURCE_DIR}/compiled_plugins/$<TARGET_FILE_NAME:fill_tool_plugin>" 
   COMMENT "Copying to output directory")
