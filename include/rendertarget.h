@@ -69,6 +69,7 @@ public:
     void drawRect(Vec2 pos, Vec2 size, Color color) final { drawRect((Point)pos, (Vector)size, color); };
     void drawEllipse(Vec2 pos, Vec2 size, Color color) final { drawEllipse((Point)pos, (Vector)size, color); };
     void drawTexture(Vec2 pos, Vec2 size, const plugin::Texture *texture) final;
+    void drawTexture(Vec2 pos, Vec2 size, const plugin::Texture *texture, bool invert);
     void drawText(Vec2 pos, const char *content, uint16_t char_size, Color color) final;
 
     plugin::Texture *getTexture() final {

@@ -33,6 +33,10 @@ void TextureButton::render(RenderTarget& target) {
     target.drawTexture(_reg, _pos, _size, _texture, _is_clicked);
 }
 
+void PluginTextureButton::render(RenderTarget& target) {
+    target.drawTexture(_pos, _size, _texture, _is_clicked);
+}
+
 void TextButton::render(RenderTarget& target) {
     if (_is_clicked) {
         target.drawText(_reg, _pos, text.c_str(), TITLE_SIZE, BUTTON_ACTIVE_COLOR);

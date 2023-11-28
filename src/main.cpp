@@ -9,7 +9,7 @@
 #include <filesystem>
 
 static void set_color(CallbackArgs *_args);
-static void load_plugin(const char * path, WindowManager& win_mgr, EventManager& event_mgr, ToolManager& tool_mgr, FilterManager& flt_mgr, Menu& filter_menu);
+static void load_plugin(const char * path, WindowManager& win_mgr, EventManager& event_mgr, ToolManager& tool_mgr, FilterManager& flt_mgr, Menu& filter_menu, Window& tool_window);
 static void load_plugins( WindowManager& win_mgr, EventManager& event_mgr, ToolManager& tool_mgr, FilterManager& flt_mgr);
 
 namespace chrono = std::chrono;
@@ -189,7 +189,6 @@ static void test_regions() {
 // ---------------------------------------------------------------------------------------------------------------------
 
 static void setup_canvas_window(WindowManager& win_mgr, ToolManager *tools, FilterManager &filter_mgr);
-static void setup_tool_window(WindowManager& win_mgr, ToolManager *tools);
 static void setup_file_menu(WindowManager& win_mgr, Canvas* canvas);
 // static void setup_filter_menu(WindowManager& win_mgr, FilterManager& filter_mgr, EventManager& event_mgr);
 static void setup_color_window(WindowManager& win_mgr, ToolManager *tools);
@@ -218,11 +217,8 @@ struct ColorArgs: public CallbackArgs {
 static void setup_objects(WindowManager& win_mgr, ToolManager *tools, FilterManager& filter_mgr, EventManager& event_mgr) {
     setup_canvas_window(win_mgr, tools, filter_mgr);
     setup_color_window(win_mgr, tools);
-    setup_tool_window(win_mgr, tools);
 
     load_plugins(win_mgr, event_mgr, *tools, filter_mgr);
-
-    //setup_filter_menu(win_mgr, filter_mgr, event_mgr);
 }
 
 static void setup_canvas_window(WindowManager& win_mgr, ToolManager *tools, FilterManager& filter_mgr) {
@@ -243,19 +239,6 @@ static void setup_canvas_window(WindowManager& win_mgr, ToolManager *tools, Filt
     // auto v_controller = new ScrollController(*v_scrollbar, *canvas);
 
     setup_file_menu(win_mgr, canvas);
-}
-
-
-static void setup_tool_window(WindowManager& win_mgr, ToolManager *tools) {
-    plugin::ToolI *brush = new Brush();
-
-    tools->setTool(brush);
-
-    auto win     = new Window(Point(0,0), Vector(100,345), "Tools");
-    auto br_btn  = new TextureButton(Point(10, 10) , Vector(30, 30), set_brush, new ToolArgs(tools, brush), global_resources::brush);
-
-    win->register_object(br_btn);
-    win_mgr.register_object(win);
 }
 
 static void setup_color_window(WindowManager& win_mgr, ToolManager *tools) {
@@ -338,7 +321,8 @@ static void ask_color(CallbackArgs *_args) {
     }
 }
 
-static void load_plugins(WindowManager& win_mgr, EventManager& event_mgr, ToolManager& tool_mgr, FilterManager& flt_mgr) {
+static void load_plugins(WindowManager& win_mgr, EventManager& event_mgr, ToolManager& tool_mgr, FilterManager& flt_mgr)
+{
     auto filter_menu = new Menu(Point(51,0), Vector(99, HEADER_HEIGHT), "Filter");
 
     auto filter_args = new FilterApplyArgs(flt_mgr, event_mgr, &win_mgr);
@@ -346,14 +330,26 @@ static void load_plugins(WindowManager& win_mgr, EventManager& event_mgr, ToolMa
                                                                 filter_args, "Recent");
     filter_menu->register_object(recent_button);
 
+    plugin::ToolI *brush = new Brush();
+    tool_mgr.setTool(brush);
+    auto tool_win = new Window(Point(0,0), Vector(100,345), "Tools");
+    auto br_btn   = new TextureButton(Point(10, 10) , Vector(30, 30), set_brush, new ToolArgs(&tool_mgr, brush), global_resources::brush);
+
+    tool_win->register_object(br_btn);
+
     for (const auto& x: std::filesystem::directory_iterator("./compiled_plugins")) {
-        load_plugin(x.path().c_str(), win_mgr, event_mgr, tool_mgr, flt_mgr, *filter_menu);
+        load_plugin(x.path().c_str(), win_mgr, event_mgr, tool_mgr, flt_mgr, *filter_menu, *tool_win);
     }
 
     win_mgr.register_object_exact_pos(filter_menu);
+    win_mgr.register_object(tool_win);
 }
 
-static void load_plugin(const char * path, WindowManager& win_mgr, EventManager& event_mgr, ToolManager& tool_mgr, FilterManager& flt_mgr, Menu& filter_menu) {
+static void load_plugin(const char * path, WindowManager& win_mgr, EventManager& event_mgr, ToolManager& tool_mgr,
+    FilterManager& flt_mgr, Menu& filter_menu, Window& tool_window)
+{
+    static Vector tool_pos = Vector(60, 10);
+
     void* handle = dlopen(path, RTLD_NOW | RTLD_LOCAL);
     if (handle) {
         void *func = dlsym(handle, "getInstance");
@@ -370,6 +366,18 @@ static void load_plugin(const char * path, WindowManager& win_mgr, EventManager&
         if (plugin->type == plugin::InterfaceType::Filter) {
             auto filter = static_cast<plugin::FilterI *>(plugin->getInterface());
             add_filter_button(win_mgr, filter_menu, flt_mgr, event_mgr, plugin->name, filter);
+        } else if (plugin->type == plugin::InterfaceType::Tool) {
+            auto tool = static_cast<plugin::ToolI *>(plugin->getInterface());
+            auto texture = tool->getIcon();
+            auto tool_btn = new PluginTextureButton(tool_pos, Vector(30, 30), set_brush, new ToolArgs(&tool_mgr, tool), texture);
+            tool_window.register_object(tool_btn);
+            
+            if (fabs(tool_pos.x - 60) < 1) {
+                tool_pos.x  = 10;
+                tool_pos.y += 50;
+            } else {
+                tool_pos.x = 60;
+            }
         }
     } else {
         std::cerr << "failed to load plugin <" << path << "> with error: " << dlerror() << "\n";

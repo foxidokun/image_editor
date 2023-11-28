@@ -48,6 +48,22 @@ public:
     }
 };
 
+class PluginTextureButton: public Button {
+protected:
+    const plugin::Texture* _texture;
+public:
+    PluginTextureButton(const Point& pos, const Vector& size, callback_f callback,
+        CallbackArgs *allocated_args, const plugin::Texture* texture):
+        Button(pos, size, callback, allocated_args),
+        _texture(texture) {}
+
+    void render(RenderTarget& target) override;
+
+    void print(std::ostream& stream) const final {
+        stream << "TextureButton";
+    }
+};
+
 class TextButton: public Button {
 private:
     string text;

@@ -275,6 +275,10 @@ void RenderTarget::setPixel(Vec2 pos, Color color) {
 }
 
 void RenderTarget::drawTexture(Vec2 pos, Vec2 size, const plugin::Texture *img) {
+    drawTexture(pos, size, img, false);
+}
+
+void RenderTarget::drawTexture(Vec2 pos, Vec2 size, const plugin::Texture *img, bool invert) {
     sf::Texture texture;
     texture.create(img->width(), img->height());
     texture.update(img->get_bytes());
@@ -286,7 +290,11 @@ void RenderTarget::drawTexture(Vec2 pos, Vec2 size, const plugin::Texture *img) 
     double y_scale = size.y / texture.getSize().y;
 
     sprite.setScale(x_scale, y_scale);
-    _data.draw(sprite);
+     if (invert) {
+        _data.draw(sprite, &invert_shader);
+    } else {
+        _data.draw(sprite);
+    }
 }
 
 void RenderTarget::drawText(Vec2 pos, const char *content, uint16_t char_size, Color color) {
