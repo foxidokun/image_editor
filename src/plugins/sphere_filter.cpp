@@ -30,18 +30,4 @@ extern "C" plugin::Plugin* getInstance(plugin::App *app) {
 }
 
 void ConstFillFilter::apply(plugin::RenderTargetI *data) {
-    const plugin::Texture *image = data->getTexture();
-    plugin::Texture new_texture = plugin::Texture(image->width(), image->height());
-
-    // TODO make 1:1
-    double width = image->width();
-
-    for (uint64_t row = 0; row < image->_height; ++row) {
-        for (uint64_t col = 0; col < image->_width; ++col) {
-            double radius = 
-        }
-    }
-
-    data->drawTexture(Vector(0,0), new_texture.size(), &new_texture);
-    delete image;
 }
