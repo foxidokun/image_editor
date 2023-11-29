@@ -66,8 +66,8 @@ add_library(fill_tool_plugin SHARED
         "${PROJECT_SOURCE_DIR}/assets/fill.png.cpp"
 )
 
-target_link_libraries(fill_tool_plugin PRIVATE core_lib)
 set_property(TARGET fill_tool_plugin PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(fill_tool_plugin PRIVATE core_lib)
 
 add_custom_command(TARGET fill_tool_plugin POST_BUILD 
   COMMAND "${CMAKE_COMMAND}" -E copy 
