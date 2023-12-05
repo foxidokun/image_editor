@@ -9,7 +9,7 @@ namespace {
     struct FillTool: public plugin::Plugin, public plugin::ToolI {
         plugin::Texture *_texture;
 
-        FillTool(uint64_t id_, const char *name_): _texture(&fill_tool_texture) {
+        constexpr FillTool(uint64_t id_, const char *name_): _texture(&fill_tool_texture) {
             id = id_;
             name = name_;
             type = plugin::InterfaceType::Tool;
