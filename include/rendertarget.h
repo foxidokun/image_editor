@@ -72,10 +72,12 @@ public:
     void drawTexture(Vec2 pos, Vec2 size, const plugin::Texture *texture, bool invert);
     void drawText(Vec2 pos, const char *content, uint16_t char_size, Color color) final;
 
-    plugin::Texture *getTexture() final {
+    plugin::Texture *getTexture() const final {
         auto res = new plugin::Texture(get_image());
         return res;
     }
+
+    void setTexture(plugin::Texture *) final {assert(0);};
 
     void clear() final {clear(sf::Color::Transparent); };
 

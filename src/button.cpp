@@ -53,9 +53,9 @@ void Menu::register_object(Widget *widget) {
     if (btn_size.x > max_width) {
         max_width = btn_size.x;
         for (auto& child: _childs) {
-            auto child_size = child.size();
+            auto child_size = child->size();
             child_size.x = max_width;
-            child.set_size(child_size);
+            child->set_size(child_size);
         }
     }
 
@@ -83,7 +83,7 @@ Region Menu::get_default_region() const {
 
     if (is_open) {
         for (const auto& child: _childs) {
-            new_reg += child.get_default_region();
+            new_reg += child->get_default_region();
         }
     }
 
@@ -94,12 +94,12 @@ void Menu::open() {
     assert(!is_open);
 
     is_open = true;
-    _root.recalc_regions();
+    _root->recalc_regions();
 }
 
 void Menu::close() {
     is_open = false;
-    _root.recalc_regions();
+    _root->recalc_regions();
 }
 
 bool Menu::onMousePress(mouse_event_t key) {

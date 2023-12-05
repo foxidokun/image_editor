@@ -117,7 +117,7 @@ namespace plugin {
         }
 
         virtual ~Texture() {
-            delete _pixels;
+            delete[] _pixels;
         };
     };
 
@@ -296,10 +296,6 @@ namespace plugin {
         virtual ~RenderableI() = default;
     };
 
-    struct PluginWidgetI: public EventProcessableI, public RenderableI {
-        WidgetI* host;
-    };
-
     struct Interface {
         virtual Array<const char *> getParamNames() const = 0;
         
@@ -389,6 +385,10 @@ namespace plugin {
         virtual void setAvailable(bool) = 0;
 
         virtual ~WidgetI() = default;
+    };
+
+    struct PluginWidgetI: public EventProcessableI, public RenderableI {
+        WidgetI* host;
     };
 
     struct ToolI: public Interface {

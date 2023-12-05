@@ -14,20 +14,20 @@ public:
 };
 */
 
-class FilterManager: public plugin::FilterManagerI {
+class FilterManager {
 private:
     plugin::FilterI *last_filter = nullptr;
     plugin::RenderTargetI *active_rt = nullptr;
 
 public:
-    void setFilter(plugin::FilterI* filter) final { last_filter = filter; };
+    void setFilter(plugin::FilterI* filter) { last_filter = filter; };
 
     plugin::FilterI* get_filter() { return last_filter; };
 
-    void setRenderTarget(plugin::RenderTargetI* rt) final { active_rt = rt; };
+    void setRenderTarget(plugin::RenderTargetI* rt) { active_rt = rt; };
     plugin::RenderTargetI* get_rt() { return active_rt; };
 
-    void applyFilter() final { last_filter->apply(active_rt); }
+    void applyFilter() { last_filter->apply(active_rt); }
 };
 
 /*

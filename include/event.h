@@ -41,7 +41,7 @@ protected:
 public:
     uint priority() const { return (uint)_priority; }
 
-    uint8_t getPriority() override { return (uint8_t)_priority; }
+    uint8_t getPriority() const override { return (uint8_t)_priority; }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------

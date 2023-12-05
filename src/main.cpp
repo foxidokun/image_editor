@@ -359,7 +359,7 @@ static void load_plugin(const char * path, WindowManager& win_mgr, EventManager&
         }
 
         auto init_func = (decltype(getInstance)*)(func);
-        auto app = plugin::App{&win_mgr, &event_mgr, &tool_mgr, &flt_mgr};
+        auto app = plugin::App{&win_mgr, &event_mgr};
         auto plugin = init_func(&app);
         std::cerr << "Got plugin " << plugin->name << " (" << plugin->id << ")\n";
 

@@ -15,15 +15,17 @@ namespace {
             type = type_;
         }
         
-        plugin::Interface *getInterface() final { return this; };
+        plugin::Interface *getInterface() const final { return const_cast<SphereFilter *>(this); };
         ~SphereFilter() final = default;
 
-        plugin::Array<const char *> getParamNames() final { return {0, nullptr}; }
+        plugin::Array<const char *> getParamNames() const final { return {0, nullptr}; }
             
-        plugin::Array<double> getParams() final { return plugin::Array<double>(0, nullptr); }
+        plugin::Array<double> getParams() const final { return plugin::Array<double>(0, nullptr); }
         void setParams(plugin::Array<double> params) final {}
 
         void apply(plugin::RenderTargetI *data) final;
+
+        void selectPlugin() final {/* I don't care */}
     };
 
 

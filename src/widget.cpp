@@ -6,23 +6,23 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 static inline bool no_hit(const Point& pos, const Vector& size, const mouse_event_t& event);
-void set_root(WidgetPtr widget, void *args);
+void set_root(Widget * widget, void *args);
 
 template<typename T>
-using handler_func_t = bool (WidgetPtr::*)(T event);
+using handler_func_t = bool (Widget::*)(T event);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 template<typename T, bool reorder = false>
-static bool default_event_handler(WidgetPtr root, linked_list<WidgetPtr>& childs, handler_func_t<T> handler_func,
+static bool default_event_handler(Widget * root, linked_list<Widget *>& childs, handler_func_t<T> handler_func,
     const T& event)
 {
     for (auto child_iter = childs.begin(); child_iter != childs.end();) {
-        if (((*child_iter).*handler_func)(event) == EVENT_RES::STOP) {
+        if (((*child_iter)->*handler_func)(event) == EVENT_RES::STOP) {
             if constexpr (reorder) {
                 childs.push_front(*child_iter);
                 childs.erase(child_iter);
-                root.recalc_regions();
+                root->recalc_regions();
             }
             return EVENT_RES::STOP;
         }
@@ -36,31 +36,31 @@ static bool default_event_handler(WidgetPtr root, linked_list<WidgetPtr>& childs
 // ---------------------------------------------------------------------------------------------------------------------
 
 bool Widget::onKeyboardPress(keyboard_event_t key) {
-    return default_event_handler<keyboard_event_t>(_root, _childs, &WidgetPtr::onKeyboardPress, key);
+    return default_event_handler<keyboard_event_t>(_root, _childs, &Widget::onKeyboardPress, key);
 }
 
 
 bool Widget::onKeyboardRelease(keyboard_event_t key) {
-    return default_event_handler<keyboard_event_t>(_root, _childs, &WidgetPtr::onKeyboardRelease, key);
+    return default_event_handler<keyboard_event_t>(_root, _childs, &Widget::onKeyboardRelease, key);
 }
 
 
 bool Widget::onMousePress(mouse_event_t key) {
-    return default_event_handler<mouse_event_t, true>(_root, _childs, &WidgetPtr::onMousePress, key);
+    return default_event_handler<mouse_event_t, true>(_root, _childs, &Widget::onMousePress, key);
 }
 
 
 bool Widget::onMouseRelease(mouse_event_t key) {
-    return default_event_handler<mouse_event_t, true>(_root, _childs, &WidgetPtr::onMouseRelease, key);
+    return default_event_handler<mouse_event_t, true>(_root, _childs, &Widget::onMouseRelease, key);
 }
 
 bool Widget::onMouseMove(mouse_event_t key) {
-    return default_event_handler<mouse_event_t>(_root, _childs, &WidgetPtr::onMouseMove, key);
+    return default_event_handler<mouse_event_t>(_root, _childs, &Widget::onMouseMove, key);
 }
 
 
 bool Widget::onClock(uint64_t delta) {
-    return default_event_handler<uint64_t>(_root, _childs, &WidgetPtr::onClock, delta);
+    return default_event_handler<uint64_t>(_root, _childs, &Widget::onClock, delta);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -84,25 +84,23 @@ void Widget::register_object_exact_pos(Widget *child) {
     assert(child != this);
     
     child->_parent = this;
-    recursive_update(child, set_root, &_root);
+    recursive_update(child, set_root, _root);
     
     _childs.push_front(child);
     
-    _root.recalc_regions();
+    _root->recalc_regions();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void recursive_update(WidgetPtr widget, transform_f func, void* args, 
+void recursive_update(Widget * widget, transform_f func, void* args, 
                      checker_f check, void* check_args) {
     if (check && !check(widget, check_args)) {
         return;
     }
 
-    if (widget.is_internal()) {
-        for (auto child : widget.internal_ptr()->_childs) {
-            recursive_update(child, func, args, check, check_args);
-        }
+    for (auto child : widget->_childs) {
+        recursive_update(child, func, args, check, check_args);
     }
 
     func(widget, args);
@@ -119,9 +117,9 @@ static inline bool no_hit(const Point& pos, const Vector& size, const mouse_even
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void update_coords(WidgetPtr widget, void *args) {
+void update_coords(Widget * widget, void *args) {
     Vector base_point = *static_cast<Vector *>(args);
-    widget.move(base_point);
+    widget->move(base_point);
 }
 
 void Widget::move(const Vector& shift) {
@@ -137,9 +135,9 @@ void Widget::move(const Vector& shift) {
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void set_root(WidgetPtr widget, void *args) {
-    WidgetPtr *root = static_cast<WidgetPtr *>(args);
-    widget.set_root(*root);
+void set_root(Widget * widget, void *args) {
+    Widget *root = static_cast<Widget *>(args);
+    widget->_root = root;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -147,25 +145,23 @@ void set_root(WidgetPtr widget, void *args) {
 void Widget::recalc_regions() {
     Region new_reg = get_default_region();
 
-    if (_parent && _parent.is_internal()) {
-        Widget *parent = _parent.internal_ptr();
+    if (_parent) {
+        new_reg *= _parent->_reg;
 
-        new_reg *= parent->_reg;
-
-        for (const auto& subling: parent->_childs) {
+        for (const auto& subling: _parent->_childs) {
             if (subling == this) { break; }
-            new_reg -= subling.get_default_region();
+            new_reg -= subling->get_default_region();
         }
     }
 
     _reg = new_reg;
 
     for (auto& child: _childs) {
-        child.recalc_regions();
+        child->recalc_regions();
     }
 
     for (const auto& child: _childs) {
-        _reg -= child.get_default_region();
+        _reg -= child->get_default_region();
     }
 }
 
@@ -174,15 +170,13 @@ void Widget::recalc_regions() {
 bool Widget::recursive_cleanup() {
     bool has_deleted = false;
     for (auto child = _childs.begin(); child != _childs.end(); ++child) {
-        if (!((*child).is_alive())) {
-            (*child).free();
+        if (!((*child)->is_alive())) {
+            delete (*child);
             child = _childs.erase(child);
             has_deleted = true;
         }
 
-        if ((*child).is_internal()) {
-            (*child).internal_ptr()->recursive_cleanup();
-        }
+        (*child)->recursive_cleanup();
     }
 
     return has_deleted;
@@ -192,11 +186,7 @@ bool Widget::recursive_cleanup() {
 
 void Widget::render(RenderTarget& target) {
     for (auto child = _childs.rbegin(); child != _childs.rend(); ++child) {
-        if ((*child).is_internal()) {
-            (*child).internal_ptr()->render(target);
-        } else {
-            assert(0 && "TODO");
-        }
+        (*child)->render(target);
     }
 }
 

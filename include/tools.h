@@ -5,7 +5,7 @@
 #include "rendertarget.h"
 #include "widget.h"
 
-class ToolManager: public plugin::ToolManagerI {
+class ToolManager {
 private:
     plugin::ToolI *active_tool; // owned
     Color color;
@@ -13,19 +13,19 @@ private:
 public:
     ToolManager(plugin::ToolI *tool = nullptr, const Color& color = Color{0,0,0,255}): active_tool(tool), color(color) {}
 
-    void paintOnPress(plugin::RenderTargetI* permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos) final {
+    void paintOnPress(plugin::RenderTargetI* permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos) {
         active_tool->paintOnPress(permanent, tmp, point_pos, color);
     }
 
-    void paintOnMove(plugin::RenderTargetI* permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos) final {
+    void paintOnMove(plugin::RenderTargetI* permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos) {
         active_tool->paintOnMove(permanent, tmp, point_pos, color);
     }
 
-    void paintOnRelease(plugin::RenderTargetI* permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos) final {
+    void paintOnRelease(plugin::RenderTargetI* permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos) {
         active_tool->paintOnRelease(permanent, tmp, point_pos, color);
     }
 
-    void disableTool(plugin::RenderTargetI* permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos) final {
+    void disableTool(plugin::RenderTargetI* permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos) {
         active_tool->disable(permanent, tmp, point_pos, color);
     }
 
@@ -37,13 +37,12 @@ public:
 
     ~ToolManager() = default;
 
-    void setColor(Color color) final { set_color(color); }
-    void setTool(plugin::ToolI *tool) final { active_tool = tool; };
+    void setColor(Color color) { set_color(color); }
+    void setTool(plugin::ToolI *tool) { active_tool = tool; };
 
-    plugin::ToolI *getTool() final { return active_tool; };
-    Color  getColor() final { return color; };
+    plugin::ToolI *getTool() { return active_tool; };
+    Color getColor() { return color; };
 };
-
 
 class Brush: public plugin::ToolI {
 private:
@@ -58,10 +57,10 @@ public:
 
     void disable(plugin::RenderTargetI *permanent, plugin::RenderTargetI* tmp, mouse_event_t point_pos, Color color) final {};
 
-    const plugin::Texture *getIcon() final { return nullptr; /* it is internal tool */ };
+    const plugin::Texture *getIcon() const final { return nullptr; /* it is internal tool */ };
 
-    plugin::Array<const char *> getParamNames() final { return plugin::Array<const char *>(0, nullptr); };
-    plugin::Array<double> getParams() final { return plugin::Array<double>(0, nullptr); };
+    plugin::Array<const char *> getParamNames() const final { return plugin::Array<const char *>(0, nullptr); };
+    plugin::Array<double> getParams() const final { return plugin::Array<double>(0, nullptr); };
     void setParams(plugin::Array<double> params) final {};
 };
 

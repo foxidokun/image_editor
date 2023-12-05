@@ -15,14 +15,14 @@ namespace {
             type = plugin::InterfaceType::Tool;
         }
         
-        plugin::Interface *getInterface() final {
-            return static_cast<plugin::Interface *>(this);
+        plugin::Interface *getInterface() const final {
+            return const_cast<FillTool *>(this);
         };
 
         ~FillTool() final = default;
 
-        plugin::Array<const char *> getParamNames() final { return {0, nullptr}; }
-        plugin::Array<double> getParams() final { return plugin::Array<double>(0, nullptr); }
+        plugin::Array<const char *> getParamNames() const final { return {0, nullptr}; }
+        plugin::Array<double> getParams() const final { return plugin::Array<double>(0, nullptr); }
         void setParams(plugin::Array<double> params) final {}
 
         void paintOnPress(plugin::RenderTargetI *data, plugin::RenderTargetI *tmp, plugin::MouseContext context, plugin::Color color) final {
@@ -69,9 +69,11 @@ namespace {
         void paintOnMove(plugin::RenderTargetI *, plugin::RenderTargetI *, plugin::MouseContext, plugin::Color) final {}
         void disable(plugin::RenderTargetI *,plugin::RenderTargetI *, plugin::MouseContext, plugin::Color) final {}
 
-        const plugin::Texture *getIcon() final {
+        const plugin::Texture *getIcon() const final {
             return _texture;
         };
+
+        void selectPlugin() { /* i don't care */};
     };
 }
 
