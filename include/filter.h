@@ -59,12 +59,14 @@ struct FilterApplyArgs: public CallbackArgs {
     WindowManager *root;
     EventManager &event_mgr;
     ParametersModalWindow* param_window = nullptr;
+    plugin::Plugin* plugin = nullptr;
 
-    FilterApplyArgs(FilterManager &filter_mgr, EventManager& event_mgr, WindowManager* root, plugin::FilterI* filter = nullptr):
+    FilterApplyArgs(FilterManager &filter_mgr, EventManager& event_mgr, WindowManager* root, plugin::FilterI* filter = nullptr, plugin::Plugin* plugin = nullptr):
         filter_mgr(filter_mgr),
         filter(filter),
         root(root),
-        event_mgr(event_mgr) {}
+        event_mgr(event_mgr),
+        plugin(plugin) {}
 };
 
 void apply_filter_callback(CallbackArgs *_args);

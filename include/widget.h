@@ -26,7 +26,7 @@ using checker_f   = bool(*)(Widget *, void *);
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-class Widget: public Renderable, public EventSubscriber {
+class Widget: public Renderable, public EventSubscriber, public plugin::WidgetI {
 protected:
     Widget * _parent = nullptr;
     Widget * _root   = this;
@@ -50,14 +50,14 @@ public:
             _active_area = whole;
         }
 
-    virtual bool onKeyboardPress  (keyboard_event_t key) override;
-    virtual bool onKeyboardRelease(keyboard_event_t key) override;
-    virtual bool onMousePress     (mouse_event_t key) override;
-    virtual bool onMouseRelease   (mouse_event_t key) override;
-    virtual bool onMouseMove      (mouse_event_t key) override;
-    virtual bool onClock          (uint64_t delta) override;
+    bool onKeyboardPress  (keyboard_event_t key) override;
+    bool onKeyboardRelease(keyboard_event_t key) override;
+    bool onMousePress     (mouse_event_t key) override;
+    bool onMouseRelease   (mouse_event_t key) override;
+    bool onMouseMove      (mouse_event_t key) override;
+    bool onClock          (uint64_t delta) override;
 
-    virtual void render(RenderTarget& target) override;
+    void render(RenderTarget& target) override;
 
     virtual Region get_default_region() const {
         return Region(Rectangle{_pos.x, _pos.y, _pos.x + _size.x, _pos.y + _size.y});
@@ -74,7 +74,7 @@ public:
     const Point&     pos()         const { return _pos;         }
     const Vector&    size()        const { return _size;        }
     const Rectangle& active_area() const { return _active_area; }
-    Widget *        parent()      const { return _parent;      }
+    Widget *         parent()      const { return _parent;      }
     
     void             set_pos   (const Point&   pos) { _pos  = pos;  }
     void             set_size  (const Vector& size) { _size = size; }
@@ -101,6 +101,26 @@ public:
     Rectangle get_hit_rectangle() {
         return {_pos.x, _pos.y, _pos.x + _size.x, _pos.y + _size.y};
     }
+
+    void registerSubWidget(plugin::WidgetI* object) final { register_object(static_cast<Widget *>(object)); };
+    void unregisterSubWidget(WidgetI* object) final { (static_cast<Widget *>(object))->kill(); };
+
+    Vec2 getSize() const final { return _size; };
+    void setSize(Vec2 new_size) final { _size = new_size; };
+
+    Vec2 getPos() const final { return _pos; };
+    void setPos(Vec2 new_pos) final {_pos = new_pos;};
+
+    WidgetI *getParent() const final { return static_cast<WidgetI *>(_parent); };
+    void setParent(WidgetI *root) final {_parent = static_cast<Widget *>(root);};
+
+    void move(Vec2 shift) { move((Vector)shift); };
+
+    // Жив ли виджет
+    // Если true, то это идейно равносильно вызову деструктору, то есть его не надо рендерить, ему не надо передавать 
+    // ивенты и тд и тп
+    bool getAvailable() const final {return _is_alive;};
+    void setAvailable(bool alive) { _is_alive = alive; };
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -118,7 +138,7 @@ public:
 
     void cleanup();
 
-    virtual void render(RenderTarget& target) override;
+    void render(RenderTarget& target) override;
 
     virtual Vec2 getSize() { assert(0); };
 
@@ -149,7 +169,7 @@ public:
 
     void print(std::ostream& stream) const final { stream << "Color Indicator"; }
 
-    virtual void render(RenderTarget& target) override;
+    void render(RenderTarget& target) override;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -163,17 +183,40 @@ public:
         Widget(pos, size)
         {}
 
-    virtual bool onKeyboardPress  (keyboard_event_t key) override;
-    virtual bool onKeyboardRelease(keyboard_event_t key) override {return EVENT_RES::CONT;}
-    virtual bool onMousePress     (mouse_event_t key) override;
-    virtual bool onMouseRelease   (mouse_event_t key) override;
-    virtual bool onMouseMove      (mouse_event_t key) override;
+    bool onKeyboardPress  (keyboard_event_t key) override;
+    bool onKeyboardRelease(keyboard_event_t key) override {return EVENT_RES::CONT;}
+    bool onMousePress     (mouse_event_t key) override;
+    bool onMouseRelease   (mouse_event_t key) override;
+    bool onMouseMove      (mouse_event_t key) override;
 
     void print(std::ostream& stream) const final { stream << "Text Box with content <" << content << ">"; }
 
     const string& get_content() const { return content; }
 
-    virtual void render(RenderTarget& target) override;
+    void render(RenderTarget& target) override;
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+class WidgetPlugin: public Widget {
+    WidgetPlugin(plugin::EventProcessableI *events, plugin::RenderableI *render):
+        Widget(Vector(), Vector()),
+        events_(events), render_(render) {}
+
+    bool onKeyboardPress  (keyboard_event_t key) override { return events_.onKeyboardPress(key); }
+    bool onKeyboardRelease(keyboard_event_t key) override { return events_.onKeyboardRelease(key); }
+    bool onMousePress     (mouse_event_t key)    override { return events_.onMousePress(key); }
+    bool onMouseRelease   (mouse_event_t key)    override { return events_.onMouseRelease(key); }
+    bool onMouseMove      (mouse_event_t key)    override { return events_.onMouseMove(key); }
+    bool onClock          (uint64_t delta)       override { return events_.onClock(delta); }
+
+    void render(RenderTarget& target) override {
+        render_->render(&target);
+    }
+
+private:
+    plugin::EventProcessableI *events_;
+    plugin::RenderableI *render_;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------

@@ -69,12 +69,12 @@ public:
     void reset_priority();
 
     // EventSubscriber API
-    virtual bool onKeyboardPress  (keyboard_event_t key) override;
-    virtual bool onKeyboardRelease(keyboard_event_t key) override;
-    virtual bool onMousePress     (mouse_event_t key)    override;
-    virtual bool onMouseRelease   (mouse_event_t key)    override;
-    virtual bool onMouseMove      (mouse_event_t key)    override;
-    virtual bool onClock          (uint64_t delta)       override;
+    bool onKeyboardPress  (keyboard_event_t key) override;
+    bool onKeyboardRelease(keyboard_event_t key) override;
+    bool onMousePress     (mouse_event_t key)    override;
+    bool onMouseRelease   (mouse_event_t key)    override;
+    bool onMouseMove      (mouse_event_t key)    override;
+    bool onClock          (uint64_t delta)       override;
 
     // Timer interru^W ebent generator
     void timer_event() {
@@ -102,12 +102,12 @@ private:
 public:
     EventLogger(std::ostream& stream): stream(stream) {}
 
-    virtual bool onKeyboardPress  (keyboard_event_t key) override EVENTLOGGER_DEFINED_STUB;
-    virtual bool onKeyboardRelease(keyboard_event_t key) override EVENTLOGGER_DEFINED_STUB;
-    virtual bool onMousePress     (mouse_event_t key)    override EVENTLOGGER_DEFINED_STUB;
-    virtual bool onMouseRelease   (mouse_event_t key)    override EVENTLOGGER_DEFINED_STUB;
-    virtual bool onMouseMove      (mouse_event_t key)    override EVENTLOGGER_DEFINED_STUB;
-    virtual bool onClock          (uint64_t delta)       override EVENTLOGGER_DEFINED_STUB;
+    bool onKeyboardPress  (keyboard_event_t key) override EVENTLOGGER_DEFINED_STUB;
+    bool onKeyboardRelease(keyboard_event_t key) override EVENTLOGGER_DEFINED_STUB;
+    bool onMousePress     (mouse_event_t key)    override EVENTLOGGER_DEFINED_STUB;
+    bool onMouseRelease   (mouse_event_t key)    override EVENTLOGGER_DEFINED_STUB;
+    bool onMouseMove      (mouse_event_t key)    override EVENTLOGGER_DEFINED_STUB;
+    bool onClock          (uint64_t delta)       override EVENTLOGGER_DEFINED_STUB;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------

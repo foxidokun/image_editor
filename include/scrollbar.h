@@ -37,10 +37,10 @@ private:
 public:
     Scrollbar(const Point& pos, const Vector& size): Widget(pos, size) {}
 
-    virtual bool onMousePress(mouse_event_t key) override;
-    virtual bool onMouseMove(mouse_event_t key) override;
-    virtual bool onMouseRelease(mouse_event_t key) override;
-    virtual void render(RenderTarget& target) override;
+    bool onMousePress(mouse_event_t key) override;
+    bool onMouseMove(mouse_event_t key) override;
+    bool onMouseRelease(mouse_event_t key) override;
+    void render(RenderTarget& target) override;
 
     double percentage() const noexcept { return _percentage; }
     void percentage(double val) noexcept { _percentage = val; }
