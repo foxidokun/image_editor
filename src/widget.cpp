@@ -283,3 +283,10 @@ static void add_symbol(const keyboard_event_t& key, string& string) {
         string.pop_back();
     }
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void WindowManager::createWidgetI(plugin::PluginWidgetI* widget) {
+    auto wrapper = new WidgetPlugin(widget, widget);
+    widget->host = wrapper;
+}

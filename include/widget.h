@@ -140,11 +140,9 @@ public:
 
     void render(RenderTarget& target) override;
 
-    virtual Vec2 getSize() { assert(0); };
+    plugin::WidgetI* getRoot() const final { return const_cast<WindowManager *>(this); };
 
-    plugin::WidgetI* getRoot() const final { assert(0); };
-
-    void createWidgetI(plugin::PluginWidgetI* widget) final {assert(0);};
+    void createWidgetI(plugin::PluginWidgetI* widget) final;
 
     // плагин через это у хоста запрашивает, есть ли плагин c таким id. nullptr если нет
     plugin::Plugin *queryPlugin(uint64_t id) final { return nullptr; };
@@ -153,7 +151,6 @@ public:
     // например, если у хоста все asset'ы этого плагина валяются в assets/shit/<filename>, то 
     // сюда надо передавать только filename
     plugin::Texture *loadTextureFromFile(const char *filename) final { return nullptr; };
-
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -199,16 +196,17 @@ public:
 // ---------------------------------------------------------------------------------------------------------------------
 
 class WidgetPlugin: public Widget {
+public:
     WidgetPlugin(plugin::EventProcessableI *events, plugin::RenderableI *render):
         Widget(Vector(), Vector()),
         events_(events), render_(render) {}
 
-    bool onKeyboardPress  (keyboard_event_t key) override { return events_.onKeyboardPress(key); }
-    bool onKeyboardRelease(keyboard_event_t key) override { return events_.onKeyboardRelease(key); }
-    bool onMousePress     (mouse_event_t key)    override { return events_.onMousePress(key); }
-    bool onMouseRelease   (mouse_event_t key)    override { return events_.onMouseRelease(key); }
-    bool onMouseMove      (mouse_event_t key)    override { return events_.onMouseMove(key); }
-    bool onClock          (uint64_t delta)       override { return events_.onClock(delta); }
+    bool onKeyboardPress  (keyboard_event_t key) override { return events_->onKeyboardPress(key); }
+    bool onKeyboardRelease(keyboard_event_t key) override { return events_->onKeyboardRelease(key); }
+    bool onMousePress     (mouse_event_t key)    override { return events_->onMousePress(key); }
+    bool onMouseRelease   (mouse_event_t key)    override { return events_->onMouseRelease(key); }
+    bool onMouseMove      (mouse_event_t key)    override { return events_->onMouseMove(key); }
+    bool onClock          (uint64_t delta)       override { return events_->onClock(delta); }
 
     void render(RenderTarget& target) override {
         render_->render(&target);
