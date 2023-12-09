@@ -165,7 +165,6 @@ namespace {
     void ShittyCurveFilter::finally_draw(plugin::RenderTargetI *data) {
         plugin::Texture *image = data->getTexture();
 
-        // TODO make 1:1
         const double height = image->_height;
         const double width  = image->_width;
 
