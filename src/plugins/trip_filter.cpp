@@ -5,8 +5,6 @@
 #include <cmath>
 
 namespace {
-    constexpr int NUM_OF_POINTS = 5;
-
     class ShittyCurveFilter;
 
     class CurveSetWidget: public plugin::PluginWidgetI {
@@ -23,18 +21,19 @@ namespace {
         bool onMousePress(plugin::MouseContext context) final {
             if (!check_hit(context.position)) { return EVENT_RES::CONT; }
 
-            points_[pos_] = context.position - host->getPos();
-            points_[pos_].x /= host->getSize().x;
-            points_[pos_].y /= host->getSize().y;
-            points_[pos_].y = 1 - points_[pos_].y;
-            ++pos_;
-
-            std::sort(points_, points_+pos_, [](const Vector& a, const Vector& b) { return a.x < b.x; });
-
-            if (pos_ == NUM_OF_POINTS) {
+            if (context.button == plugin::MouseButton::Right) {
                 inform();
                 host->setAvailable(false);
+                return EVENT_RES::STOP;
             }
+
+            Vector val = context.position - host->getPos();;
+            val.x /= host->getSize().x;
+            val.y /= host->getSize().y;
+            val.y = 1 - val.y;
+            points_.push_back(val);
+
+            std::sort(points_.begin(), points_.end(), [](const Vector& a, const Vector& b) { return a.x < b.x; });
 
             return EVENT_RES::STOP;
         }
@@ -63,13 +62,13 @@ namespace {
 
             texture->drawRect(pos, size, plugin::Color{255,0,0});
 
-            if (pos_ == 0) {
+            if (points_.size() == 0) {
                 texture->drawLine(get_pos_of_point(Vector(0, 0)), get_pos_of_point(Vector(1, 1)), {0, 255, 0});
             } else {
                 texture->drawLine(get_pos_of_point(Vector(0, 0)), get_pos_of_point(points_[0]), {0, 255, 0});
-                texture->drawLine(get_pos_of_point(points_[pos_ - 1]), get_pos_of_point(Vector(1, 1)), {0, 255, 0});
+                texture->drawLine(get_pos_of_point(points_[points_.size() - 1]), get_pos_of_point(Vector(1, 1)), {0, 255, 0});
 
-                for (int i = 0; i < pos_ - 1; ++i) {
+                for (int i = 0; i < points_.size() - 1; ++i) {
                     texture->drawLine(get_pos_of_point(points_[i]), get_pos_of_point(points_[i+1]), {0, 255, 0});
                 }
             }
@@ -78,8 +77,7 @@ namespace {
         }
 
     private:
-        uint pos_ = 0;
-        Vector points_[NUM_OF_POINTS];
+        dynarray<Vector> points_;
         ShittyCurveFilter* filter_;
         plugin::RenderTargetI *canvas_;
     };
@@ -104,8 +102,8 @@ namespace {
 
         void selectPlugin() final { std::cerr << "selectPlugin & apply flow is the worst thing ever happened to me, so i'll ignore it\n\t\tLove Yan and his ideas :3\n"; }
 
-        void set_points(Vector *points, uint count) {
-            std::copy(points, points+count, points_);
+        void set_points(const dynarray<Vector>& points) {
+            points_ = points;
         }
 
         void set_gui_ptr(plugin::GuiI *gui) {
@@ -113,7 +111,7 @@ namespace {
         }
 
     private:
-        Vector points_[NUM_OF_POINTS];
+        dynarray<Vector> points_;
         plugin::GuiI *gui_;
     };
 
@@ -141,13 +139,13 @@ namespace {
                 val /= 255*3;
 
                 int i;
-                for (i = 0; i < NUM_OF_POINTS; ++i) {
+                for (i = 0; i < points_.size(); ++i) {
                     if (points_[i].x > val) {
                         break;
                     }
                 }
 
-                Vector end_point = (i < NUM_OF_POINTS) ? points_[i] : Vector(1, 1);
+                Vector end_point = (i < points_.size()) ? points_[i] : Vector(1, 1);
                 Vector start_point = (i > 0) ? points_[i-1] : Vector(0, 0);
 
                 double target = start_point.y + (end_point.y - start_point.y) * (val - start_point.x) / (end_point.x - start_point.x);
@@ -167,12 +165,12 @@ namespace {
     }
 
     void CurveSetWidget::inform() {
-        filter_->set_points(points_, NUM_OF_POINTS);
+        filter_->set_points(points_);
         filter_->finally_draw(canvas_);
     }
 }
 
-static ShittyCurveFilter plugin_obj(0xAB0BA & 0x434, "SCF", plugin::InterfaceType::Filter); /* Shitty Curve Filter */
+static ShittyCurveFilter plugin_obj(0xAB0BA | 0x434, "SCF", plugin::InterfaceType::Filter); /* Shitty Curve Filter */
 
 extern "C" plugin::Plugin* getInstance(plugin::App *app) {
     plugin_obj.set_gui_ptr(app->root);
