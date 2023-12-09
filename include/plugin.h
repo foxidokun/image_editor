@@ -388,7 +388,7 @@ namespace plugin {
     };
 
     struct PluginWidgetI: public EventProcessableI, public RenderableI {
-        WidgetI* host;
+        WidgetI* host = nullptr;
     };
 
     struct ToolI: public Interface {

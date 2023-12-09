@@ -293,9 +293,9 @@ static void setup_file_menu(WindowManager& win_mgr, Canvas* canvas) {
 }
 
 static inline void add_filter_button(WindowManager& win_mgr, Menu& menu, FilterManager& filter_mgr, EventManager& event_mgr,
-    const char* button_name, plugin::FilterI *filter)
+    const char* button_name, plugin::FilterI *filter, plugin::Plugin* plugin)
 {
-    auto filter_args = new FilterApplyArgs(filter_mgr, event_mgr, &win_mgr, filter);
+    auto filter_args = new FilterApplyArgs(filter_mgr, event_mgr, &win_mgr, filter, plugin);
     auto flt_btn = new TextButton(Point(), Vector(300, 0), apply_filter_callback, filter_args, button_name);
     menu.register_object(flt_btn);
 }
@@ -365,7 +365,7 @@ static void load_plugin(const char * path, WindowManager& win_mgr, EventManager&
 
         if (plugin->type == plugin::InterfaceType::Filter) {
             auto filter = static_cast<plugin::FilterI *>(plugin->getInterface());
-            add_filter_button(win_mgr, filter_menu, flt_mgr, event_mgr, plugin->name, filter);
+            add_filter_button(win_mgr, filter_menu, flt_mgr, event_mgr, plugin->name, filter, plugin);
         } else if (plugin->type == plugin::InterfaceType::Tool) {
             auto tool = static_cast<plugin::ToolI *>(plugin->getInterface());
             auto texture = tool->getIcon();

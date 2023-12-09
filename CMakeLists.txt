@@ -72,3 +72,20 @@ add_custom_command(TARGET fill_tool_plugin POST_BUILD
      "$<TARGET_FILE:fill_tool_plugin>"
      "${PROJECT_SOURCE_DIR}/compiled_plugins/$<TARGET_FILE_NAME:fill_tool_plugin>" 
   COMMENT "Copying to output directory")
+
+  ######################
+## Fill tool plugin ##
+######################
+
+add_library(trip_filter_plugin SHARED
+"${PROJECT_SOURCE_DIR}/src/plugins/trip_filter.cpp"
+)
+
+set_property(TARGET trip_filter_plugin PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(trip_filter_plugin PRIVATE core_lib)
+
+add_custom_command(TARGET trip_filter_plugin POST_BUILD 
+COMMAND "${CMAKE_COMMAND}" -E copy 
+"$<TARGET_FILE:trip_filter_plugin>"
+"${PROJECT_SOURCE_DIR}/compiled_plugins/$<TARGET_FILE_NAME:trip_filter_plugin>" 
+COMMENT "Copying to output directory")
