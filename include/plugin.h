@@ -41,10 +41,10 @@ namespace plugin {
         uint8_t b;
         uint8_t a;
 
-        Color(const sf::Color &sfc): r(sfc.r), g(sfc.g), b(sfc.b), a(sfc.a) {}
-        Color(uint r_, uint g_, uint b_, uint a_=255): r(r_), g(g_), b(b_), a(a_) {}
-        Color() = default;
-        Color(double color[3]): r(color[0]), g(color[1]), b(color[2]), a(255) {}
+        constexpr Color(const sf::Color &sfc): r(sfc.r), g(sfc.g), b(sfc.b), a(sfc.a) {}
+        constexpr Color(uint r_, uint g_, uint b_, uint a_=255): r(r_), g(g_), b(b_), a(a_) {}
+        constexpr Color() = default;
+        constexpr Color(double color[3]): r(color[0]), g(color[1]), b(color[2]), a(255) {}
 
         operator sf::Color() const {
             return sf::Color(r, g, b, a);
