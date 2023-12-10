@@ -14,7 +14,12 @@ namespace {
 
     class CurveSetWidget: public plugin::PluginWidgetI {
     public:
-        CurveSetWidget(ShittyCurveFilter* filter, plugin::RenderTargetI *canvas): filter_(filter), canvas_(canvas) {}
+        CurveSetWidget(ShittyCurveFilter* filter, plugin::RenderTargetI *canvas): filter_(filter), canvas_(canvas) {
+            for (int i = 0; i < 3; ++i) {
+                color_points_[i].push_back(Vector(0,0));
+                color_points_[i].push_back(Vector(1,1));
+            }
+        }
 
         bool check_hit(const Vector& pos) {
             bool hit_x = pos.x > host->getPos().x && pos.x < host->getPos().x + host->getSize().x;
@@ -25,6 +30,13 @@ namespace {
 
         bool onMousePress(plugin::MouseContext context) final {
             if (!check_hit(context.position)) { return EVENT_RES::CONT; }
+
+            Vector pos = host->getPos();
+            if (context.position.y < pos.y + HEADER_HEIGHT) {
+                moving = (context.button == plugin::MouseButton::Left);
+                last_pos = context.position;
+                return EVENT_RES::STOP;
+            }
 
             if (context.button == plugin::MouseButton::Right) {
                 if (color == 2) {
@@ -50,8 +62,22 @@ namespace {
             return EVENT_RES::STOP;
         }
 
-        bool onMouseMove(plugin::MouseContext context) final { return check_hit(context.position) ? EVENT_RES::STOP : EVENT_RES::CONT; }
-        bool onMouseRelease(plugin::MouseContext context) final { return check_hit(context.position) ? EVENT_RES::STOP : EVENT_RES::CONT; }
+        bool onMouseMove(plugin::MouseContext context) final {
+            if (!check_hit(context.position)) { return EVENT_RES::CONT; }
+
+            if (moving) {
+                host->move(context.position - last_pos);
+                last_pos = context.position;
+            }
+
+            return EVENT_RES::STOP;
+        }
+
+        bool onMouseRelease(plugin::MouseContext context) final {
+            moving = false;
+            return check_hit(context.position) ? EVENT_RES::STOP : EVENT_RES::CONT;
+        }
+
         bool onKeyboardPress(plugin::KeyboardContext context) final { return EVENT_RES::CONT; }
         bool onKeyboardRelease(plugin::KeyboardContext context) final { return EVENT_RES::CONT; }
         bool onClock(uint64_t delta) { return EVENT_RES::STOP; };
@@ -79,6 +105,8 @@ namespace {
             // header sep
             texture->drawLineByVector(pos + Vector(0, HEADER_HEIGHT - LINE_THICKNESS), Vector(size.x, 0));
 
+            texture->drawText(pos + Vector(2* LINE_THICKNESS, LINE_THICKNESS), "SCF params", TITLE_SIZE, Color(0,0,0));
+
             // borders
             texture->drawLineByVector(pos, Vector(size.x, 0));
             texture->drawLineByVector(pos+Vector(0, size.y-LINE_THICKNESS), Vector(size.x, 0));
@@ -90,16 +118,12 @@ namespace {
 
             texture->drawRect(pos, size, plugin::Color{77,77,77});
 
-            if (points_.size() == 0) {
-                texture->drawLine(get_pos_of_point(Vector(0, 0), pos, size), get_pos_of_point(Vector(1, 1), pos, size), bar_colors[color]);
-            } else {
-                for (int i = 0; i < points_.size() - 1; ++i) {
-                    texture->drawRect(get_pos_of_point(points_[i], pos, size) - Vector(5, 5), Vector(10, 10), bar_colors[color]);
-                    texture->drawLine(get_pos_of_point(points_[i], pos, size), get_pos_of_point(points_[i+1], pos, size), bar_colors[color]);
-                }
-
-                texture->drawRect(get_pos_of_point(points_[points_.size()-1], pos, size) - Vector(5, 5), Vector(10, 10), bar_colors[color]);
+            for (int i = 0; i < points_.size() - 1; ++i) {
+                texture->drawRect(get_pos_of_point(points_[i], pos, size) - Vector(5, 5), Vector(10, 10), bar_colors[color]);
+                texture->drawLine(get_pos_of_point(points_[i], pos, size), get_pos_of_point(points_[i+1], pos, size), bar_colors[color]);
             }
+
+            texture->drawRect(get_pos_of_point(points_[points_.size()-1], pos, size) - Vector(5, 5), Vector(10, 10), bar_colors[color]);
 
             texture->display();
         }
@@ -109,6 +133,8 @@ namespace {
         uint color = 0;
         ShittyCurveFilter* filter_;
         plugin::RenderTargetI *canvas_;
+        bool moving = false;
+        Vector last_pos;
     };
 
     struct ShittyCurveFilter: public plugin::Plugin, public plugin::FilterI {

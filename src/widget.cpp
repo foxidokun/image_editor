@@ -131,6 +131,8 @@ void Widget::move(const Vector& shift) {
     _active_area.high_x += shift.x;
     _active_area.low_y  += shift.y;
     _active_area.high_y += shift.y;
+
+    _root->recalc_regions();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
