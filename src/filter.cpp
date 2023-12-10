@@ -64,9 +64,10 @@ void apply_filter_callback(CallbackArgs *_args) {
     }
 
     if (args->filter->getParamNames().size > 0) {
-        auto params = new ParametersModalWindow(Vector(200, 200), Vector(300, 300), "Filter Params", args->event_mgr, parameters_get_and_apply, new FilterApplyArgs(*args), args->filter->getParamNames());
-        args->param_window = params;
-        args->root->register_object(params);
+        auto new_args = new FilterApplyArgs(*args);
+        auto params = new ParametersModalWindow(Vector(200, 200), Vector(300, 300), "Filter Params", args->event_mgr, parameters_get_and_apply, new_args, args->filter->getParamNames());
+        new_args->param_window = params;
+        new_args->root->register_object(params);
     } else {
         args->filter_mgr.setFilter(args->filter);
         plugin::RenderTargetI *rt = args->filter_mgr.get_rt();

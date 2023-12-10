@@ -4,8 +4,6 @@
 #include <cmath>
 
 namespace {
-    static const char *param_names[3] = {"R", "G", "B"};
-
     struct SphereFilter: public plugin::Plugin, public plugin::FilterI {
         SphereFilter(uint64_t id_, const char *name_, plugin::InterfaceType type_) {
             id = id_;

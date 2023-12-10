@@ -71,7 +71,7 @@ namespace {
 
             dynarray<Vector>& points_ = color_points_[color];
 
-            texture->drawRect(pos, size, plugin::Color{0,126,126});
+            texture->drawRect(pos, size, plugin::Color{77,77,77});
 
             if (points_.size() == 0) {
                 texture->drawLine(get_pos_of_point(Vector(0, 0)), get_pos_of_point(Vector(1, 1)), bar_colors[color]);

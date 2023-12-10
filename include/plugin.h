@@ -21,14 +21,37 @@ namespace plugin {
     };
 
 /// @warning [UPD] Array владеющая структура
-    template<class T>
+    
+    template<typename T>
     struct Array {
         uint64_t size;
         T* data;
 
-        Array(uint64_t size, T* data): size(size), data(data) {}
         Array(const dynarray<T>& array);
         operator dynarray<T>() const;
+
+        Array(uint64_t _size, T* _data): size(_size), data(new T[_size]) {
+            std::copy(_data, _data + _size, data);
+        }
+
+        Array(const Array<T>& other): Array(other.size, other.data) {}
+        
+        Array& operator=(const Array<T>& other) {
+            size = other.size;
+            delete data;
+            data = new T[other.size];
+            std::copy(other.data, other.data + other.size, data);
+        }
+
+        Array(Array<T>&& other) {
+            std::swap(size, other.size);
+            std::swap(data, other.data);
+        }
+
+        Array& operator=(Array<T>&& other) {
+            std::swap(size, other.size);
+            std::swap(data, other.data);
+        }
 
         ~Array() {
             delete[] data;
@@ -289,6 +312,7 @@ namespace plugin {
 
         /// clear
         virtual void clear() = 0;
+        virtual void clear(Color color) = 0;
     };
 
     struct RenderableI {

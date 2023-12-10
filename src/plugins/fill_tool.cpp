@@ -48,11 +48,17 @@ namespace {
 
                 if (img->get_pixel(cur_pos.x, cur_pos.y) == ref_color) {
                     img->set_pixel(cur_pos.x, cur_pos.y, color);
-                    Vector diff = cur_pos - pos;
-                    double diff_length = diff.length_square();
                     for (int i = -1; i <= 1; ++i) {
                         for (int j = -1; j <= 1; ++j) {
-                            if ((diff+Vector(i, j)).length_square() > diff_length + 0.1) {
+                            if (cur_pos.x + i < 0 || cur_pos.x + i + 1 > img->width()) {
+                                continue;
+                            }
+
+                            if (cur_pos.y + j < 0 || cur_pos.y + j + 1 > img->height()) {
+                                continue;
+                            }
+
+                            if (img->get_pixel(cur_pos.x + i, cur_pos.y + j) != color) {
                                 queue.push_back(cur_pos + Vector(i, j));
                             }
                         }

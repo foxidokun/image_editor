@@ -30,8 +30,6 @@ public:
 
     void loadFromFile(const char *filename);
     void saveToFile(const char *filename);
-
-    void clear(const Color& color) { _data.clear(color); };
     
     void display() { _data.display(); }
     void display(sf::RenderWindow& window);
@@ -80,6 +78,7 @@ public:
     void setTexture(plugin::Texture *) final {assert(0);};
 
     void clear() final {clear(sf::Color::Transparent); };
+    void clear(plugin::Color color) final { _data.clear(color); };
 
     #if DRAW_REGIONS
         void drawRegions(const Region& reg);
