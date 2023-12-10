@@ -59,10 +59,6 @@ void parameters_get_and_apply(CallbackArgs *_args) {
 void apply_filter_callback(CallbackArgs *_args) {
     FilterApplyArgs* args = static_cast<FilterApplyArgs *>(_args);
     
-    if (args->plugin) {
-        args->plugin->selectPlugin();
-    }
-
     if (args->filter->getParamNames().size > 0) {
         auto new_args = new FilterApplyArgs(*args);
         auto params = new ParametersModalWindow(Vector(200, 200), Vector(300, 300), "Filter Params", args->event_mgr, parameters_get_and_apply, new_args, args->filter->getParamNames());

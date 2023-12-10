@@ -303,6 +303,11 @@ namespace plugin {
         virtual void drawTexture(Vec2 pos, Vec2 size, const Texture *texture) = 0;
         virtual void drawText(Vec2 pos, const char *content, uint16_t char_size, Color color) = 0;
 
+        /* non virtual */
+        void drawLineByVector(Vec2 pos, Vec2 size, Color color = Color(0,0,0,255)) {
+            drawLine(pos, pos+size, color);
+        }
+
         // Возвращает аллоцированную структуру типа Texture* 
         virtual Texture *getTexture() const = 0;
         virtual void setTexture(Texture *) = 0;

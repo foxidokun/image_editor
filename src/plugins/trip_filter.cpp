@@ -1,8 +1,11 @@
 #include "plugin.h"
 #include "event.h"
+#include "colors.h"
 #include <iostream>
 #include <string>
 #include <cmath>
+
+#define POINT_HALFSIZE 5
 
 namespace {
     class ShittyCurveFilter;
@@ -57,11 +60,11 @@ namespace {
 
         void inform();
 
-        Vector get_pos_of_point(Vector ratios) {
-            Vector point_pos = host->getSize();
+        Vector get_pos_of_point(Vector ratios, Vector pos, Vector size) {
+            Vector point_pos = size;
             point_pos.x *= ratios.x;
             point_pos.y *= (1-ratios.y);
-            point_pos += host->getPos();
+            point_pos += pos;
             return point_pos;
         }
 
@@ -71,17 +74,31 @@ namespace {
 
             dynarray<Vector>& points_ = color_points_[color];
 
+            texture->drawRect(pos, size, WINDOW_BACKGROUND_COLOR);
+
+            // header sep
+            texture->drawLineByVector(pos + Vector(0, HEADER_HEIGHT - LINE_THICKNESS), Vector(size.x, 0));
+
+            // borders
+            texture->drawLineByVector(pos, Vector(size.x, 0));
+            texture->drawLineByVector(pos+Vector(0, size.y-LINE_THICKNESS), Vector(size.x, 0));
+            texture->drawLineByVector(pos+Vector(LINE_THICKNESS,0), Vector(0, size.y));
+            texture->drawLineByVector(pos+Vector(size.x, 0), Vector(0, size.y));
+
+            pos += Vector(LINE_THICKNESS, HEADER_HEIGHT);
+            size -=  Vector(2*LINE_THICKNESS, HEADER_HEIGHT + LINE_THICKNESS);
+
             texture->drawRect(pos, size, plugin::Color{77,77,77});
 
             if (points_.size() == 0) {
-                texture->drawLine(get_pos_of_point(Vector(0, 0)), get_pos_of_point(Vector(1, 1)), bar_colors[color]);
+                texture->drawLine(get_pos_of_point(Vector(0, 0), pos, size), get_pos_of_point(Vector(1, 1), pos, size), bar_colors[color]);
             } else {
-                texture->drawLine(get_pos_of_point(Vector(0, 0)), get_pos_of_point(points_[0]), bar_colors[color]);
-                texture->drawLine(get_pos_of_point(points_[points_.size() - 1]), get_pos_of_point(Vector(1, 1)), bar_colors[color]);
-
                 for (int i = 0; i < points_.size() - 1; ++i) {
-                    texture->drawLine(get_pos_of_point(points_[i]), get_pos_of_point(points_[i+1]), bar_colors[color]);
+                    texture->drawRect(get_pos_of_point(points_[i], pos, size) - Vector(5, 5), Vector(10, 10), bar_colors[color]);
+                    texture->drawLine(get_pos_of_point(points_[i], pos, size), get_pos_of_point(points_[i+1], pos, size), bar_colors[color]);
                 }
+
+                texture->drawRect(get_pos_of_point(points_[points_.size()-1], pos, size) - Vector(5, 5), Vector(10, 10), bar_colors[color]);
             }
 
             texture->display();
@@ -112,7 +129,7 @@ namespace {
         void apply(plugin::RenderTargetI *data) final;
         void finally_draw(plugin::RenderTargetI *data);
 
-        void selectPlugin() final { std::cerr << "selectPlugin & apply flow is the worst thing ever happened to me, so i'll ignore it\n\t\tLove Yan and his ideas :3\n"; }
+        void selectPlugin() final {}
 
         void set_points(const dynarray<Vector>& red_points, const dynarray<Vector>& green_points, const dynarray<Vector>& blue_points) {
             red_points_ = red_points;
