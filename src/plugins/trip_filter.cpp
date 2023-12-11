@@ -1,6 +1,7 @@
 #include "plugin.h"
 #include "event.h"
 #include "colors.h"
+#include "catmulrom.h"
 #include <iostream>
 #include <string>
 #include <cmath>
@@ -9,6 +10,7 @@
 
 namespace {
     class ShittyCurveFilter;
+    static Vector get_param(const dynarray<Vector>& points, double x);
 
     constexpr plugin::Color bar_colors[3] = {plugin::Color(255, 0, 0), plugin::Color(0, 255, 0), plugin::Color(0,0,255)};
 
@@ -55,8 +57,14 @@ namespace {
             val.x /= host->getSize().x;
             val.y /= host->getSize().y;
             val.y = 1 - val.y;
-            points_.push_back(val);
 
+            for (int i = 0; i < points_.size(); ++i) {
+                if (fabs(points_[i].x - val.x) < 0.03) {
+                    return EVENT_RES::STOP;        
+                }
+            }
+
+            points_.push_back(val);
             std::sort(points_.begin(), points_.end(), [](const Vector& a, const Vector& b) { return a.x < b.x; });
 
             return EVENT_RES::STOP;
@@ -120,7 +128,23 @@ namespace {
 
             for (int i = 0; i < points_.size() - 1; ++i) {
                 texture->drawRect(get_pos_of_point(points_[i], pos, size) - Vector(5, 5), Vector(10, 10), bar_colors[color]);
-                texture->drawLine(get_pos_of_point(points_[i], pos, size), get_pos_of_point(points_[i+1], pos, size), bar_colors[color]);
+            }
+
+            Vector prev_point = get_pos_of_point(get_param(points_, 0), pos, size) - Vector(2, 2);
+            texture->drawEllipse(prev_point, Vector(4, 4), bar_colors[color]);
+
+            for (double i = 0; i < 1;) {
+                double delta = 0.0025;
+                Vector new_point = get_pos_of_point(get_param(points_, i + delta), pos, size) - Vector(2, 2);
+                while ((new_point - prev_point).length_square() > 4 && delta > 0.000001) {
+                    delta /= 2;
+                    new_point = get_pos_of_point(get_param(points_, i + delta), pos, size) - Vector(2, 2);
+                }
+
+                texture->drawEllipse(new_point, Vector(4, 4), bar_colors[color]);
+                prev_point = new_point;
+
+                i += delta;
             }
 
             texture->drawRect(get_pos_of_point(points_[points_.size()-1], pos, size) - Vector(5, 5), Vector(10, 10), bar_colors[color]);
@@ -228,6 +252,33 @@ namespace {
     void CurveSetWidget::inform() {
         filter_->set_points(color_points_[0], color_points_[1], color_points_[2]);
         filter_->finally_draw(canvas_);
+    }
+
+    static Vector get_param(const dynarray<Vector>& points, double x) {
+        int i;
+        for (i = 0; i < points.size(); ++i) {
+            if (points[i].x > x) {
+                break;
+            }
+        }
+
+        assert(i > 0);
+
+        Vector end_point = (i < points.size()) ? points[i] : Vector(1, 1);
+        Vector start_point = points[i - 1];
+
+        if (i == 1 || i >= points.size() - 1) {
+            return Vector(x, start_point.y + (end_point.y - start_point.y) * (x - start_point.x) / (end_point.x - start_point.x));
+        }
+
+        double t;
+        if (fabs(end_point.x - start_point.x) < 0.005) {
+            t = 0;
+        } else {
+            t = (x - start_point.x) / (end_point.x - start_point.x);
+        }
+
+        return cutmullrom(t, points[i-2], points[i-1], points[i], points[i+1]);
     }
 }
 
