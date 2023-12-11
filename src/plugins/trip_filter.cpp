@@ -59,7 +59,12 @@ namespace {
             val.y = 1 - val.y;
 
             for (int i = 0; i < points_.size(); ++i) {
-                if (fabs(points_[i].x - val.x) < 0.03) {
+                if (fabs(points_[i].x - val.x) < 0.1) {
+                    if (fabs(points_[i].y - val.y) < 0.1) {
+                        moving_point = true;
+                        moving_index = i;
+                    }
+
                     return EVENT_RES::STOP;        
                 }
             }
@@ -78,11 +83,28 @@ namespace {
                 last_pos = context.position;
             }
 
+            if (moving_point) {
+                dynarray<Vector>& points_ = color_points_[color];
+                Vector val = context.position - host->getPos();;
+                val.x /= host->getSize().x;
+                val.y /= host->getSize().y;
+                val.y = 1 - val.y;
+
+                if (moving_index == 0)              { val.x = 0; }
+                if (moving_index == points_.size() - 1) { val.x = 1; }
+
+                points_[moving_index] = val;
+
+                std::sort(points_.begin(), points_.end(), [](const Vector& a, const Vector& b) { return a.x < b.x; });
+                for (int i = 0; i < points_.size(); ++i) { if (points_[i] == val) {moving_index = i;} }
+            }
+
             return EVENT_RES::STOP;
         }
 
         bool onMouseRelease(plugin::MouseContext context) final {
             moving = false;
+            moving_point = false;
             return check_hit(context.position) ? EVENT_RES::STOP : EVENT_RES::CONT;
         }
 
@@ -159,6 +181,8 @@ namespace {
         plugin::RenderTargetI *canvas_;
         bool moving = false;
         Vector last_pos;
+        bool moving_point = false;
+        uint8_t moving_index;
     };
 
     struct ShittyCurveFilter: public plugin::Plugin, public plugin::FilterI {
