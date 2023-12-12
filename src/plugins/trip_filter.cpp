@@ -237,17 +237,7 @@ namespace {
         double val = pixel.*color;
         val /= 255;
 
-        int i;
-        for (i = 0; i < points.size(); ++i) {
-            if (points[i].x > val) {
-                break;
-            }
-        }
-
-        Vector end_point = (i < points.size()) ? points[i] : Vector(1, 1);
-        Vector start_point = (i > 0) ? points[i-1] : Vector(0, 0);
-
-        double target = start_point.y + (end_point.y - start_point.y) * (val - start_point.x) / (end_point.x - start_point.x);
+        double target = get_param(points, val).y;
         double ratio = (val > 0.01) ? (target / val) : 1;
         
         return std::min(255, (int)(pixel.*color * ratio));
@@ -288,8 +278,8 @@ namespace {
 
         assert(i > 0);
 
-        Vector end_point = (i < points.size()) ? points[i] : Vector(1, 1);
-        Vector start_point = points[i - 1];
+        Vector end_point = (i < points.size()) ? points[i] : points[points.size() - 1];
+        Vector start_point = (i < points.size()) ? points[i-1] : points[i - 2];
 
         if (i == 1 || i >= points.size() - 1) {
             return Vector(x, start_point.y + (end_point.y - start_point.y) * (x - start_point.x) / (end_point.x - start_point.x));
