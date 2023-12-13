@@ -54,6 +54,8 @@ bool Canvas::onMouseMove(mouse_event_t key) {
     key_copy.position.y = std::min(key_copy.position.y, _pos.y + _size.y);
     tool_manager->paintOnRelease(&_permanent, &_tmp, key_copy);
 
+    tool_manager->disableTool(&_permanent, &_tmp, key_copy);
+
     return EVENT_RES::CONT;
 }
 

@@ -126,12 +126,17 @@ public:
 // ---------------------------------------------------------------------------------------------------------------------
 
 class WindowManager: public Widget, public plugin::GuiI {
+private:
+    sf::Shader invert_shader;
+
 public:
     WindowManager(double width, double height):
-        Widget(Point(0,0), Vector(width, height))
-        {
+        Widget(Point(0,0), Vector(width, height)) {
             _root = this;
             _active_area.low_y += MENU_HEIGHT;
+            
+            invert_shader.loadFromFile(RENDER_SHADER_PATH, sf::Shader::Fragment);
+            invert_shader.setUniform("texture", sf::Shader::CurrentTexture);
         }
 
     void print(std::ostream& stream) const final { stream << "Window manager"; }
@@ -144,13 +149,21 @@ public:
 
     void createWidgetI(plugin::PluginWidgetI* widget) final;
 
-    // плагин через это у хоста запрашивает, есть ли плагин c таким id. nullptr если нет
     plugin::Plugin *queryPlugin(uint64_t id) final { return nullptr; };
 
-    // принимает имя файла
-    // например, если у хоста все asset'ы этого плагина валяются в assets/shit/<filename>, то 
-    // сюда надо передавать только filename
-    plugin::Texture *loadTextureFromFile(const char *filename) final { return nullptr; };
+    plugin::Texture *loadTextureFromFile(const char *filename) final {
+        sf::Texture texture;
+        texture.loadFromFile(std::string("./compiled_plugins/textures/") + std::string(filename));
+        
+        sf::RenderTexture rt;
+        rt.create(texture.getSize().x, texture.getSize().y);
+        rt.clear(WINDOW_BACKGROUND_COLOR);
+        rt.draw(sf::Sprite(texture), &invert_shader);
+        rt.display();
+
+        sf::Image img = rt.getTexture().copyToImage();
+        return new plugin::Texture(texture.getSize().x, texture.getSize().y, img.getPixelsPtr());
+    }
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
