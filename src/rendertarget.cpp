@@ -1,6 +1,7 @@
 #include "rendertarget.h"
 
 void RenderTarget::drawRect(const Region& reg, const Point& point, const Vector& size, const Color& fillcolor) {
+    return drawRect(point, size, fillcolor);
     Region wanted;
     wanted.add_rectangle({point.x, point.y, point.x+size.x, point.y+size.y});
     wanted *= reg;
@@ -27,6 +28,7 @@ void RenderTarget::drawRect(const Point& point, const Vector& size, const Color&
 }
 
 void RenderTarget::drawLine(const Region& reg, const Point& point, const Vector& size, const Color& fillcolor) {
+    return drawLine(point, size, fillcolor);
     for (const auto &disp_rect: reg.rects()) {
         Point start_point = point;
         Point end_point   = point + size;
@@ -69,9 +71,9 @@ void RenderTarget::display(sf::RenderWindow& window) {
 
 void RenderTarget::drawText(const Region& reg, const Point& point, const char* text, uint size, const Color& backcolor)
 {
-    sf::RenderTexture ghost;
-    ghost.create(_data.getSize().x, _data.getSize().y);
-    ghost.clear(backcolor);
+    // sf::RenderTexture ghost;
+    // ghost.create(_data.getSize().x, _data.getSize().y);
+    // ghost.clear(backcolor);
 
     sf::Text textobj;
     textobj.setFont(global_resources::font);
@@ -80,23 +82,25 @@ void RenderTarget::drawText(const Region& reg, const Point& point, const char* t
     textobj.setCharacterSize(size);
     textobj.setFillColor(TEXT_COLOR);
 
-    ghost.draw(textobj);
-    ghost.display();
+    _data.draw(textobj);
+    // ghost.display();
 
-    for (const auto &disp_rect: reg.rects()) {
-        float width  = disp_rect.high_x - disp_rect.low_x;
-        float height = disp_rect.high_y - disp_rect.low_y;
+    // for (const auto &disp_rect: reg.rects()) {
+    //     float width  = disp_rect.high_x - disp_rect.low_x;
+    //     float height = disp_rect.high_y - disp_rect.low_y;
 
-        sf::Sprite part_sprite(ghost.getTexture(), sf::Rect<int>(disp_rect.low_x, disp_rect.low_y, width, height));
-        part_sprite.setPosition(disp_rect.low_x, disp_rect.low_y);
+    //     sf::Sprite part_sprite(ghost.getTexture(), sf::Rect<int>(disp_rect.low_x, disp_rect.low_y, width, height));
+    //     part_sprite.setPosition(disp_rect.low_x, disp_rect.low_y);
 
-        _data.draw(part_sprite);
-    }
+    //     _data.draw(part_sprite);
+    // }
 }
 
 void RenderTarget::drawTexture(const Region& reg, const Point& point, const Vector& size, const Texture& texture,
     bool invert)
 {
+    return drawTexture(point, size, texture, invert);
+
     sf::RenderTexture ghost;
     ghost.create(_data.getSize().x, _data.getSize().y);
     ghost.clear(sf::Color::Transparent);
@@ -176,6 +180,8 @@ void RenderTarget::drawRegions(const Region& reg) {
 #endif
 
 void RenderTarget::drawCircle(const Region& reg, const Point& point, double radius, const Color& fillcolor) {
+    return drawCircle(point, radius, fillcolor);
+
     sf::RenderTexture ghost;
     ghost.create(_data.getSize().x, _data.getSize().y);
     ghost.clear(sf::Color::Transparent);
@@ -222,24 +228,24 @@ void RenderTarget::drawEllipse(const Point& point, const Vector& size, const Col
 }
 
 void RenderTarget::drawRenderTarget(const Region& reg, const Point& point, const RenderTarget& rt) {
-    sf::RenderTexture ghost;
-    ghost.create(_data.getSize().x, _data.getSize().y);
-    ghost.clear(sf::Color::Transparent);
+    // sf::RenderTexture ghost;
+    // ghost.create(_data.getSize().x, _data.getSize().y);
+    // ghost.clear(sf::Color::Transparent);
 
     sf::Sprite fullsprite(rt._data.getTexture());
     fullsprite.setPosition(point.x, point.y);
-    ghost.draw(fullsprite);
-    ghost.display();
+    _data.draw(fullsprite);
+    // ghost.display();
 
-    for (const auto &disp_rect: reg.rects()) {
-        float width  = disp_rect.high_x - disp_rect.low_x;
-        float height = disp_rect.high_y - disp_rect.low_y;
+    // for (const auto &disp_rect: reg.rects()) {
+    //     float width  = disp_rect.high_x - disp_rect.low_x;
+    //     float height = disp_rect.high_y - disp_rect.low_y;
 
-        sf::Sprite part_sprite(ghost.getTexture(), sf::Rect<int>(disp_rect.low_x, disp_rect.low_y, width, height));
-        part_sprite.setPosition(disp_rect.low_x, disp_rect.low_y);
+    //     sf::Sprite part_sprite(ghost.getTexture(), sf::Rect<int>(disp_rect.low_x, disp_rect.low_y, width, height));
+    //     part_sprite.setPosition(disp_rect.low_x, disp_rect.low_y);
 
-        _data.draw(part_sprite);
-    }
+    //     _data.draw(part_sprite);
+    // }
 }
 
 void RenderTarget::loadFromFile(const char *filename) {

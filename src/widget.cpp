@@ -145,6 +145,7 @@ void set_root(Widget * widget, void *args) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 void Widget::recalc_regions() {
+    return;
     Region new_reg = get_default_region();
 
     if (_parent) {

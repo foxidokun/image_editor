@@ -214,11 +214,22 @@ public:
         Widget(Vector(), Vector()),
         events_(events), render_(render) {}
 
+    bool check_hit(const Vector& pos) {
+        bool hit_x = pos.x > _pos.x && pos.x < _pos.x + _size.x;
+        bool hit_y = pos.y > _pos.y && pos.y < _pos.y + _size.y;
+
+        if (hit_x && hit_y) {
+            return EVENT_RES::STOP;
+        } else {
+            return EVENT_RES::CONT;
+        }
+    }
+
     bool onKeyboardPress  (keyboard_event_t key) override { return events_->onKeyboardPress(key); }
     bool onKeyboardRelease(keyboard_event_t key) override { return events_->onKeyboardRelease(key); }
-    bool onMousePress     (mouse_event_t key)    override { return events_->onMousePress(key); }
-    bool onMouseRelease   (mouse_event_t key)    override { return events_->onMouseRelease(key); }
-    bool onMouseMove      (mouse_event_t key)    override { return events_->onMouseMove(key); }
+    bool onMousePress     (mouse_event_t key)    override { events_->onMousePress(key); return check_hit(key.position); }
+    bool onMouseRelease   (mouse_event_t key)    override { events_->onMouseRelease(key); return check_hit(key.position); }
+    bool onMouseMove      (mouse_event_t key)    override { events_->onMouseMove(key); return check_hit(key.position); }
     bool onClock          (uint64_t delta)       override { return events_->onClock(delta); }
 
     void render(RenderTarget& target) override {

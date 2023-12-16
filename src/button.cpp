@@ -38,9 +38,12 @@ void PluginTextureButton::render(RenderTarget& target) {
 }
 
 void TextButton::render(RenderTarget& target) {
+
     if (_is_clicked) {
+        target.drawRect(_pos, _size, BUTTON_ACTIVE_COLOR);
         target.drawText(_reg, _pos, text.c_str(), TITLE_SIZE, BUTTON_ACTIVE_COLOR);
     } else {
+        target.drawRect(_pos, _size, BUTTON_INACTIVE_COLOR);
         target.drawText(_reg, _pos, text.c_str(), TITLE_SIZE, BUTTON_INACTIVE_COLOR);
     }
 }
