@@ -102,7 +102,7 @@ public:
         return {_pos.x, _pos.y, _pos.x + _size.x, _pos.y + _size.y};
     }
 
-    void registerSubWidget(plugin::WidgetI* object) final { register_object(static_cast<Widget *>(object)); };
+    void registerSubWidget(plugin::WidgetI* object) final { register_object_exact_pos(static_cast<Widget *>(object)); };
     void unregisterSubWidget(WidgetI* object) final { (static_cast<Widget *>(object))->kill(); };
 
     Vec2 getSize() const final { return _size; };
@@ -225,15 +225,16 @@ public:
         }
     }
 
-    bool onKeyboardPress  (keyboard_event_t key) override { return events_->onKeyboardPress(key); }
-    bool onKeyboardRelease(keyboard_event_t key) override { return events_->onKeyboardRelease(key); }
-    bool onMousePress     (mouse_event_t key)    override { events_->onMousePress(key); return check_hit(key.position); }
-    bool onMouseRelease   (mouse_event_t key)    override { events_->onMouseRelease(key); return check_hit(key.position); }
-    bool onMouseMove      (mouse_event_t key)    override { events_->onMouseMove(key); return check_hit(key.position); }
-    bool onClock          (uint64_t delta)       override { return events_->onClock(delta); }
+    bool onKeyboardPress  (keyboard_event_t key) override { Widget::onKeyboardPress(key); return events_->onKeyboardPress(key); }
+    bool onKeyboardRelease(keyboard_event_t key) override { Widget::onKeyboardRelease(key); return events_->onKeyboardRelease(key); }
+    bool onMousePress     (mouse_event_t key)    override { if (!check_hit(key.position)) { return EVENT_RES::CONT; } Widget::onMousePress(key); events_->onMousePress(key); return check_hit(key.position); }
+    bool onMouseRelease   (mouse_event_t key)    override { if (!check_hit(key.position)) { return EVENT_RES::CONT; } Widget::onMouseRelease(key); events_->onMouseRelease(key); return check_hit(key.position); }
+    bool onMouseMove      (mouse_event_t key)    override { if (!check_hit(key.position)) { return EVENT_RES::CONT; } Widget::onMouseMove(key); events_->onMouseMove(key); return check_hit(key.position); }
+    bool onClock          (uint64_t delta)       override { Widget::onClock(delta); return events_->onClock(delta); }
 
     void render(RenderTarget& target) override {
         render_->render(&target);
+        Widget::render(target);
     }
 
 private:
