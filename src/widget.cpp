@@ -293,3 +293,39 @@ void WindowManager::createWidgetI(plugin::PluginWidgetI* widget) {
     auto wrapper = new WidgetPlugin(widget, widget);
     widget->host = wrapper;
 }
+
+
+bool WidgetPlugin::onKeyboardPress  (keyboard_event_t key) {
+    Widget::onKeyboardPress(key);
+    return events_->onKeyboardPress(key);
+}
+
+bool WidgetPlugin::onKeyboardRelease(keyboard_event_t key) {
+    Widget::onKeyboardRelease(key);
+    return events_->onKeyboardRelease(key);
+}
+
+bool WidgetPlugin::onMousePress(mouse_event_t key) {
+    if (!check_hit(key.position)) { return EVENT_RES::CONT; }
+    Widget::onMousePress(key);
+    events_->onMousePress(key);
+    return check_hit(key.position);
+}
+
+bool WidgetPlugin::onMouseRelease(mouse_event_t key) {
+    if (!check_hit(key.position)) { return EVENT_RES::CONT; }
+    Widget::onMouseRelease(key);
+    events_->onMouseRelease(key);
+    return check_hit(key.position);
+}
+
+bool WidgetPlugin::onMouseMove(mouse_event_t key) {
+    if (!check_hit(key.position)) { return EVENT_RES::CONT; }
+    Widget::onMouseMove(key);events_->onMouseMove(key);
+    return check_hit(key.position);
+}
+
+bool WidgetPlugin::onClock(uint64_t delta) {
+    Widget::onClock(delta);
+    return events_->onClock(delta);
+}

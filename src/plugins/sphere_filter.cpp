@@ -24,7 +24,6 @@ namespace {
         void selectPlugin() final {/* I don't care */}
     };
 
-
     void SphereFilter::apply(plugin::RenderTargetI *data) {
         const plugin::Texture *image = data->getTexture();
         plugin::Texture new_texture = plugin::Texture(image->width(), image->height());

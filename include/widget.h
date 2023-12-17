@@ -225,12 +225,12 @@ public:
         }
     }
 
-    bool onKeyboardPress  (keyboard_event_t key) override { Widget::onKeyboardPress(key); return events_->onKeyboardPress(key); }
-    bool onKeyboardRelease(keyboard_event_t key) override { Widget::onKeyboardRelease(key); return events_->onKeyboardRelease(key); }
-    bool onMousePress     (mouse_event_t key)    override { if (!check_hit(key.position)) { return EVENT_RES::CONT; } Widget::onMousePress(key); events_->onMousePress(key); return check_hit(key.position); }
-    bool onMouseRelease   (mouse_event_t key)    override { if (!check_hit(key.position)) { return EVENT_RES::CONT; } Widget::onMouseRelease(key); events_->onMouseRelease(key); return check_hit(key.position); }
-    bool onMouseMove      (mouse_event_t key)    override { if (!check_hit(key.position)) { return EVENT_RES::CONT; } Widget::onMouseMove(key); events_->onMouseMove(key); return check_hit(key.position); }
-    bool onClock          (uint64_t delta)       override { Widget::onClock(delta); return events_->onClock(delta); }
+    bool onKeyboardPress  (keyboard_event_t key) override;
+    bool onKeyboardRelease(keyboard_event_t key) override;
+    bool onMousePress     (mouse_event_t key)    override;
+    bool onMouseRelease   (mouse_event_t key)    override;
+    bool onMouseMove      (mouse_event_t key)    override;
+    bool onClock          (uint64_t delta)       override;
 
     void render(RenderTarget& target) override {
         render_->render(&target);
