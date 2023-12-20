@@ -195,6 +195,20 @@ void Widget::render(RenderTarget& target) {
     }
 }
 
+void Widget::prioritize_itself() {
+    if (!_parent) { return; }
+
+    for (auto child_iter = _parent->_childs.begin(); child_iter != _parent->_childs.end(); ++child_iter) {
+        if (*child_iter == this) {
+            _parent->_childs.push_front(this);
+            _parent->_childs.erase(child_iter);
+            break;
+        }
+    }
+
+    _parent->prioritize_itself();
+}
+
 // ---------------------------------------------------------------------------------------------------------------------
 
 void WindowManager::render(RenderTarget& target) {

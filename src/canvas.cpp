@@ -64,8 +64,13 @@ void Canvas::move(const Vector& shift) {
     Widget::move(shift);
 }
 
+void window_menu_callback(CallbackArgs* args_) {
+    CanvasCallbackArgs *args = static_cast<CanvasCallbackArgs *>(args_);
+    args->self->prioritize_itself();
+}
+
 void load_canvas_callback(CallbackArgs *args_) {
-    SaveLoadCanvasArgs *args = static_cast<SaveLoadCanvasArgs *>(args_);
+    CanvasCallbackArgs *args = static_cast<CanvasCallbackArgs *>(args_);
 
     auto result = QFileDialog::getOpenFileName();
     auto path = result.toStdString();
@@ -77,7 +82,7 @@ void load_canvas_callback(CallbackArgs *args_) {
 }
 
 void save_canvas_callback(CallbackArgs *args_) {
-    SaveLoadCanvasArgs *args = static_cast<SaveLoadCanvasArgs *>(args_);
+    CanvasCallbackArgs *args = static_cast<CanvasCallbackArgs *>(args_);
 
     auto result = QFileDialog::getSaveFileName();
     auto path = result.toStdString();

@@ -70,6 +70,8 @@ public:
 
     virtual void notify_register() {}
 
+    void prioritize_itself();
+
     void kill()     { _is_alive = false; }
     bool is_alive() { return _is_alive; }
 
