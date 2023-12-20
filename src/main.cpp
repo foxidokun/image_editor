@@ -374,10 +374,23 @@ static void load_plugin(const char * path, WindowManager& win_mgr, EventManager&
             auto texture = tool->getIcon();
 
             Button *tool_btn;
-            if (texture) {
+            if (false && texture) {
                 tool_btn = new PluginTextureButton(tool_pos, Vector(30, 30), set_brush, new ToolArgs(&tool_mgr, tool), new plugin::Texture(*texture));
             } else { 
-                tool_btn = new TextureButton(tool_pos, Vector(30, 30), set_brush, new ToolArgs(&tool_mgr, tool), global_resources::brush);
+                sf::RenderTexture rt;
+                rt.create(20, 20);
+                rt.clear(sf::Color::Black);
+
+                sf::Text textobj;
+                textobj.setFont(global_resources::font);
+                textobj.setString(string{plugin->name[0], plugin->name[1], '\0'});
+                textobj.setPosition(0, 0);
+                textobj.setCharacterSize(16);
+                textobj.setFillColor(TEXT_COLOR);
+                rt.draw(textobj);
+                rt.display();
+
+                tool_btn = new TextureButton(tool_pos, Vector(30, 30), set_brush, new ToolArgs(&tool_mgr, tool), rt.getTexture());
             }
 
             tool_window.register_object(tool_btn);
