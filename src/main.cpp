@@ -189,7 +189,7 @@ static void test_regions() {
 // ---------------------------------------------------------------------------------------------------------------------
 
 static void setup_canvas_window(WindowManager& win_mgr, ToolManager *tools, FilterManager &filter_mgr, Menu* menu);
-static void setup_file_menu(WindowManager& win_mgr, Canvas* canvas);
+static void setup_file_menu(WindowManager& win_mgr, Canvas* canvas, ToolManager& toolmgr, FilterManager& filtmgr, Menu& menu);
 // static void setup_filter_menu(WindowManager& win_mgr, FilterManager& filter_mgr, EventManager& event_mgr);
 static void setup_color_window(WindowManager& win_mgr, ToolManager *tools);
 static void setup_color_button(Window& win, ToolManager *tools, const Color& color, const Point& pos);
@@ -229,7 +229,7 @@ static void setup_canvas_window(WindowManager& win_mgr, ToolManager *tools, Filt
     double width  = win->active_area().high_x - win->active_area().low_x; // - 12;
     double height = win->active_area().high_y - win->active_area().low_y; // - 10;
 
-    auto canvas = new Canvas(Point(0,0), Vector(width, height), tools, filter_mgr, *menu, Point(0,0), Vector(width, height));
+    auto canvas = new Canvas(Point(0,0), Vector(width, height), tools, filter_mgr, win_mgr, *menu, Point(0,0), Vector(width, height));
     // auto h_scrollbar = new Scrollbar<Orientation::Horizontal>(Vector(0, 365), Vector(600, 10));
     // auto v_scrollbar = new Scrollbar<Orientation::Vertical>  (Vector(588, 0), Vector(12, 400));
 
@@ -241,7 +241,7 @@ static void setup_canvas_window(WindowManager& win_mgr, ToolManager *tools, Filt
     // auto h_controller = new ScrollController(*h_scrollbar, *canvas);
     // auto v_controller = new ScrollController(*v_scrollbar, *canvas);
 
-    setup_file_menu(win_mgr, canvas);
+    setup_file_menu(win_mgr, canvas, *tools, filter_mgr, *menu);
 }
 
 static void setup_color_window(WindowManager& win_mgr, ToolManager *tools) {
@@ -284,11 +284,11 @@ static void setup_color_button(Window& win, ToolManager *tools, const Color& col
     win.register_object(button);
 }
 
-static void setup_file_menu(WindowManager& win_mgr, Canvas* canvas) {
+static void setup_file_menu(WindowManager& win_mgr, Canvas* canvas, ToolManager& toolmgr, FilterManager& filtmgr, Menu& menu) {
     auto file_menu = new Menu(Point(1,0), Vector(49, HEADER_HEIGHT), "File");
 
-    auto load_button = new TextButton(Point(), Vector(), load_canvas_callback, new CanvasCallbackArgs(canvas), "Open");
-    auto save_button = new TextButton(Point(), Vector(), save_canvas_callback, new CanvasCallbackArgs(canvas), "Save");
+    auto load_button = new TextButton(Point(), Vector(), load_canvas_callback, new CanvasOpenCallbackArgs(win_mgr, toolmgr, filtmgr, menu), "Open");
+    auto save_button = new TextButton(Point(), Vector(), save_canvas_callback, new CanvasOpenCallbackArgs(win_mgr, toolmgr, filtmgr, menu), "Save");
 
     file_menu->register_object(load_button);
     file_menu->register_object(save_button);

@@ -27,6 +27,7 @@ private:
     bool is_drawing;
     Menu& window_menu_;
     TextButton *menu_button_;
+    WindowManager& winmgr;
 
     Vector real_pos_;
     Vector real_size_;
@@ -35,7 +36,8 @@ private:
     friend class ScrollController;
 
 public:
-    Canvas(const Point& pos, const Vector& size, ToolManager *tool_manager, FilterManager &filter_manager, Menu& window_menu,
+    Canvas(const Point& pos, const Vector& size, ToolManager *tool_manager, FilterManager &filter_manager, WindowManager& winmgr,
+                Menu& window_menu,
                 std::optional<Point>  real_pos  = std::optional<Point>(),
                 std::optional<Vector> real_size = std::optional<Vector>()):
         Widget(pos, size),
@@ -43,6 +45,7 @@ public:
         filter_manager(filter_manager),
         is_drawing(false),
         window_menu_(window_menu),
+        winmgr(winmgr),
         _permanent(RenderTarget(real_size.has_value() ? real_size.value() : size)),
         _tmp(RenderTarget(real_size.has_value() ? real_size.value() : size)),
         real_pos_(real_pos.has_value() ? real_pos.value() : pos),
@@ -67,8 +70,11 @@ public:
         menu_button_->set_text(title);
         char buf[256];
         sprintf(buf, "Canvas [%s]", title);
-        auto parent_window = static_cast<Window *>(_parent);
-        parent_window->set_title(buf);
+
+        if (_parent) {
+            auto parent_window = static_cast<Window *>(_parent);
+            parent_window->set_title(buf);
+        }
     }
 
     void load_from_file(const char* filepath) {
@@ -83,6 +89,16 @@ public:
         set_parent_title(extract_filename(filepath));
         _permanent.saveToFile(filepath);
     };
+};
+
+struct CanvasOpenCallbackArgs: public CallbackArgs {
+    WindowManager& winmgr;
+    ToolManager& toolmgr;
+    FilterManager& filtmgr;
+    Menu& menu;
+
+    CanvasOpenCallbackArgs(WindowManager& winmgr, ToolManager& toolmgr, FilterManager& filtmgr, Menu& menu):
+    winmgr(winmgr), toolmgr(toolmgr), filtmgr(filtmgr), menu(menu) {}
 };
 
 void load_canvas_callback(CallbackArgs *args);
