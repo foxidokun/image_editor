@@ -78,8 +78,8 @@ void load_canvas_callback(CallbackArgs *args_) {
 
     if (!result.isEmpty() && !result.isNull()) {
         auto win      = new Window(Point(110,0), Vector(800, 600), "Canvas");
-        double width  = win->active_area().high_x - win->active_area().low_x; // - 12;
-        double height = win->active_area().high_y - win->active_area().low_y; // - 10;
+        double width  = win->active_area().high_x - win->active_area().low_x;
+        double height = win->active_area().high_y - win->active_area().low_y;
 
         auto canvas = new Canvas(Point(0,0), Vector(width, height),  &args->toolmgr, args->filtmgr, args->winmgr, args->menu);
         win->register_object(canvas);
