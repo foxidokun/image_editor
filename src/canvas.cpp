@@ -86,3 +86,17 @@ void save_canvas_callback(CallbackArgs *args_) {
         args->self->save_to_file(path.c_str());
     }
 }
+
+const char *extract_filename(const char *path) {
+    const char *start = path;
+
+    while (*path) {
+        if (*path == '/') {
+            start = path + 1;
+        }
+
+        path++;
+    }
+
+    return start;
+}

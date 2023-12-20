@@ -5,6 +5,9 @@
 #include "tools.h"
 #include "button.h"
 #include "filter.h"
+#include "window.h"
+
+const char *extract_filename(const char *path);
 
 class Canvas: public Widget {
 private:
@@ -43,15 +46,24 @@ public:
     bool onMouseRelease(mouse_event_t key) final;
     bool onMouseMove(mouse_event_t key) final;
 
-    void load_from_file(const char* filename) {
-        _permanent.loadFromFile(filename);
+    void set_parent_title(const char *title) {
+        char buf[256];
+        sprintf(buf, "Canvas [%s]", title);
+        auto parent_window = static_cast<Window *>(_parent);
+        parent_window->set_title(buf);
+    }
+
+    void load_from_file(const char* filepath) {
+        set_parent_title(extract_filename(filepath));
+        _permanent.loadFromFile(filepath);
         _tmp.clear(sf::Color::Transparent);
     };
 
     void move(const Vector& shift) override;
 
-    void save_to_file(const char* filename) {
-        _permanent.saveToFile(filename);
+    void save_to_file(const char* filepath) {
+        set_parent_title(extract_filename(filepath));
+        _permanent.saveToFile(filepath);
     };
 };
 

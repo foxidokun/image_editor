@@ -32,6 +32,10 @@ public:
     bool onMouseRelease (mouse_event_t key) final;
     bool onMouseMove    (mouse_event_t key) final;
 
+    void set_title(const char *title) {
+        _title = title;
+    }
+
     void print(std::ostream& stream) const final {
         stream << "Window " << _title;
     }
