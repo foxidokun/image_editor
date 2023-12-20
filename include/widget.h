@@ -68,6 +68,8 @@ public:
     void register_object(Widget *child);
     void register_object_exact_pos(Widget *child);
 
+    virtual void notify_register() {}
+
     void kill()     { _is_alive = false; }
     bool is_alive() { return _is_alive; }
 

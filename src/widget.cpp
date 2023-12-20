@@ -89,6 +89,8 @@ void Widget::register_object_exact_pos(Widget *child) {
     _childs.push_front(child);
     
     _root->recalc_regions();
+
+    child->notify_register();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

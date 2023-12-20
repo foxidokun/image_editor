@@ -46,6 +46,8 @@ public:
     bool onMouseRelease(mouse_event_t key) final;
     bool onMouseMove(mouse_event_t key) final;
 
+    void notify_register() override { set_parent_title("Unnamed"); }
+
     void set_parent_title(const char *title) {
         char buf[256];
         sprintf(buf, "Canvas [%s]", title);
