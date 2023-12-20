@@ -5,6 +5,8 @@
 #include "button.h"
 #include "window.h"
 
+class Canvas;
+
 /*
 class Filter {
 public:

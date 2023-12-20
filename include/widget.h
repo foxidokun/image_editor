@@ -68,6 +68,10 @@ public:
     void register_object(Widget *child);
     void register_object_exact_pos(Widget *child);
 
+    virtual void notify_register() {}
+
+    void prioritize_itself();
+
     void kill()     { _is_alive = false; }
     bool is_alive() { return _is_alive; }
 
@@ -125,9 +129,12 @@ public:
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+class Canvas;
+
 class WindowManager: public Widget, public plugin::GuiI {
 private:
     sf::Shader invert_shader;
+    Canvas *last_canvas = nullptr;
 
 public:
     WindowManager(double width, double height):
@@ -144,6 +151,9 @@ public:
     void cleanup();
 
     void render(RenderTarget& target) override;
+
+    void set_last_canvas(Canvas *canvas) { last_canvas = canvas; }
+    Canvas *get_last_canvas() { return last_canvas; }
 
     plugin::WidgetI* getRoot() const final { return const_cast<WindowManager *>(this); };
 

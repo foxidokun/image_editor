@@ -14,6 +14,7 @@ bool Canvas::onMousePress(mouse_event_t key) {
     if (hit_x && hit_y) {
         is_drawing = true;
         filter_manager.setRenderTarget(&_permanent);
+        winmgr.set_last_canvas(this);
         mouse_event_t key_copy = key;
         key_copy.position.x -= real_pos_.x;
         key_copy.position.y -= real_pos_.y;
@@ -64,25 +65,51 @@ void Canvas::move(const Vector& shift) {
     Widget::move(shift);
 }
 
+void window_menu_callback(CallbackArgs* args_) {
+    CanvasCallbackArgs *args = static_cast<CanvasCallbackArgs *>(args_);
+    args->self->prioritize_itself();
+}
+
 void load_canvas_callback(CallbackArgs *args_) {
-    SaveLoadCanvasArgs *args = static_cast<SaveLoadCanvasArgs *>(args_);
+    CanvasOpenCallbackArgs *args = static_cast<CanvasOpenCallbackArgs *>(args_);
 
     auto result = QFileDialog::getOpenFileName();
     auto path = result.toStdString();
 
-
     if (!result.isEmpty() && !result.isNull()) {
-        args->self->load_from_file(path.c_str());
+        auto win      = new Window(Point(110,0), Vector(800, 600), "Canvas");
+        double width  = win->active_area().high_x - win->active_area().low_x; // - 12;
+        double height = win->active_area().high_y - win->active_area().low_y; // - 10;
+
+        auto canvas = new Canvas(Point(0,0), Vector(width, height),  &args->toolmgr, args->filtmgr, args->winmgr, args->menu);
+        win->register_object(canvas);
+        args->winmgr.register_object(win);
+
+        canvas->load_from_file(path.c_str());
     }
 }
 
 void save_canvas_callback(CallbackArgs *args_) {
-    SaveLoadCanvasArgs *args = static_cast<SaveLoadCanvasArgs *>(args_);
+    CanvasOpenCallbackArgs *args = static_cast<CanvasOpenCallbackArgs *>(args_);
 
     auto result = QFileDialog::getSaveFileName();
     auto path = result.toStdString();
 
     if (!result.isEmpty() && !result.isNull()) {
-        args->self->save_to_file(path.c_str());
+        args->winmgr.get_last_canvas()->save_to_file(path.c_str());
     }
+}
+
+const char *extract_filename(const char *path) {
+    const char *start = path;
+
+    while (*path) {
+        if (*path == '/') {
+            start = path + 1;
+        }
+
+        path++;
+    }
+
+    return start;
 }

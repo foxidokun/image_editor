@@ -76,6 +76,10 @@ public:
 
     void render(RenderTarget& target) override;
 
+    void set_text(const char *_text) {
+        text = _text;
+    }
+
     void print(std::ostream& stream) const override {
         stream << "TextButton";
     }

@@ -89,6 +89,8 @@ void Widget::register_object_exact_pos(Widget *child) {
     _childs.push_front(child);
     
     _root->recalc_regions();
+
+    child->notify_register();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -191,6 +193,20 @@ void Widget::render(RenderTarget& target) {
     for (auto child = _childs.rbegin(); child != _childs.rend(); ++child) {
         (*child)->render(target);
     }
+}
+
+void Widget::prioritize_itself() {
+    if (!_parent) { return; }
+
+    for (auto child_iter = _parent->_childs.begin(); child_iter != _parent->_childs.end(); ++child_iter) {
+        if (*child_iter == this) {
+            _parent->_childs.push_front(this);
+            _parent->_childs.erase(child_iter);
+            break;
+        }
+    }
+
+    _parent->prioritize_itself();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
